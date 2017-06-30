@@ -138,7 +138,7 @@ void Viewer::init()
     float max = *std::max_element(vertex_positions.begin(), vertex_positions.end());
     cout <<max<< endl;
     setSceneRadius(max);
-    setSceneCenter((max,max,max));
+    //setSceneCenter((max,max,max));
     //showEntireScene();
     // Opens help window
     help();
