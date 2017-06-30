@@ -1,0 +1,4 @@
+build/*
+buildDebug/*
+PLY_FILES/*
+DAT_FILES/*
