@@ -1,0 +1,42 @@
+file(REMOVE_RECURSE
+  "include/moc_shader.cxx"
+  "include/moc_simpleViewer.cxx"
+  "external/I3S-Meshing/moc_dat.cxx"
+  "external/I3S-Meshing/moc_export_files.cxx"
+  "external/I3S-Meshing/moc_geometric_transformations.cxx"
+  "external/I3S-Meshing/moc_halfedgemesh.cxx"
+  "external/I3S-Meshing/moc_import_structure.cxx"
+  "external/I3S-Meshing/moc_multiresolution.cxx"
+  "external/I3S-Meshing/moc_ply.cxx"
+  "external/I3S-Meshing/moc_read_data.cxx"
+  "external/I3S-Meshing/moc_reconstruction.cxx"
+  "CMakeFiles/bestView.dir/src/main.cpp.o"
+  "CMakeFiles/bestView.dir/src/shader.cpp.o"
+  "CMakeFiles/bestView.dir/src/simpleViewer.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/dat.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/export_files.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/geometric_transformations.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/halfedgemesh.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/import_structure.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/ply.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/read_data.cpp.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/reconstruction.cpp.o"
+  "CMakeFiles/bestView.dir/include/moc_shader.cxx.o"
+  "CMakeFiles/bestView.dir/include/moc_simpleViewer.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_dat.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_export_files.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_geometric_transformations.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_halfedgemesh.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_import_structure.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_multiresolution.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_ply.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_read_data.cxx.o"
+  "CMakeFiles/bestView.dir/external/I3S-Meshing/moc_reconstruction.cxx.o"
+  "bestView.pdb"
+  "bestView"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/bestView.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

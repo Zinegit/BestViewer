@@ -1,0 +1,99 @@
+Determining if the Q_WS_WIN exist failed with the following output:
+Change Dir: /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_89cca/fast"
+/usr/bin/make -f CMakeFiles/cmTC_89cca.dir/build.make CMakeFiles/cmTC_89cca.dir/build
+make[1] : on entre dans le répertoire « /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp »
+Building CXX object CMakeFiles/cmTC_89cca.dir/CheckSymbolExists.cxx.o
+/usr/bin/g++    -I/usr/include/qt4   -o CMakeFiles/cmTC_89cca.dir/CheckSymbolExists.cxx.o -c /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+/home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+/home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_WIN’ was not declared in this scope
+   return ((int*)(&Q_WS_WIN))[argc];
+                   ^~~~~~~~
+CMakeFiles/cmTC_89cca.dir/build.make:65 : la recette pour la cible « CMakeFiles/cmTC_89cca.dir/CheckSymbolExists.cxx.o » a échouée
+make[1]: *** [CMakeFiles/cmTC_89cca.dir/CheckSymbolExists.cxx.o] Erreur 1
+make[1] : on quitte le répertoire « /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_89cca/fast » a échouée
+make: *** [cmTC_89cca/fast] Erreur 2
+
+File /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <QtCore/qglobal.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef Q_WS_WIN
+  return ((int*)(&Q_WS_WIN))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the Q_WS_QWS exist failed with the following output:
+Change Dir: /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_27154/fast"
+/usr/bin/make -f CMakeFiles/cmTC_27154.dir/build.make CMakeFiles/cmTC_27154.dir/build
+make[1] : on entre dans le répertoire « /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp »
+Building CXX object CMakeFiles/cmTC_27154.dir/CheckSymbolExists.cxx.o
+/usr/bin/g++    -I/usr/include/qt4   -o CMakeFiles/cmTC_27154.dir/CheckSymbolExists.cxx.o -c /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+/home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+/home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_QWS’ was not declared in this scope
+   return ((int*)(&Q_WS_QWS))[argc];
+                   ^~~~~~~~
+CMakeFiles/cmTC_27154.dir/build.make:65 : la recette pour la cible « CMakeFiles/cmTC_27154.dir/CheckSymbolExists.cxx.o » a échouée
+make[1]: *** [CMakeFiles/cmTC_27154.dir/CheckSymbolExists.cxx.o] Erreur 1
+make[1] : on quitte le répertoire « /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_27154/fast » a échouée
+make: *** [cmTC_27154/fast] Erreur 2
+
+File /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <QtCore/qglobal.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef Q_WS_QWS
+  return ((int*)(&Q_WS_QWS))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the Q_WS_MAC exist failed with the following output:
+Change Dir: /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ef816/fast"
+/usr/bin/make -f CMakeFiles/cmTC_ef816.dir/build.make CMakeFiles/cmTC_ef816.dir/build
+make[1] : on entre dans le répertoire « /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp »
+Building CXX object CMakeFiles/cmTC_ef816.dir/CheckSymbolExists.cxx.o
+/usr/bin/g++    -I/usr/include/qt4   -o CMakeFiles/cmTC_ef816.dir/CheckSymbolExists.cxx.o -c /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+/home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+/home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_MAC’ was not declared in this scope
+   return ((int*)(&Q_WS_MAC))[argc];
+                   ^~~~~~~~
+CMakeFiles/cmTC_ef816.dir/build.make:65 : la recette pour la cible « CMakeFiles/cmTC_ef816.dir/CheckSymbolExists.cxx.o » a échouée
+make[1]: *** [CMakeFiles/cmTC_ef816.dir/CheckSymbolExists.cxx.o] Erreur 1
+make[1] : on quitte le répertoire « /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_ef816/fast » a échouée
+make: *** [cmTC_ef816/fast] Erreur 2
+
+File /home/tom/Documents/MyViewer/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <QtCore/qglobal.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef Q_WS_MAC
+  return ((int*)(&Q_WS_MAC))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+

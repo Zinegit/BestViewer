@@ -1,0 +1,99 @@
+Determining if the Q_WS_WIN exist failed with the following output:
+Change Dir: /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_fd7ae/fast"
+/usr/bin/make -f CMakeFiles/cmTC_fd7ae.dir/build.make CMakeFiles/cmTC_fd7ae.dir/build
+make[1] : on entre dans le répertoire « /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp »
+Building CXX object CMakeFiles/cmTC_fd7ae.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++    -I/usr/include/qt4   -o CMakeFiles/cmTC_fd7ae.dir/CheckSymbolExists.cxx.o -c /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+/home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+/home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_WIN’ was not declared in this scope
+   return ((int*)(&Q_WS_WIN))[argc];
+                   ^~~~~~~~
+CMakeFiles/cmTC_fd7ae.dir/build.make:65 : la recette pour la cible « CMakeFiles/cmTC_fd7ae.dir/CheckSymbolExists.cxx.o » a échouée
+make[1]: *** [CMakeFiles/cmTC_fd7ae.dir/CheckSymbolExists.cxx.o] Erreur 1
+make[1] : on quitte le répertoire « /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_fd7ae/fast » a échouée
+make: *** [cmTC_fd7ae/fast] Erreur 2
+
+File /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <QtCore/qglobal.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef Q_WS_WIN
+  return ((int*)(&Q_WS_WIN))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the Q_WS_QWS exist failed with the following output:
+Change Dir: /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_55990/fast"
+/usr/bin/make -f CMakeFiles/cmTC_55990.dir/build.make CMakeFiles/cmTC_55990.dir/build
+make[1] : on entre dans le répertoire « /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp »
+Building CXX object CMakeFiles/cmTC_55990.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++    -I/usr/include/qt4   -o CMakeFiles/cmTC_55990.dir/CheckSymbolExists.cxx.o -c /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+/home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+/home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_QWS’ was not declared in this scope
+   return ((int*)(&Q_WS_QWS))[argc];
+                   ^~~~~~~~
+CMakeFiles/cmTC_55990.dir/build.make:65 : la recette pour la cible « CMakeFiles/cmTC_55990.dir/CheckSymbolExists.cxx.o » a échouée
+make[1]: *** [CMakeFiles/cmTC_55990.dir/CheckSymbolExists.cxx.o] Erreur 1
+make[1] : on quitte le répertoire « /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_55990/fast » a échouée
+make: *** [cmTC_55990/fast] Erreur 2
+
+File /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <QtCore/qglobal.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef Q_WS_QWS
+  return ((int*)(&Q_WS_QWS))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the Q_WS_MAC exist failed with the following output:
+Change Dir: /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_6a9d5/fast"
+/usr/bin/make -f CMakeFiles/cmTC_6a9d5.dir/build.make CMakeFiles/cmTC_6a9d5.dir/build
+make[1] : on entre dans le répertoire « /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp »
+Building CXX object CMakeFiles/cmTC_6a9d5.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++    -I/usr/include/qt4   -o CMakeFiles/cmTC_6a9d5.dir/CheckSymbolExists.cxx.o -c /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+/home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx: In function ‘int main(int, char**)’:
+/home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:8:19: error: ‘Q_WS_MAC’ was not declared in this scope
+   return ((int*)(&Q_WS_MAC))[argc];
+                   ^~~~~~~~
+CMakeFiles/cmTC_6a9d5.dir/build.make:65 : la recette pour la cible « CMakeFiles/cmTC_6a9d5.dir/CheckSymbolExists.cxx.o » a échouée
+make[1]: *** [CMakeFiles/cmTC_6a9d5.dir/CheckSymbolExists.cxx.o] Erreur 1
+make[1] : on quitte le répertoire « /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp »
+Makefile:126 : la recette pour la cible « cmTC_6a9d5/fast » a échouée
+make: *** [cmTC_6a9d5/fast] Erreur 2
+
+File /home/tom/Documents/MyViewer/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <QtCore/qglobal.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef Q_WS_MAC
+  return ((int*)(&Q_WS_MAC))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
