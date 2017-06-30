@@ -1,0 +1,3 @@
+[submodule "external/I3S-Meshing"]
+	path = external/I3S-Meshing
+	url = https://github.com/FloPaga/I3S-Meshing.git

@@ -1,3 +1,0 @@
-/home/tom/Documents/MyViewer/buildDebug/CMakeFiles/rebuild_cache.dir
-/home/tom/Documents/MyViewer/buildDebug/CMakeFiles/edit_cache.dir
-/home/tom/Documents/MyViewer/buildDebug/CMakeFiles/bestView.dir
