@@ -10,7 +10,10 @@ find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
 find_package(Qt5 COMPONENTS Gui Widgets Xml OpenGL)
 
-find_package(QGLViewer REQUIRED)
+add_subdirectory(
+	"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer"
+	"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer/build"
+)
 
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
 if(APPLE)
@@ -34,7 +37,7 @@ include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
 	${GLM_INCLUDE_DIRS}
-	${QGLVIEWER_INCLUDE_DIR}
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS}
 	.
@@ -43,8 +46,8 @@ include_directories(
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	${GLEW_LIBRARIES}
-	${QGLVIEWER_LIBRARY}
 	${Boost_LIBRARIES}
+	QGLViewer
 	${OpenCV_LIBRARIES}
 )
 
