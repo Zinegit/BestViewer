@@ -16,6 +16,7 @@ add_subdirectory(
 )
 
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
+
 if(APPLE)
 	set("OpenCV_DIR" "/usr/local/Cellar/opencv3/3.2.0/share/OpenCV/")
 endif(APPLE)
@@ -84,7 +85,7 @@ file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 add_executable(bestView
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
