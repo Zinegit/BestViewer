@@ -6,6 +6,7 @@ FIND_PATH(QGLVIEWER_INCLUDE_DIR qglviewer.h
     /opt/local/include/QGLViewer
     /usr/local/include/QGLViewer
     /sw/include/QGLViewer
+    /usr/local/lib/QGLViewer.framework/Headers
     ENV QGLVIEWERROOT
   )
 

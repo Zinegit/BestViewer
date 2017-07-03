@@ -7,9 +7,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
-find_package(Qt4 REQUIRED)
+find_package(Qt5Widgets)
+find_package(Qt5Xml)
+find_package(Qt5OpenGL)
 find_package(QGLViewer REQUIRED)
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
+if(APPLE)
+	set("OpenCV_DIR" "/usr/local/Cellar/opencv3/3.2.0/share/OpenCV/")
+endif(APPLE)
 find_package(OpenCV REQUIRED)
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
@@ -26,10 +31,12 @@ include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
 	${GLM_INCLUDE_DIRS}
-	${QT_INCLUDE_DIR}
+	${Qt5Widgets_INCLUDE_DIRS}
+	${Qt5Xml_INCLUDE_DIRS}
+	${Qt5OpenGL_INCLUDE_DIRS}
 	${QGLVIEWER_INCLUDE_DIR}
 	${Boost_INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 	.
 )
 
@@ -38,10 +45,12 @@ INCLUDE(${QT_USE_FILE})
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	${GLEW_LIBRARIES}
-	${QT_LIBRARIES}
+	${Qt5Widgets_LIBRARIES}
+	${Qt5Xml_LIBRARIES}
+	${Qt5OpenGL_LIBRARIES}
 	${QGLVIEWER_LIBRARY}
 	${Boost_LIBRARIES}
-        ${OpenCV_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 
 add_definitions(
@@ -50,47 +59,49 @@ add_definitions(
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
-	${QT_DEFINITIONS}
+	${Qt5Widgets_DEFINITIONS}
+	${Qt5Xml_DEFINITIONS}
+	${Qt5OpenGL_DEFINITIONS}
 )
 
 #MonProjet
 file(
-        GLOB_RECURSE
+  GLOB_RECURSE
 	SRC_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.cpp"
 
 )
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/main.cpp")
 # Because of the presence of 2 main
 
 file(
-        GLOB_RECURSE
+  GLOB_RECURSE
 	INCLUDE_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.h*"
 )
 
 file(
-        GLOB_RECURSE
-        SHADER_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vertexshader"
-        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
+  GLOB_RECURSE
+  SHADER_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vertexshader"
+  "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
 )
 
-QT4_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
+# QT5_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
 
 add_executable(bestView
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
 	${SRC_FILES}
 	${INCLUDE_FILES_MOC}
 	${INCLUDE_FILES}
 	${SHADER_FILES}
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11
+	${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}
+	${Qt5Xml_EXECUTABLE_COMPILE_FLAGS}
+	${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS}")
 
-target_link_libraries(bestView
-	${ALL_LIBS}
-)
-
+target_link_libraries(bestView ${ALL_LIBS})
