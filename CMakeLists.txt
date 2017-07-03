@@ -7,9 +7,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
-find_package(Qt5Widgets)
-find_package(Qt5Xml)
-find_package(Qt5OpenGL)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
 find_package(QGLViewer REQUIRED)
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
 if(APPLE)
@@ -31,9 +31,6 @@ include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
 	${GLM_INCLUDE_DIRS}
-	${Qt5Widgets_INCLUDE_DIRS}
-	${Qt5Xml_INCLUDE_DIRS}
-	${Qt5OpenGL_INCLUDE_DIRS}
 	${QGLVIEWER_INCLUDE_DIR}
 	${Boost_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
@@ -45,9 +42,6 @@ INCLUDE(${QT_USE_FILE})
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	${GLEW_LIBRARIES}
-	${Qt5Widgets_LIBRARIES}
-	${Qt5Xml_LIBRARIES}
-	${Qt5OpenGL_LIBRARIES}
 	${QGLVIEWER_LIBRARY}
 	${Boost_LIBRARIES}
   ${OpenCV_LIBRARIES}
@@ -59,9 +53,6 @@ add_definitions(
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
-	${Qt5Widgets_DEFINITIONS}
-	${Qt5Xml_DEFINITIONS}
-	${Qt5OpenGL_DEFINITIONS}
 )
 
 #MonProjet
@@ -89,7 +80,7 @@ file(
   "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
 )
 
-# QT5_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_executable(bestView
   "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
@@ -99,9 +90,6 @@ add_executable(bestView
 	${SHADER_FILES}
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11
-	${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}
-	${Qt5Xml_EXECUTABLE_COMPILE_FLAGS}
-	${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS}")
+qt5_use_modules(bestView Widgets Xml OpenGL)
 
 target_link_libraries(bestView ${ALL_LIBS})
