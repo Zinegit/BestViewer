@@ -143,32 +143,32 @@ void Viewer::init()
 
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
-    // Get event modifiers key
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
+	// Get event modifiers key
+	const Qt::KeyboardModifiers modifiers = e->modifiers();
 
-    bool handled = false;
-    if ((e->key() == Qt::Key_K))
-    {
-        if (m_mix)
-        {
-            m_mix = false;
-        } else {
-            m_mix = true;
-        }
-    }
-    else if (e->key() == Qt::Key_L)
-    {
-        if (glIsEnabled(GL_CULL_FACE))
-        {
-            glDisable(GL_CULL_FACE);
-        } else {
-            glEnable(GL_CULL_FACE);
-        }
-        handled = true;
-        //update();
-    }
-    if(!handled)
-        QGLViewer::keyPressEvent(e);
+	bool handled = false;
+	if ((e->key() == Qt::Key_K))
+	{
+		if (m_mix)
+		{
+			m_mix = false;
+		} else {
+			m_mix = true;
+		}
+	}
+	else if (e->key() == Qt::Key_L)
+	{
+		if (glIsEnabled(GL_CULL_FACE))
+		{
+			glDisable(GL_CULL_FACE);
+		} else {
+			glEnable(GL_CULL_FACE);
+		}
+		handled = true;
+		//update();
+	}
+	if(!handled)
+		QGLViewer::keyPressEvent(e);
 }
 
 void Viewer::drawOutlines()
@@ -206,34 +206,33 @@ void Viewer::drawOutlines()
     glDisable(GL_POLYGON_OFFSET_LINE);
 
     glDisableVertexAttribArray(0);
-
 }
 
 
 void Viewer::drawSurfaces()
 {
-    // Use our shader
-    //glUseProgram(m_program_id);
+	// Use our shader
+	//glUseProgram(m_program_id);
 
-    // 1rst attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-    glVertexAttribPointer(
-       0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-       3,                  // size
-       GL_FLOAT,           // type
-       GL_FALSE,           // normalized?
-       0,                  // stride
-       (void*)0            // array buffer offset
-    );
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
+	glVertexAttribPointer(
+	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+	   3,                  // size
+	   GL_FLOAT,           // type
+	   GL_FALSE,           // normalized?
+	   0,                  // stride
+	   (void*)0            // array buffer offset
+	);
 
-    // Set object color to white
-    glColor3f(1,1,1);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	// Set object color to white
+	glColor3f(1,1,1);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
 
-    glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(0);
 }
 
 void Viewer::draw()
@@ -246,27 +245,26 @@ void Viewer::draw()
         drawSurfaces();
     }
     drawOutlines();
-
 }
 
 QString Viewer::helpString() const {
-    QString text("<h2>B e s t V i e w e r</h2>");
-    text += "<b> First of all Press C </b> to deactivate auto frustum culling.<br> <br>";
-    text += " Press <b> L </b> to enable/disable backface culling.<br> <br> ";
-    text += " Press <b> K </b> to fill the surfaces.<br> <br> ";
-    text += "Use the mouse to move the camera around the object. ";
-    text += "You can respectively revolve around, zoom and translate with the "
-              "three mouse buttons. ";
-    text += "Left and middle buttons pressed together rotate around the camera "
-              "view direction axis<br><br>";
-    text += "Press <b>A</b> for the world axis ";
-    text += "and <b>Control+S</b> to save "
-              "a snapshot. ";
-    text += "Double clicks automates single click actions: A left button double "
-              "click aligns the closer axis with the camera (if close enough). ";
-    text += "A middle button double click fits the zoom of the camera and the "
-              "right button re-centers the scene.<br><br>";
-    text += "Press <b>Escape</b> to exit the viewer.";
-    return text;
+	QString text("<h2>B e s t V i e w e r</h2>");
+	text += "<b> First of all Press C </b> to deactivate auto frustum culling.<br> <br>";
+	text += " Press <b> L </b> to enable/disable backface culling.<br> <br> ";
+	text += " Press <b> K </b> to fill the surfaces.<br> <br> ";
+	text += "Use the mouse to move the camera around the object. ";
+	text += "You can respectively revolve around, zoom and translate with the "
+			  "three mouse buttons. ";
+	text += "Left and middle buttons pressed together rotate around the camera "
+			  "view direction axis<br><br>";
+	text += "Press <b>A</b> for the world axis ";
+	text += "and <b>Control+S</b> to save "
+			  "a snapshot. ";
+	text += "Double clicks automates single click actions: A left button double "
+			  "click aligns the closer axis with the camera (if close enough). ";
+	text += "A middle button double click fits the zoom of the camera and the "
+			  "right button re-centers the scene.<br><br>";
+	text += "Press <b>Escape</b> to exit the viewer.";
+	return text;
 }
 

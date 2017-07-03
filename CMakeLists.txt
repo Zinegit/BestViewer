@@ -1,5 +1,6 @@
 # CMake entry point
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.12)
+
 project (MonProjet)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -7,9 +8,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
-find_package(Qt4 REQUIRED)
-find_package(QGLViewer REQUIRED)
+find_package(Qt5 COMPONENTS Gui Widgets Xml OpenGL)
+
+add_subdirectory(
+	"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer"
+	"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer/build"
+)
+
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
+if(APPLE)
+	set("OpenCV_DIR" "/usr/local/Cellar/opencv3/3.2.0/share/OpenCV/")
+endif(APPLE)
 find_package(OpenCV REQUIRED)
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
@@ -22,26 +31,24 @@ if( CMAKE_BINARY_DIR MATCHES " " )
 	message( "Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause." )
 endif()
 
+set(CMAKE_AUTOMOC ON)
+
 include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
 	${GLM_INCLUDE_DIRS}
-	${QT_INCLUDE_DIR}
-	${QGLVIEWER_INCLUDE_DIR}
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
 	${Boost_INCLUDE_DIRS}
-        ${OpenCV_INCLUDE_DIRS}
+	${OpenCV_INCLUDE_DIRS}
 	.
 )
-
-INCLUDE(${QT_USE_FILE})
 
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	${GLEW_LIBRARIES}
-	${QT_LIBRARIES}
-	${QGLVIEWER_LIBRARY}
 	${Boost_LIBRARIES}
-        ${OpenCV_LIBRARIES}
+	QGLViewer
+	${OpenCV_LIBRARIES}
 )
 
 add_definitions(
@@ -50,47 +57,42 @@ add_definitions(
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
-	${QT_DEFINITIONS}
 )
 
 #MonProjet
 file(
-        GLOB_RECURSE
+	GLOB_RECURSE
 	SRC_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.cpp"
 
 )
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/main.cpp")
 # Because of the presence of 2 main
 
 file(
-        GLOB_RECURSE
+	GLOB_RECURSE
 	INCLUDE_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.h*"
 )
 
 file(
-        GLOB_RECURSE
-        SHADER_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vertexshader"
-        "${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
-)
-
-QT4_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
-
-add_executable(bestView
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
-	${SRC_FILES}
-	${INCLUDE_FILES_MOC}
-	${INCLUDE_FILES}
-	${SHADER_FILES}
+	GLOB_RECURSE
+	SHADER_FILES
+	"${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.vertexshader"
+	"${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-target_link_libraries(bestView
-	${ALL_LIBS}
+add_executable(bestView
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
+	${SRC_FILES}
+	${INCLUDE_FILES}
+	${SHADER_FILES}
 )
 
+qt5_use_modules(bestView Gui Widgets Xml OpenGL)
+
+target_link_libraries(bestView ${ALL_LIBS})
