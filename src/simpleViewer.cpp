@@ -13,6 +13,7 @@
 
 #include "include/simpleViewer.hpp"
 #include "include/shader.hpp"
+#include "include/barycentre.hpp"
 #include "external/I3S-Meshing/ply.h"
 #include "external/I3S-Meshing/dat.h"
 
@@ -28,6 +29,7 @@
 #include <QMouseEvent>
 
 #include <math.h>
+#include <boost/geometry.hpp>
 
 using namespace std;
 
@@ -74,10 +76,6 @@ void Viewer::init()
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
 
-    // Accept fragment if it's closer to the camera than the former one
-    glDepthFunc(GL_LESS);
-
-
     // Creation of VAO
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
@@ -104,7 +102,7 @@ void Viewer::init()
     // Topology
     vector<int> index_triangles;
     Dat dat;
-    dat.readDat("../DAT_FILES/rabbit2.dat", 0);
+    dat.readDat("../DAT_FILES/Teapot_Res3.dat", 2);
     // Retrieve geometry
     vertex_positions = dat.getPos();
     // Retrieve topology
@@ -133,11 +131,11 @@ void Viewer::init()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
 
-    //Show the entire scene
-
+    //Show the entire scene from the beginning
     float max = *std::max_element(vertex_positions.begin(), vertex_positions.end());
     setSceneRadius(max);
-    //setSceneCenter((max,max,max));
+    const qglviewer::Vec center = barycentre(vertex_positions);
+    setSceneCenter(center);
     showEntireScene();
     // Opens help window
     help();
@@ -175,8 +173,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 
 void Viewer::drawOutlines()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
@@ -202,7 +198,7 @@ void Viewer::drawOutlines()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // Draw black wireframe version of geometry
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(2.5f);
+    glLineWidth(1.f);
 
     //glDrawArrays(GL_POINTS, 0, m_nb_indices);
     glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
@@ -242,11 +238,14 @@ void Viewer::drawSurfaces()
 
 void Viewer::draw()
 {
-    drawOutlines();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Accept fragment if it's closer to the camera than the former one
+    glDepthFunc(GL_LEQUAL);
     if (m_mix)
     {
         drawSurfaces();
     }
+    drawOutlines();
 
 }
 
