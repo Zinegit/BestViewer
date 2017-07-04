@@ -9,6 +9,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
 find_package(Qt5 COMPONENTS Gui Widgets Xml OpenGL)
+find_package(Eigen3 REQUIRED)
 
 add_subdirectory(
 	"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer"
@@ -41,6 +42,7 @@ include_directories(
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
 	${Boost_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS}
+    ${EIGEN3_INCLUDE_DIR}
 	.
 )
 
