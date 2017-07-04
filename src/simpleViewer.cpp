@@ -14,6 +14,7 @@
 #include "include/simpleViewer.hpp"
 #include "include/shader.hpp"
 #include "include/barycentre.hpp"
+#include "include/getNormals.hpp"
 #include "external/I3S-Meshing/ply.h"
 #include "external/I3S-Meshing/dat.h"
 
@@ -36,13 +37,17 @@ using namespace std;
 void Viewer::init()
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if it's closer to the camera than the former one
+    glDepthFunc(GL_LESS);
+    glCullFace( GL_BACK );
     glEnable(GL_CULL_FACE);
 
     // Set 'L' as the key to enable backface culling
     setKeyDescription(Qt::Key_L, "Toggles backface culling");
     // Set 'K' as the key to mix between fill and line
     setKeyDescription(Qt::Key_K, "Toggles surface filling");
-
 
     // Enlighten everything (not just the well-oriented faces of the triangles)
     // Light setup
@@ -73,27 +78,24 @@ void Viewer::init()
     // Dark red background
     glClearColor(0.2f, 0.0f, 0.0f, 0.0f);
 
-    // Enable depth test
-    glEnable(GL_DEPTH_TEST);
-
     // Creation of VAO
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
 
-    // ////////////READING .PLY FILES//////////// //
+    /*// ////////////READING .PLY FILES//////////// //
     // Geometry
-    //vector<float> vertex_positions;
+    vector<float> vertex_positions;
     // Topology
-    //vector<int> index_triangles;
-    //Ply ply;
-    //ply.readPly("../PLY_FILES/anneau_bin.ply");
+    vector<int> index_triangles;
+    Ply ply;
+    ply.readPly("../PLY_FILES/anneau_bin.ply");
     // Retrieve geometry
-    //vertex_positions = ply.getPos();
+    vertex_positions = ply.getPos();
     // Retrieve topology
-    //index_triangles = ply.getIndex();
-    // ////////////READING .PLY FILES//////////// //
+    index_triangles = ply.getIndex();
+    // ////////////READING .PLY FILES//////////// //*/
 
 
     // ////////////READING .DAT FILES//////////// //
@@ -102,12 +104,15 @@ void Viewer::init()
     // Topology
     vector<int> index_triangles;
     Dat dat;
-    dat.readDat("../DAT_FILES/Teapot_Res3.dat", 2);
+    dat.readDat("../DAT_FILES/Anneau_Res3.dat", 0);
     // Retrieve geometry
     vertex_positions = dat.getPos();
     // Retrieve topology
     index_triangles = dat.getIndex();
     // ////////////READING .DAT FILES//////////// //
+
+    // Get normal vertices
+    vector<float> normals = getBackTriangles(vertex_positions, index_triangles);
 
 
     m_nb_points_buffer = vertex_positions.size();
@@ -122,8 +127,6 @@ void Viewer::init()
 
 
     m_pointer_to_index_triangles = index_triangles.data();
-    //for (auto v : index_triangles)
-    //    std::cout << v << std::endl;
     m_nb_indices = index_triangles.size();
 
 
@@ -147,7 +150,19 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	const Qt::KeyboardModifiers modifiers = e->modifiers();
 
 	bool handled = false;
-	if ((e->key() == Qt::Key_K))
+    // Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
+    if (e->key() == Qt::Key_L)
+    {
+        if(glIsEnabled(GL_CULL_FACE))
+        {
+            glDisable(GL_CULL_FACE);
+            cout << " disabled " << endl;
+        } else {
+            glEnable(GL_CULL_FACE);
+            cout << " enabled " << endl;
+        }
+    }
+    else if ((e->key() == Qt::Key_K))
 	{
 		if (m_mix)
 		{
@@ -155,19 +170,9 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		} else {
 			m_mix = true;
 		}
-	}
-	else if (e->key() == Qt::Key_L)
-	{
-		if (glIsEnabled(GL_CULL_FACE))
-		{
-			glDisable(GL_CULL_FACE);
-		} else {
-			glEnable(GL_CULL_FACE);
-		}
-		handled = true;
-		//update();
-	}
-	if(!handled)
+        handled = true;
+    }
+    if(!handled)
 		QGLViewer::keyPressEvent(e);
 }
 
@@ -190,15 +195,17 @@ void Viewer::drawOutlines()
     else
         glColor3f(1,1,1);
     // Draw black outline
-    glPolygonOffset(-10.0f, -10.0f);      // Shift depth values
-    glEnable(GL_POLYGON_OFFSET_LINE);
-    // Draw lines antialiased
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // Draw black wireframe version of geometry
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(1.f);
+    // Shift depth values
+    glPolygonOffset(-0.1f, -1.0f);
+    glEnable(GL_POLYGON_OFFSET_LINE);
+    //Draw lines antialiased
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_BLEND);
+    glLineWidth(2.5f);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     //glDrawArrays(GL_POINTS, 0, m_nb_indices);
     glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
@@ -235,11 +242,20 @@ void Viewer::drawSurfaces()
 	glDisableVertexAttribArray(0);
 }
 
+vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
+{
+    vector<bool> frontFaceTriangles(normals.size(), 0);
+    for (int i = 0; i < normals.size(); i += 3)
+    {
+
+    }
+}
+
 void Viewer::draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // Accept fragment if it's closer to the camera than the former one
-    glDepthFunc(GL_LEQUAL);
+    // Get camera's viewing direction
+    qglviewer::Vec dir = camera() -> viewDirection();
     if (m_mix)
     {
         drawSurfaces();

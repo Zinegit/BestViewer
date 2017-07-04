@@ -2,7 +2,9 @@
 #include <qapplication.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "include/getNormals.hpp"
 #include "include/simpleViewer.hpp"
+#include "include/getNormals.hpp"
 
 int main(int argc, char **argv) {
   // Read command lines arguments.

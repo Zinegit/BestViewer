@@ -20,7 +20,6 @@ const qglviewer::Vec barycentre(std::vector<float>& vertices)
         Z += vertices[i];
     float Z_mean = Z / (nb_points / 3);
     const qglviewer::Vec bar(X_mean, Y_mean, Z_mean);
-    std::cout << X_mean << Y_mean << Z_mean << std::endl;
     return bar;
 
 }
