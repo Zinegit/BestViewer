@@ -1,36 +1,4 @@
-// Include basic libraries
-#include <stdio.h>
-#include <stdlib.h>
-
-// Include GLEW
-#include <GL/glew.h>
-
-// Include GLM
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
-
 #include "include/simpleViewer.hpp"
-#include "include/shader.hpp"
-#include "include/barycentre.hpp"
-#include "include/getNormals.hpp"
-#include "external/I3S-Meshing/ply.h"
-#include "external/I3S-Meshing/dat.h"
-
-// Display elements of vectors
-#include <vector>
-#include <iostream>
-
-// Keypress
-#include <QCursor>
-#include <QKeyEvent>
-#include <QMap>
-#include <QMenu>
-#include <QMouseEvent>
-
-#include <math.h>
-#include <boost/geometry.hpp>
 
 using namespace std;
 
@@ -112,7 +80,7 @@ void Viewer::init()
     // ////////////READING .DAT FILES//////////// //
 
     // Get normal vertices
-    vector<float> normals = getBackTriangles(vertex_positions, index_triangles);
+    m_normals = getBackTriangles(vertex_positions, index_triangles);
 
 
     m_nb_points_buffer = vertex_positions.size();
@@ -146,20 +114,20 @@ void Viewer::init()
 
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
+    this->update();
 	// Get event modifiers key
 	const Qt::KeyboardModifiers modifiers = e->modifiers();
 
-	bool handled = false;
     // Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
     if (e->key() == Qt::Key_L)
     {
         if(glIsEnabled(GL_CULL_FACE))
         {
             glDisable(GL_CULL_FACE);
-            cout << " disabled " << endl;
+//            cout << " disabled " << endl;
         } else {
             glEnable(GL_CULL_FACE);
-            cout << " enabled " << endl;
+//            cout << " enabled " << endl;
         }
     }
     else if ((e->key() == Qt::Key_K))
@@ -169,11 +137,13 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 			m_mix = false;
 		} else {
 			m_mix = true;
-		}
-        handled = true;
+        }
+        update();
     }
-    if(!handled)
-		QGLViewer::keyPressEvent(e);
+    else
+    {
+        QGLViewer::keyPressEvent(e);
+    }
 }
 
 void Viewer::drawOutlines()
@@ -244,18 +214,27 @@ void Viewer::drawSurfaces()
 
 vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
 {
-    vector<bool> frontFaceTriangles(normals.size(), 0);
+    Eigen::Vector3d dir_vec(direction.x, direction.y, direction.z);
+    vector<bool> frontFaceTriangles(normals.size()/3, 0);
+    int j = 0;
     for (int i = 0; i < normals.size(); i += 3)
     {
-
+        Eigen::Vector3d normal(normals[i], normals[i + 1], normals[i + 2]);
+        frontFaceTriangles[j] = normal.dot(dir_vec) < 0;
+        j += 1;
     }
+    for (auto v : frontFaceTriangles)
+        cout << v << endl;
+    return frontFaceTriangles;
 }
 
 void Viewer::draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Get camera's viewing direction
-    qglviewer::Vec dir = camera() -> viewDirection();
+    m_dir = camera() -> viewDirection();
+    vector<bool> frontFaceTriangles;
+    frontFaceTriangles = isFrontFace(m_dir, m_normals);
     if (m_mix)
     {
         drawSurfaces();
