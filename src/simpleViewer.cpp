@@ -5,6 +5,7 @@ using namespace std;
 void Viewer::init()
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it's closer to the camera than the former one
@@ -21,12 +22,10 @@ void Viewer::init()
     // Light setup
      glDisable(GL_LIGHT0);
      glEnable(GL_LIGHT1);
-
      // Light default parameters
      const GLfloat light_ambient[4] = {1.0, 1.0, 1.0, 1.0};
      const GLfloat light_specular[4] = {1.0, 1.0, 1.0, 1.0};
      const GLfloat light_diffuse[4] = {1.0, 1.0, 1.0, 1.0};
-
      glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 3.0);
      glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 10.0);
      glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.1f);
@@ -43,6 +42,7 @@ void Viewer::init()
         fprintf(stderr, "Failed to initialize GLEW\n");
         return;
     }
+
     // Dark red background
     glClearColor(0.2f, 0.0f, 0.0f, 0.0f);
 
@@ -51,19 +51,18 @@ void Viewer::init()
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
-
-    /*// ////////////READING .PLY FILES//////////// //
-    // Geometry
-    vector<float> vertex_positions;
-    // Topology
-    vector<int> index_triangles;
-    Ply ply;
-    ply.readPly("../PLY_FILES/anneau_bin.ply");
-    // Retrieve geometry
-    vertex_positions = ply.getPos();
-    // Retrieve topology
-    index_triangles = ply.getIndex();
-    // ////////////READING .PLY FILES//////////// //*/
+//    // ////////////READING .PLY FILES//////////// //
+//    // Geometry
+//    vector<float> vertex_positions;
+//    // Topology
+//    vector<int> index_triangles;
+//    Ply ply;
+//    ply.readPly("../PLY_FILES/icosahedron.ply");
+//    // Retrieve geometry
+//    vertex_positions = ply.getPos();
+//    // Retrieve topology
+//    index_triangles = ply.getIndex();
+//    // ////////////READING .PLY FILES//////////// //
 
 
     // ////////////READING .DAT FILES//////////// //
@@ -72,7 +71,7 @@ void Viewer::init()
     // Topology
     vector<int> index_triangles;
     Dat dat;
-    dat.readDat("../DAT_FILES/Anneau_Res3.dat", 0);
+    dat.readDat("../DAT_FILES/Anneau_Res3.dat", 1);
     // Retrieve geometry
     vertex_positions = dat.getPos();
     // Retrieve topology
@@ -80,8 +79,9 @@ void Viewer::init()
     // ////////////READING .DAT FILES//////////// //
 
     // Get normal vertices
-    m_normals = getBackTriangles(vertex_positions, index_triangles);
-
+    m_normals = getNormals(lol, mdr);
+    for (auto v : m_normals)
+        cout << v << endl;
 
     m_nb_points_buffer = vertex_positions.size();
     // Create pointer to vector for glBufferData
@@ -93,11 +93,8 @@ void Viewer::init()
     // Give our vertices to OpenGL.
     glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), pointer_to_vertex_positions, GL_STATIC_DRAW);
 
-
     m_pointer_to_index_triangles = index_triangles.data();
     m_nb_indices = index_triangles.size();
-
-
     glGenBuffers(1, &m_index_triangles);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
@@ -108,6 +105,7 @@ void Viewer::init()
     const qglviewer::Vec center = barycentre(vertex_positions);
     setSceneCenter(center);
     showEntireScene();
+
     // Opens help window
     help();
 }
@@ -121,14 +119,13 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     // Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
     if (e->key() == Qt::Key_L)
     {
-        if(glIsEnabled(GL_CULL_FACE))
+        if(!glIsEnabled(GL_CULL_FACE))
         {
-            glDisable(GL_CULL_FACE);
-//            cout << " disabled " << endl;
-        } else {
             glEnable(GL_CULL_FACE);
-//            cout << " enabled " << endl;
+        } else {
+            glDisable(GL_CULL_FACE);
         }
+        update();
     }
     else if ((e->key() == Qt::Key_K))
 	{
@@ -141,9 +138,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
         update();
     }
     else
-    {
         QGLViewer::keyPressEvent(e);
-    }
 }
 
 void Viewer::drawOutlines()
@@ -162,18 +157,17 @@ void Viewer::drawOutlines()
 
     if (m_mix)// Set object color to black
         glColor3f(0,0,0);
-    else
+    else // Set object color to white
         glColor3f(1,1,1);
-    // Draw black outline
     // Draw black wireframe version of geometry
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    // Shift depth values
-    glPolygonOffset(-0.1f, -1.0f);
+    // Shift depth values (arbitrary)
+    glPolygonOffset(-0.25f, -1.0f);
     glEnable(GL_POLYGON_OFFSET_LINE);
     //Draw lines antialiased
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_BLEND);
-    glLineWidth(2.5f);
+    glLineWidth(2.0f);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
@@ -203,13 +197,10 @@ void Viewer::drawSurfaces()
 	   (void*)0            // array buffer offset
 	);
 
-	// Set object color to white
 	glColor3f(1,1,1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
-
-	glDisableVertexAttribArray(0);
+    glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
+    glDisableVertexAttribArray(0);
 }
 
 vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
@@ -223,9 +214,12 @@ vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
         frontFaceTriangles[j] = normal.dot(dir_vec) < 0;
         j += 1;
     }
-    for (auto v : frontFaceTriangles)
-        cout << v << endl;
     return frontFaceTriangles;
+}
+
+vector<bool> isHidden(vector<float> positions)
+{
+
 }
 
 void Viewer::draw()
