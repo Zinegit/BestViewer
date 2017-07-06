@@ -53,12 +53,16 @@ private:
     GLuint m_vertex_buffer;
     GLuint m_nb_points_buffer;
     GLuint m_index_triangles;
+    vector<int> m_index;
+    vector<float> m_vertex_positions;
     GLuint m_nb_indices;
     GLuint m_render_programID;
     vector<float> m_normals;
     int* m_pointer_to_index_triangles;
-    bool m_mix = true;
+    bool m_mix = false;
     qglviewer::Vec m_dir;
+    vector<bool> m_front_face_triangles;
+    vector<int> m_index_temp;
 
 };
 

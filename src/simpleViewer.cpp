@@ -2,6 +2,48 @@
 
 using namespace std;
 
+vector<int> updateIndex(vector<bool> triangles_to_show, vector<int> index)
+{
+    vector<int> new_index;
+    for (int i = 0; i < triangles_to_show.size(); i++)
+    {
+        if (triangles_to_show[i])
+        {
+            new_index.push_back(index[3 * i]);
+            new_index.push_back(index[3 * i + 1]);
+            new_index.push_back(index[3 * i + 2]);
+        }
+    }
+    return new_index;
+}
+
+vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
+{
+    cout << "camera orientation" << endl;
+    for (int i = 0; i < 3; i++)
+        cout << direction[i] << endl;
+    cout << "normals" << endl;
+    for (int i = 0; i < normals.size(); i++)
+        cout << normals[i] << endl;
+    Eigen::Vector3d dir_vec(direction.x, direction.y, direction.z);
+    vector<bool> front_face_triangles(normals.size()/3, 0);
+    int j = 0;
+    cout << "dot product" << endl;
+    for (int i = 0; i < normals.size(); i += 3)
+    {
+        Eigen::Vector3d normal(normals[i], normals[i + 1], normals[i + 2]);
+        cout <<  normal.dot(dir_vec) << endl;
+        front_face_triangles[j] = normal.dot(dir_vec) <= 0;
+        j += 1;
+    }
+    cout << endl;
+    return front_face_triangles;
+}
+
+//vector<bool> isHidden(vector<float> positions)
+//{
+//}
+
 void Viewer::init()
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -10,8 +52,8 @@ void Viewer::init()
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it's closer to the camera than the former one
     glDepthFunc(GL_LESS);
-    glCullFace( GL_BACK );
-    glEnable(GL_CULL_FACE);
+    //glCullFace( GL_BACK );
+    //glEnable(GL_CULL_FACE);
 
     // Set 'L' as the key to enable backface culling
     setKeyDescription(Qt::Key_L, "Toggles backface culling");
@@ -51,41 +93,37 @@ void Viewer::init()
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
-//    // ////////////READING .PLY FILES//////////// //
-//    // Geometry
-//    vector<float> vertex_positions;
-//    // Topology
-//    vector<int> index_triangles;
-//    Ply ply;
-//    ply.readPly("../PLY_FILES/icosahedron.ply");
-//    // Retrieve geometry
-//    vertex_positions = ply.getPos();
-//    // Retrieve topology
-//    index_triangles = ply.getIndex();
-//    // ////////////READING .PLY FILES//////////// //
-
-
-    // ////////////READING .DAT FILES//////////// //
-    // Geometry
-    vector<float> vertex_positions;
-    // Topology
-    vector<int> index_triangles;
-    Dat dat;
-    dat.readDat("../DAT_FILES/Anneau_Res3.dat", 1);
+    // ////////////READING .PLY FILES//////////// //
+    Ply ply;
+    ply.readPly("../PLY_FILES/tetra.ply");
     // Retrieve geometry
-    vertex_positions = dat.getPos();
+    m_vertex_positions = ply.getPos();
     // Retrieve topology
-    index_triangles = dat.getIndex();
-    // ////////////READING .DAT FILES//////////// //
+    m_index = ply.getIndex();
+    // ////////////READING .PLY FILES//////////// //
+
+
+//    // ////////////READING .DAT FILES//////////// //
+//    Dat dat;
+//    dat.readDat("../DAT_FILES/Dodecahedron_Res3.dat", 0);
+//    // Retrieve geometry
+//    m_vertex_positions = dat.getPos();
+//    // Retrieve topology
+//    m_index = dat.getIndex();
+//    // ////////////READING .DAT FILES//////////// //
 
     // Get normal vertices
-    m_normals = getNormals(lol, mdr);
-    for (auto v : m_normals)
-        cout << v << endl;
+    m_normals = getNormals(m_vertex_positions, m_index);
 
-    m_nb_points_buffer = vertex_positions.size();
+    // Get camera's viewing direction
+    //Camera* camera = QGLViewer::Camera this->camera();
+    m_dir = camera() -> viewDirection();
+    m_front_face_triangles = isFrontFace(m_dir, m_normals);
+    m_index_temp = updateIndex(m_front_face_triangles, m_index);
+
+    m_nb_points_buffer = m_vertex_positions.size();
     // Create pointer to vector for glBufferData
-    float *pointer_to_vertex_positions = vertex_positions.data();
+    float *pointer_to_vertex_positions = m_vertex_positions.data();
     // Generate 1 buffer, put the resulting identifier in m_vertex_buffer
     glGenBuffers(1, &m_vertex_buffer);
     // The following commands will talk about our 'm_vertex_buffer' buffer
@@ -93,16 +131,16 @@ void Viewer::init()
     // Give our vertices to OpenGL.
     glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), pointer_to_vertex_positions, GL_STATIC_DRAW);
 
-    m_pointer_to_index_triangles = index_triangles.data();
-    m_nb_indices = index_triangles.size();
+    m_pointer_to_index_triangles = m_index_temp.data();
+    m_nb_indices = m_index_temp.size();
     glGenBuffers(1, &m_index_triangles);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
 
     //Show the entire scene from the beginning
-    float max = *std::max_element(vertex_positions.begin(), vertex_positions.end());
+    float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
     setSceneRadius(max);
-    const qglviewer::Vec center = barycentre(vertex_positions);
+    const qglviewer::Vec center = barycentre(m_vertex_positions);
     setSceneCenter(center);
     showEntireScene();
 
@@ -203,32 +241,24 @@ void Viewer::drawSurfaces()
     glDisableVertexAttribArray(0);
 }
 
-vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
-{
-    Eigen::Vector3d dir_vec(direction.x, direction.y, direction.z);
-    vector<bool> frontFaceTriangles(normals.size()/3, 0);
-    int j = 0;
-    for (int i = 0; i < normals.size(); i += 3)
-    {
-        Eigen::Vector3d normal(normals[i], normals[i + 1], normals[i + 2]);
-        frontFaceTriangles[j] = normal.dot(dir_vec) < 0;
-        j += 1;
-    }
-    return frontFaceTriangles;
-}
 
-vector<bool> isHidden(vector<float> positions)
-{
-
-}
 
 void Viewer::draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Get camera's viewing direction
     m_dir = camera() -> viewDirection();
-    vector<bool> frontFaceTriangles;
-    frontFaceTriangles = isFrontFace(m_dir, m_normals);
+
+
+    m_front_face_triangles = isFrontFace(m_dir, m_normals);
+    m_index_temp = updateIndex(m_front_face_triangles, m_index);
+
+    m_pointer_to_index_triangles = m_index_temp.data();
+    m_nb_indices = m_index_temp.size();
+    glGenBuffers(1, &m_index_triangles);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
+
     if (m_mix)
     {
         drawSurfaces();
