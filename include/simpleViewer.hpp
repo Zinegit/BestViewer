@@ -36,33 +36,28 @@
 #include <glm/glm.hpp>
 
 #include <Eigen/Dense>
+#include <vector>
 
+
+class outsideCamera;
 
 class Viewer : public QGLViewer
 {
+
+public:
+    void setOutsideCamera(qglviewer::Camera *oc) { outside_camera = oc;}
+
 protected:
   virtual void draw();
   virtual void init();
   virtual void drawSurfaces();
   virtual void drawOutlines();
+  // virtual void drawCam();
   virtual void keyPressEvent(QKeyEvent *e);
   virtual QString helpString() const;
 
-    // This will identify our vertex buffer
 private:
-    GLuint m_vertex_buffer;
-    GLuint m_nb_points_buffer;
-    GLuint m_index_triangles;
-    vector<int> m_index;
-    vector<float> m_vertex_positions;
-    GLuint m_nb_indices;
-    GLuint m_render_programID;
-    vector<float> m_normals;
-    int* m_pointer_to_index_triangles;
-    bool m_mix = false;
-    qglviewer::Vec m_dir;
-    vector<bool> m_front_face_triangles;
-    vector<int> m_index_temp;
+    qglviewer::Camera *outside_camera = NULL;
 
 };
 

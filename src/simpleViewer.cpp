@@ -1,5 +1,7 @@
 #include "include/simpleViewer.hpp"
 
+#include "include/globalVariables.hpp"
+
 using namespace std;
 
 vector<int> updateIndex(vector<bool> triangles_to_show, vector<int> index)
@@ -19,24 +21,24 @@ vector<int> updateIndex(vector<bool> triangles_to_show, vector<int> index)
 
 vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
 {
-    cout << "camera orientation" << endl;
-    for (int i = 0; i < 3; i++)
-        cout << direction[i] << endl;
-    cout << "normals" << endl;
-    for (int i = 0; i < normals.size(); i++)
-        cout << normals[i] << endl;
+    //cout << "camera orientation" << endl;
+    //for (int i = 0; i < 3; i++)
+        //cout << direction[i] << endl;
+    //cout << "normals" << endl;
+    //for (int i = 0; i < normals.size(); i++)
+        //cout << normals[i] << endl;
     Eigen::Vector3d dir_vec(direction.x, direction.y, direction.z);
     vector<bool> front_face_triangles(normals.size()/3, 0);
     int j = 0;
-    cout << "dot product" << endl;
+    //cout << "dot product" << endl;
     for (int i = 0; i < normals.size(); i += 3)
     {
         Eigen::Vector3d normal(normals[i], normals[i + 1], normals[i + 2]);
-        cout <<  normal.dot(dir_vec) << endl;
+        //cout <<  normal.dot(dir_vec) << endl;
         front_face_triangles[j] = normal.dot(dir_vec) <= 0;
         j += 1;
     }
-    cout << endl;
+    //cout << endl;
     return front_face_triangles;
 }
 
@@ -90,8 +92,9 @@ void Viewer::init()
 
     // Creation of VAO
     GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
+    glGenVertexArrays(2, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
+
 
     // ////////////READING .PLY FILES//////////// //
     Ply ply;
@@ -112,24 +115,25 @@ void Viewer::init()
 //    m_index = dat.getIndex();
 //    // ////////////READING .DAT FILES//////////// //
 
+    //Main viewer configuration
+
     // Get normal vertices
     m_normals = getNormals(m_vertex_positions, m_index);
 
     // Get camera's viewing direction
-    //Camera* camera = QGLViewer::Camera this->camera();
     m_dir = camera() -> viewDirection();
     m_front_face_triangles = isFrontFace(m_dir, m_normals);
     m_index_temp = updateIndex(m_front_face_triangles, m_index);
 
     m_nb_points_buffer = m_vertex_positions.size();
     // Create pointer to vector for glBufferData
-    float *pointer_to_vertex_positions = m_vertex_positions.data();
+    m_pointer_to_vertex_positions = m_vertex_positions.data();
     // Generate 1 buffer, put the resulting identifier in m_vertex_buffer
     glGenBuffers(1, &m_vertex_buffer);
     // The following commands will talk about our 'm_vertex_buffer' buffer
     glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
     // Give our vertices to OpenGL.
-    glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), pointer_to_vertex_positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), m_pointer_to_vertex_positions, GL_STATIC_DRAW);
 
     m_pointer_to_index_triangles = m_index_temp.data();
     m_nb_indices = m_index_temp.size();
@@ -137,15 +141,43 @@ void Viewer::init()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
 
-    //Show the entire scene from the beginning
-    float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
-    setSceneRadius(max);
-    const qglviewer::Vec center = barycentre(m_vertex_positions);
-    setSceneCenter(center);
-    showEntireScene();
+//    // Import camera skin
+//    // Need to change every coordinate to fit the viewer's camera's place
+//    dat.readDat("../DAT_FILES/rabbit1.dat", 0);
+//    m_vertex_positions_cam = dat.getPos();
+//    m_index_cam = dat.getIndex();
+//    m_nb_points_buffer_cam = m_vertex_positions_cam.size();
+//    m_pointer_to_vertex_positions_cam = m_vertex_positions_cam.data();
+//    glGenBuffers(1, &m_vertex_buffer_cam);
+//    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer_cam);
+//    glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer_cam * sizeof(float), m_pointer_to_vertex_positions_cam, GL_STATIC_DRAW);
+//    m_pointer_to_index_triangles_cam = m_index_cam.data();
+//    m_nb_indices_cam = m_index_cam.size();
+//    glGenBuffers(1, &m_index_triangles_cam);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles_cam);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices_cam * sizeof(int), m_pointer_to_index_triangles_cam, GL_STATIC_DRAW);
 
+
+
+    if (outside_camera)
+    {
+        // Place observer
+        setSceneRadius(20.0);
+        camera() -> setViewDirection(qglviewer::Vec(0.0, -1.0, 0.0));
+        showEntireScene();
+    }
+    else
+    {
+        // Place main viewer
+        // Show the entire scene from the beginning
+        float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
+        setSceneRadius(max);
+        const qglviewer::Vec center = barycentre(m_vertex_positions);
+        setSceneCenter(center);
+        showEntireScene();
+    }
     // Opens help window
-    help();
+    //help();
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -241,18 +273,84 @@ void Viewer::drawSurfaces()
     glDisableVertexAttribArray(0);
 }
 
+//void Viewer::drawCam()
+//{
+//    // Use our shader
+//    //glUseProgram(m_program_id);
+
+//    // 1rst attribute buffer : vertices
+//    glEnableVertexAttribArray(0);
+//    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer_cam);
+//    glVertexAttribPointer(
+//       0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+//       3,                  // size
+//       GL_FLOAT,           // type
+//       GL_FALSE,           // normalized?
+//       0,                  // stride
+//       (void*)0            // array buffer offset
+//    );
+
+//    glColor3f(1,1,1);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    glDrawElements(GL_TRIANGLES, m_nb_indices_cam, GL_UNSIGNED_INT, NULL);
+//    glDisableVertexAttribArray(0);
+//}
 
 
 void Viewer::draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // Get camera's viewing direction
-    m_dir = camera() -> viewDirection();
+    if (!outside_camera)
+    {
+        // Get camera's viewing direction
+        m_dir = camera() -> viewDirection();
+        m_cam_pos = camera() -> position();
 
 
-    m_front_face_triangles = isFrontFace(m_dir, m_normals);
-    m_index_temp = updateIndex(m_front_face_triangles, m_index);
+        m_front_face_triangles = isFrontFace(m_dir, m_normals);
+        m_index_temp = updateIndex(m_front_face_triangles, m_index);
 
+
+//        // Draw normals
+//        vector<float> barycentres_triangles;
+
+//        for (int i = 0; i < m_index.size(); i += 3)
+//        {
+//            vector<float> triangle(m_vertex_positions);
+//            barycentres_triangles.push_back();
+//                a[0] = vertex_positions[3 * index_triangles[i+1]] - vertex_positions[3 * index_triangles[i]];
+//                a[1] = vertex_positions[3 * index_triangles[i+1]+1] - vertex_positions[3 * index_triangles[i]+1];
+//                a[2] = vertex_positions[3 * index_triangles[i+1]+2] - vertex_positions[3 * index_triangles[i]+2];
+//                b[0] = vertex_positions[3 * index_triangles[i+2]] - vertex_positions[3 * index_triangles[i]];
+//                b[1] = vertex_positions[3 * index_triangles[i+2]+1] - vertex_positions[3 * index_triangles[i]+1];
+//                b[2] = vertex_positions[3 * index_triangles[i+2]+2] - vertex_positions[3 * index_triangles[i]+2];
+
+//                Eigen::Vector3d a_e(a[0], a[1], a[2]);
+//                Eigen::Vector3d b_e(b[0], b[1], b[2]);
+//                n = a_e.cross(b_e);
+//                normals[i] = n[0];
+//                normals[i+1] = n[1];
+//                normals[i+2] = n[2];
+//        }
+        for (auto v : m_normals)
+        {
+            glBegin(GL_LINES);
+                glVertex2f(10, 10);
+            glEnd();
+        }
+    }
+    else if (outside_camera)
+    {
+        // draws the viewer's camera orientation
+        glLineWidth(2.5);
+        glColor3f(0.0, 1.0, 0.0);
+        glBegin(GL_LINES);
+            glVertex3f(0, 0, 0);
+            glVertex3f(m_cam_pos.x, m_cam_pos.y, m_cam_pos.z);
+        glEnd();
+
+        //drawCam();
+    }
     m_pointer_to_index_triangles = m_index_temp.data();
     m_nb_indices = m_index_temp.size();
     glGenBuffers(1, &m_index_triangles);
@@ -265,6 +363,7 @@ void Viewer::draw()
     }
     drawOutlines();
 }
+
 
 QString Viewer::helpString() const {
 	QString text("<h2>B e s t V i e w e r</h2>");
