@@ -14,7 +14,8 @@ int main(int argc, char **argv) {
   QApplication application(argc, argv);
 
   // Instantiate the viewer.
-  Viewer viewer, observer;
+  Viewer viewer;
+  Viewer observer;
 
   // Observer gets a outsideCamera
   observer.setOutsideCamera(viewer.camera());

@@ -45,7 +45,7 @@ class Viewer : public QGLViewer
 {
 
 public:
-    void setOutsideCamera(qglviewer::Camera *oc) { outside_camera = oc;}
+	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
 
 protected:
   virtual void draw();
@@ -57,7 +57,27 @@ protected:
   virtual QString helpString() const;
 
 private:
-    qglviewer::Camera *outside_camera = NULL;
+	qglviewer::Camera *observed_camera = NULL;
+
+};
+
+class Observer : public QGLViewer
+{
+
+public:
+	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
+
+protected:
+  virtual void draw();
+  virtual void init();
+  virtual void drawSurfaces();
+  virtual void drawOutlines();
+  // virtual void drawCam();
+  virtual void keyPressEvent(QKeyEvent *e);
+  virtual QString helpString() const;
+
+private:
+	qglviewer::Camera *observed_camera = NULL;
 
 };
 

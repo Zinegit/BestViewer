@@ -11,15 +11,13 @@ GLuint m_vertex_buffer;
 GLuint m_nb_points_buffer;
 GLuint m_index_triangles;
 GLuint m_nb_indices;
-GLuint m_render_programID;
+//GLuint m_render_programID;
 vector<float> m_normals;
 int* m_pointer_to_index_triangles;
 float* m_pointer_to_vertex_positions;
 bool m_mix = false;
-qglviewer::Vec m_dir;
 vector<bool> m_front_face_triangles;
 vector<int> m_index_temp;
-qglviewer::Vec m_cam_pos;
 
 // Import Cam
 //vector<float> m_vertex_positions_cam;
