@@ -1,7 +1,8 @@
 build/*
 buildDebug/*
-PLY_FILES/*
-DAT_FILES/*
+PLY_FILES
+DAT_FILES
 CMakeLists.txt.user
 external/libQGLViewer/QGLViewer/build/*
 useless/*
+.qglviewer*.xml
