@@ -61,23 +61,23 @@ private:
 
 };
 
-class Observer : public QGLViewer
-{
+//class Observer : public QGLViewer
+//{
 
-public:
-	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
+//public:
+//	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
 
-protected:
-  virtual void draw();
-  virtual void init();
-  virtual void drawSurfaces();
-  virtual void drawOutlines();
-  // virtual void drawCam();
-  virtual void keyPressEvent(QKeyEvent *e);
-  virtual QString helpString() const;
+//protected:
+//  virtual void draw();
+//  virtual void init();
+//  virtual void drawSurfaces();
+//  virtual void drawOutlines();
+//  // virtual void drawCam();
+//  virtual void keyPressEvent(QKeyEvent *e);
+//  virtual QString helpString() const;
 
-private:
-	qglviewer::Camera *observed_camera = NULL;
+//private:
+//	qglviewer::Camera *observed_camera = NULL;
 
-};
+//};
 

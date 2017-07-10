@@ -50,7 +50,7 @@ vector<float> getNormals( vector<float>& vertex_positions, vector<int>& index_tr
         normals[i] = n[0];
         normals[i+1] = n[1];
         normals[i+2] = n[2];
-    }
+	}
     return normals;
 }
 

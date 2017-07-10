@@ -4,7 +4,7 @@
 
 using namespace std;
 
-vector<int> updateIndex(vector<bool> triangles_to_show, vector<int> index)
+vector<int> updateIndex(vector<bool>& triangles_to_show, vector<int>& index)
 {
 	vector<int> new_index;
 	for (int i = 0; i < triangles_to_show.size(); i++)
@@ -19,7 +19,7 @@ vector<int> updateIndex(vector<bool> triangles_to_show, vector<int> index)
 	return new_index;
 }
 
-vector<bool> isFrontFace(qglviewer::Vec& position, qglviewer::Vec& direction, vector<float>& normals)
+vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
 {
 	Eigen::Vector3d cam(direction.x, direction.y, direction.z);
 	vector<bool> front_face_triangles(normals.size()/3, 0);
@@ -33,19 +33,55 @@ vector<bool> isFrontFace(qglviewer::Vec& position, qglviewer::Vec& direction, ve
 	return front_face_triangles;
 }
 
+bool isInsideFrustum(qglviewer::Vec& pos)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		if (pos * Vec(planeCoefficients[i]) - planeCoefficients[i][3] > 0) // à modifier
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+vector<bool> areInsideFrustum(vector<float>& vertex_positions, vector<int>& index_triangles)
+{
+	// Create a boolean table returning true for each point inside the frustum and false for each point that is not
+	vector<bool> inside_frustum_points;
+	qglviewer::Vec pos;
+	vector<bool> inside_frustum_triangles;
+	for (int i = 0; i < vertex_positions.size(); i += 3)
+	{
+		pos[0] = vertex_positions[i];
+		pos[1] = vertex_positions[i+1];
+		pos[2] = vertex_positions[i+2];
+		inside_frustum_points.push_back(isInsideFrustum(pos));
+		cout << isInsideFrustum(pos);
+	}
+	for (int j = 0; j < index_triangles.size(); j += 3)
+	{
+		inside_frustum_triangles.push_back(inside_frustum_points[index_triangles[j]] && inside_frustum_points[index_triangles[j+1]] && inside_frustum_points[index_triangles[j+2]]);
+	}
+	for (int k = 0; k < inside_frustum_triangles.size(); k++)
+		//cout << inside_frustum_triangles[k] << endl;
+	return inside_frustum_triangles;
+}
+
 //vector<bool> isHidden(vector<float> positions)
 //{
 //}
 
 void Viewer::init()
 {
+
 	camera()->setType(Camera::ORTHOGRAPHIC);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it's closer to the camera than the former one
-	glDepthFunc(GL_LESS);
+	//glDepthFunc(GL_LESS);
 	//glCullFace( GL_BACK );
 	//glEnable(GL_CULL_FACE);
 
@@ -89,23 +125,23 @@ void Viewer::init()
 
 	if (!observed_camera)
 	{
-//		// ////////////READING .PLY FILES//////////// //
-//		Ply ply;
-//		ply.readPly("../PLY_FILES/anneau_bin.ply");
-//		// Retrieve geometry
-//		m_vertex_positions = ply.getPos();
-//		// Retrieve topology
-//		m_index = ply.getIndex();
-//		// ////////////READING .PLY FILES//////////// //
+		// ////////////READING .PLY FILES//////////// //
+		Ply ply;
+		ply.readPly("../PLY_FILES/tetra.ply");
+		// Retrieve geometry
+		m_vertex_positions = ply.getPos();
+		// Retrieve topology
+		m_index = ply.getIndex();
+		// ////////////READING .PLY FILES//////////// //
 
-			// ////////////READING .DAT FILES//////////// //
-			Dat dat;
-			dat.readDat("../DAT_FILES/Anneau_Res3.dat", 2);
-			// Retrieve geometry
-			m_vertex_positions = dat.getPos();
-			// Retrieve topology
-			m_index = dat.getIndex();
-			// ////////////READING .DAT FILES//////////// //
+//		// ////////////READING .DAT FILES//////////// //
+//		Dat dat;
+//		dat.readDat("../DAT_FILES/Anneau_Res3.dat", 2);
+//		// Retrieve geometry
+//		m_vertex_positions = dat.getPos();
+//		// Retrieve topology
+//		m_index = dat.getIndex();
+//		// ////////////READING .DAT FILES//////////// //
 
 
 		// Get normal vertices
@@ -113,9 +149,15 @@ void Viewer::init()
 
 		// Get camera's viewing direction
 		qglviewer::Vec viewer_dir = camera() -> viewDirection();
-		qglviewer::Vec viewer_pos = camera() -> position();
-		m_front_face_triangles = isFrontFace(viewer_pos, viewer_dir, m_normals);
-		m_index_temp = updateIndex(m_front_face_triangles, m_index);
+		GLdouble plane_coefficients[6][4];
+		camera() -> getFrustumPlanesCoefficients(plane_coefficients);
+//		cout << m_index.size() << endl;
+//		for (int i = 0; i < m_index.size(); i++)
+//			cout << m_index[i] << endl;
+		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
+		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index);
+		//m_index_temp = updateIndex(m_front_face_triangles, m_index);
+		m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
 
 		m_nb_points_buffer = m_vertex_positions.size();
 		// Create pointer to vector for glBufferData
@@ -300,12 +342,15 @@ void Viewer::draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (!observed_camera)
 	{
+		camera() -> getFrustumPlanesCoefficients(planeCoefficients);
 		// Get viewer's viewing direction
 		qglviewer::Vec viewer_dir = camera() -> viewDirection();
-		qglviewer::Vec viewer_pos = camera() -> position();
 
-		m_front_face_triangles = isFrontFace(viewer_pos, viewer_dir, m_normals);
+		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
+
+		//m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index);
 		m_index_temp = updateIndex(m_front_face_triangles, m_index);
+		//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
 
 	}
 	else if (observed_camera)
@@ -316,7 +361,6 @@ void Viewer::draw()
 
 		qglviewer::Vec out_dir = observed_camera -> viewDirection();
 		qglviewer::Vec out_pos = observed_camera -> position();
-		qglviewer::Vec pos = camera() -> position();
 		//cout << out_dir.x << " | " << out_dir.y << " | " << out_dir.z << endl;
 
 //		GLdouble plane_coefficients[6][4];
@@ -328,11 +372,12 @@ void Viewer::draw()
 
 //		cout << pos_frame.x << " " << pos_frame.y << " " << pos_frame.z << endl;
 
+		// Draw the viewer's view direction
 		glLineWidth(2.5);
 		glColor3f(0.0, 1.0, 0.0);
 		glBegin(GL_LINES);
-			glVertex3f(10 * out_dir.x + out_pos.x, 10 * out_dir.y + out_pos.y, 10 * out_dir.z + out_pos.z);
-			glVertex3f(out_pos.x, out_pos.y, out_pos.z);
+		glVertex3f(10 * out_dir.x + out_pos.x, 10 * out_dir.y + out_pos.y, 10 * out_dir.z + out_pos.z);
+		glVertex3f(out_pos.x, out_pos.y, out_pos.z);
 		glEnd();
 //      // Draw first triangle's normal
 //		float x = m_vertex_positions[3 * m_index[0]] + m_vertex_positions[3 * m_index[1]] + m_vertex_positions[3 * m_index[2]];
