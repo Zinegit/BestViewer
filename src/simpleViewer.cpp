@@ -76,7 +76,7 @@ vector<bool> areInsideFrustum(vector<float>& vertex_positions, vector<int>& inde
 	}
 	for (int j = 0; j < index_triangles.size(); j += 3)
 	{
-		inside_frustum_triangles.push_back(inside_frustum_points[index_triangles[j]] && inside_frustum_points[index_triangles[j+1]] && inside_frustum_points[index_triangles[j+2]]);
+		inside_frustum_triangles.push_back(inside_frustum_points[index_triangles[j]] || inside_frustum_points[index_triangles[j+1]] || inside_frustum_points[index_triangles[j+2]]);
 	}
 	return inside_frustum_triangles;
 }
