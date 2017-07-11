@@ -17,9 +17,10 @@ int* m_pointer_to_index_triangles;
 float* m_pointer_to_vertex_positions;
 bool m_mix = false;
 vector<bool> m_front_face_triangles;
-vector<int> m_index_temp;
-GLdouble planeCoefficients[6][4];
 vector<bool> m_inside_frustum_triangles;
+vector<bool> m_triangles_to_show;
+vector<int> m_index_temp;
+GLdouble plane_coefficients[6][4];
 
 // Import Cam
 //vector<float> m_vertex_positions_cam;
