@@ -22,6 +22,7 @@ vector<bool> m_triangles_to_show;
 vector<int> m_index_temp;
 GLdouble plane_coefficients[6][4];
 
+
 // Import Cam
 //vector<float> m_vertex_positions_cam;
 //vector<int> m_index_cam;

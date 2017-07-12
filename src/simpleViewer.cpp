@@ -45,18 +45,16 @@ vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
 
 float distanceToPlane(int i, qglviewer::Vec& pos)
 {
-	float distance = (std::abs(plane_coefficients[i][0] * pos[0] + plane_coefficients[i][1] * pos[1] + plane_coefficients[i][2] * pos[2] + plane_coefficients[i][3])) / std::sqrt(std::pow(plane_coefficients[i][0], 2.0) + std::pow(plane_coefficients[i][1], 2.0) + std::pow(plane_coefficients[i][2], 2.0) );
+	float distance = (std::abs(plane_coefficients[i][0] * pos[0] + plane_coefficients[i][1] * pos[1] + plane_coefficients[i][2] * pos[2] - plane_coefficients[i][3])) / std::sqrt(std::pow(plane_coefficients[i][0], 2.0) + std::pow(plane_coefficients[i][1], 2.0) + std::pow(plane_coefficients[i][2], 2.0) );
 	return distance;
 }
 
 bool isInsideFrustum(qglviewer::Vec& pos)
 {
-	for (int i = 0; i < 6; i += 2)
+	for (int k = 0; k < 6; k += 2)
 	{
-		if (distanceToPlane(i, pos) + distanceToPlane(i+1, pos) - plane_coefficients[i][3] - plane_coefficients[i+1][3] > 0.01)
-		{
+		if (distanceToPlane(k, pos) + distanceToPlane(k+1, pos) - plane_coefficients[k][3] - plane_coefficients[k+1][3] > 0.01)
 			return false;
-		}
 	}
 	return true;
 }
@@ -138,23 +136,23 @@ void Viewer::init()
 
 	if (!observed_camera)
 	{
-		// ////////////READING .PLY FILES//////////// //
-		Ply ply;
-		ply.readPly("../PLY_FILES/anneau_bin.ply");
-		// Retrieve geometry
-		m_vertex_positions = ply.getPos();
-		// Retrieve topology
-		m_index = ply.getIndex();
-		// ////////////READING .PLY FILES//////////// //
-
-//		// ////////////READING .DAT FILES//////////// //
-//		Dat dat;
-//		dat.readDat("../DAT_FILES/Anneau_Res3.dat", 2);
+//		// ////////////READING .PLY FILES//////////// //
+//		Ply ply;
+//		ply.readPly("../PLY_FILES/skull.ply");
 //		// Retrieve geometry
-//		m_vertex_positions = dat.getPos();
+//		m_vertex_positions = ply.getPos();
 //		// Retrieve topology
-//		m_index = dat.getIndex();
-//		// ////////////READING .DAT FILES//////////// //
+//		m_index = ply.getIndex();
+//		// ////////////READING .PLY FILES//////////// //
+
+		// ////////////READING .DAT FILES//////////// //
+		Dat dat;
+		dat.readDat("../DAT_FILES/Anneau_Res3.dat", 2);
+		// Retrieve geometry
+		m_vertex_positions = dat.getPos();
+		// Retrieve topology
+		m_index = dat.getIndex();
+		// ////////////READING .DAT FILES//////////// //
 
 
 		// Get normal vertices
@@ -364,6 +362,7 @@ void Viewer::draw()
 		m_triangles_to_show = fusionBools(m_front_face_triangles, m_inside_frustum_triangles);
 		// Display combination of both
 		m_index_temp = updateIndex(m_triangles_to_show, m_index);
+
 	}
 	else if (observed_camera)
 	{
