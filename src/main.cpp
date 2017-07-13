@@ -1,13 +1,8 @@
 #include <GL/glew.h>
 #include <qapplication.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "include/getNormals.hpp"
-#include "include/simpleViewer.hpp"
 #include <QGLViewer/manipulatedCameraFrame.h>
 
-using namespace qglviewer;
+#include "include/simpleViewer.hpp"
 
 int main(int argc, char **argv) {
   // Read command lines arguments.
@@ -22,7 +17,7 @@ int main(int argc, char **argv) {
 
   //qglviewer::Vec pos = viewer.camera() -> position();
 
-  // Make sure every Camera movement updates the observer
+  // Make sure every viewer movement updates the observer
    QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer,
                     SLOT(update()));
    QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer,

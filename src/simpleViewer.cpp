@@ -1,83 +1,9 @@
 #include "include/simpleViewer.hpp"
-
 #include "include/globalVariables.hpp"
 
 using namespace std;
 
-vector<int> updateIndex(vector<bool>& triangles_to_show, vector<int>& index)
-{
-	vector<int> new_index;
-	for (int i = 0; i < triangles_to_show.size(); i++)
-	{
-		if (triangles_to_show[i])
-		{
-			new_index.push_back(index[3 * i]);
-			new_index.push_back(index[3 * i + 1]);
-			new_index.push_back(index[3 * i + 2]);
-		}
-	}
-	return new_index;
-}
 
-vector<bool> fusionBools(vector<bool>& front_face_triangles, vector<bool>& inside_frustum_triangles)
-{
-	vector<bool> fusion;
-	for (int i = 0; i < front_face_triangles.size(); i++)
-	{
-		fusion.push_back(front_face_triangles[i] && inside_frustum_triangles[i]);
-	}
-	return fusion;
-}
-
-vector<bool> isFrontFace(qglviewer::Vec& direction, vector<float>& normals)
-{
-	Eigen::Vector3d cam(direction.x, direction.y, direction.z);
-	vector<bool> front_face_triangles(normals.size()/3, 0);
-	int j = 0;
-	for (int i = 0; i < normals.size(); i += 3)
-	{
-		Eigen::Vector3d normal(normals[i], normals[i + 1], normals[i + 2]);
-		front_face_triangles[j] = normal.dot(cam) <= 0;
-		j += 1;
-	}
-	return front_face_triangles;
-}
-
-float distanceToPlane(int i, qglviewer::Vec& pos)
-{
-	float distance = (std::abs(plane_coefficients[i][0] * pos[0] + plane_coefficients[i][1] * pos[1] + plane_coefficients[i][2] * pos[2] - plane_coefficients[i][3])) / std::sqrt(std::pow(plane_coefficients[i][0], 2.0) + std::pow(plane_coefficients[i][1], 2.0) + std::pow(plane_coefficients[i][2], 2.0) );
-	return distance;
-}
-
-bool isInsideFrustum(qglviewer::Vec& pos)
-{
-	for (int k = 0; k < 6; k += 2)
-	{
-		if (distanceToPlane(k, pos) + distanceToPlane(k+1, pos) - plane_coefficients[k][3] - plane_coefficients[k+1][3] > 0.01)
-			return false;
-	}
-	return true;
-}
-
-vector<bool> areInsideFrustum(vector<float>& vertex_positions, vector<int>& index_triangles)
-{
-	// Create a boolean table returning true for each point inside the frustum and false for each point that is not
-	vector<bool> inside_frustum_points;
-	qglviewer::Vec pos;
-	vector<bool> inside_frustum_triangles;
-	for (int i = 0; i < vertex_positions.size(); i += 3)
-	{
-		pos[0] = vertex_positions[i];
-		pos[1] = vertex_positions[i+1];
-		pos[2] = vertex_positions[i+2];
-		inside_frustum_points.push_back(isInsideFrustum(pos));
-	}
-	for (int j = 0; j < index_triangles.size(); j += 3)
-	{
-		inside_frustum_triangles.push_back(inside_frustum_points[index_triangles[j]] || inside_frustum_points[index_triangles[j+1]] || inside_frustum_points[index_triangles[j+2]]);
-	}
-	return inside_frustum_triangles;
-}
 
 //vector<bool> isHidden(vector<float> positions)
 //{
@@ -147,7 +73,7 @@ void Viewer::init()
 
 		// ////////////READING .DAT FILES//////////// //
 		Dat dat;
-		dat.readDat("../DAT_FILES/Anneau_Res3.dat", 2);
+		dat.readDat("../DAT_FILES/Anneau_Res3.dat", 0);
 		// Retrieve geometry
 		m_vertex_positions = dat.getPos();
 		// Retrieve topology
@@ -162,9 +88,13 @@ void Viewer::init()
 		qglviewer::Vec viewer_dir = camera() -> viewDirection();
 
 		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
-		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index);
+		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index, plane_coefficients);
+		// Only display frontface triangles
 		//m_index_temp = updateIndex(m_front_face_triangles, m_index);
-		m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
+		// Only display triangles in the frustum
+		//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
+		m_triangles_to_show = fusionBools(m_front_face_triangles, m_inside_frustum_triangles);
+		m_index_temp = updateIndex(m_triangles_to_show, m_index);
 
 		m_nb_points_buffer = m_vertex_positions.size();
 		// Create pointer to vector for glBufferData
@@ -219,7 +149,7 @@ void Viewer::init()
 		// Show the entire scene from the beginning
 		float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
 		setSceneRadius(max);
-		const qglviewer::Vec center = barycentre(m_vertex_positions);
+		const qglviewer::Vec center = barycenter(m_vertex_positions);
 		setSceneCenter(center);
 		showEntireScene();
 	}
@@ -354,7 +284,7 @@ void Viewer::draw()
 
 		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
 
-		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index);
+		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index, plane_coefficients);
 		// Only display frontface triangles
 		//m_index_temp = updateIndex(m_front_face_triangles, m_index);
 		// Only display triangles in the frustum

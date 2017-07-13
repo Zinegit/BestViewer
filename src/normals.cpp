@@ -1,39 +1,10 @@
-#include "include/getNormals.hpp"
-// Include basic libraries
-#include <stdio.h>
-#include <stdlib.h>
+#include "include/normals.hpp"
 
-// Include GLEW
-#include <GL/glew.h>
-
-// Include GLM
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
-
-#include "include/simpleViewer.hpp"
-#include "include/shader.hpp"
-#include "include/barycentre.hpp"
-#include "external/I3S-Meshing/ply.h"
-#include "external/I3S-Meshing/dat.h"
-
-// Display elements of vectors
-#include <vector>
-#include <iostream>
-
-#include <math.h>
-#include <boost/geometry.hpp>
-#include <Eigen/Dense>
-
-using namespace std;
-using namespace Eigen;
-
-vector<float> getNormals( vector<float>& vertex_positions, vector<int>& index_triangles)
+std::vector<float> getNormals( std::vector<float>& vertex_positions, std::vector<int>& index_triangles)
 {
-    vector<float> normals(index_triangles.size(), 0);
-    vector<float> a(3, 0);
-    vector<float> b(3, 0);
+	std::vector<float> normals(index_triangles.size(), 0);
+	std::vector<float> a(3, 0);
+	std::vector<float> b(3, 0);
     Eigen::Vector3d n;
     for (int i = 0; i < index_triangles.size(); i += 3 )
     {

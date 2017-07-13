@@ -76,7 +76,7 @@ list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/mai
 file(
 	GLOB_RECURSE
 	INCLUDE_FILES
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*"
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.h*"
 )
 

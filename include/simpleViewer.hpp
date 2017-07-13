@@ -5,17 +5,8 @@
 // Include GLEW
 #include <GL/glew.h>
 
-// Include GLM
-#define GLM_FORCE_RADIANS
+#include <QGLViewer/qglviewer.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
-
-#include "include/shader.hpp"
-#include "include/barycentre.hpp"
-#include "include/getNormals.hpp"
-#include "external/I3S-Meshing/ply.h"
-#include "external/I3S-Meshing/dat.h"
 
 // Display elements of vectors
 #include <vector>
@@ -28,16 +19,17 @@
 #include <QMenu>
 #include <QMouseEvent>
 
-#include <math.h>
-#include <boost/geometry.hpp>
-
-#include <QGLViewer/qglviewer.h>
-
-#include <glm/glm.hpp>
-
-#include <Eigen/Dense>
-#include <vector>
-
+#include "include/shader.hpp"
+#include "include/barycenter.hpp"
+#include "include/normals.hpp"
+#include "include/updateIndex.hpp"
+#include "include/distanceToPlane.hpp"
+#include "include/isInsideFrustum.hpp"
+#include "include/areInsideFrustum.hpp"
+#include "include/fusionBools.hpp"
+#include "include/isFrontFace.hpp"
+#include "external/I3S-Meshing/ply.h"
+#include "external/I3S-Meshing/dat.h"
 
 class outsideCamera;
 

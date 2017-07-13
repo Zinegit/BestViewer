@@ -1,10 +1,6 @@
-#include <QGLViewer/qglviewer.h>
-#include "include/barycentre.hpp"
-#include <vector>
-#include <math.h>
-#include <glm/common.hpp>
+#include "include/barycenter.hpp"
 
-const qglviewer::Vec barycentre(std::vector<float>& vertices)
+const qglviewer::Vec barycenter(std::vector<float>& vertices)
 {
     int nb_points = vertices.size();
     float X = 0;
