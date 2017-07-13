@@ -62,23 +62,23 @@ void Viewer::init()
 
 	if (!observed_camera)
 	{
-//		// ////////////READING .PLY FILES//////////// //
-//		Ply ply;
-//		ply.readPly("../PLY_FILES/skull.ply");
-//		// Retrieve geometry
-//		m_vertex_positions = ply.getPos();
-//		// Retrieve topology
-//		m_index = ply.getIndex();
-//		// ////////////READING .PLY FILES//////////// //
-
-		// ////////////READING .DAT FILES//////////// //
-		Dat dat;
-		dat.readDat("../DAT_FILES/Anneau_Res3.dat", 0);
+		// ////////////READING .PLY FILES//////////// //
+		Ply ply;
+		ply.readPly("../PLY_FILES/hint.ply");
 		// Retrieve geometry
-		m_vertex_positions = dat.getPos();
+		m_vertex_positions = ply.getPos();
 		// Retrieve topology
-		m_index = dat.getIndex();
-		// ////////////READING .DAT FILES//////////// //
+		m_index = ply.getIndex();
+		// ////////////READING .PLY FILES//////////// //
+
+//		// ////////////READING .DAT FILES//////////// //
+//		Dat dat;
+//		dat.readDat("../DAT_FILES/rabbit2.dat", 1);
+//		// Retrieve geometry
+//		m_vertex_positions = dat.getPos();
+//		// Retrieve topology
+//		m_index = dat.getIndex();
+//		// ////////////READING .DAT FILES//////////// //
 
 
 		// Get normal vertices
@@ -139,14 +139,16 @@ void Viewer::init()
 	if (observed_camera)
 	{
 		// Place observer
-		setSceneRadius(20.0);
-		camera() -> setViewDirection(qglviewer::Vec(0.0, -1.0, 0.0));
+		camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
+		float max = 2 * *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
+		setSceneRadius(max);
+		const qglviewer::Vec center = barycenter(m_vertex_positions);
+		setSceneCenter(center);
 		showEntireScene();
 	}
 	else
 	{
-		// Place main viewer
-		// Show the entire scene from the beginning
+		// Place viewer
 		float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
 		setSceneRadius(max);
 		const qglviewer::Vec center = barycenter(m_vertex_positions);
@@ -299,9 +301,6 @@ void Viewer::draw()
 		// Draw viewer's camera orientation
 		glColor3f(1.0, 0.0, 0.0);
 		observed_camera -> draw();
-
-		qglviewer::Vec out_dir = observed_camera -> viewDirection();
-		qglviewer::Vec out_pos = observed_camera -> position();
 
 		observed_camera -> getFrustumPlanesCoefficients(plane_coefficients);
 		//drawCam();
