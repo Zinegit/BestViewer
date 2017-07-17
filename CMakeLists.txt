@@ -34,6 +34,7 @@ if( CMAKE_BINARY_DIR MATCHES " " )
 endif()
 
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
 
 include_directories(
 	${OPENGL_INCLUDE_DIR}
@@ -77,6 +78,7 @@ file(
 	GLOB_RECURSE
 	INCLUDE_FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*"
+#	"${CMAKE_CURRENT_SOURCE_DIR}/forms/mainwindow.h"
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.h*"
 )
 
@@ -89,6 +91,8 @@ file(
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
+#add_library(mainwindow "${CMAKE_CURRENT_SOURCE_DIR}/forms/mainwindow.cpp")
+
 add_executable(bestView
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
 	${SRC_FILES}
@@ -98,4 +102,8 @@ add_executable(bestView
 
 qt5_use_modules(bestView Gui Widgets Xml OpenGL)
 
+#target_link_libraries (mainwindow Qt5::Widgets)
+
 target_link_libraries(bestView ${ALL_LIBS})
+
+#target_link_libraries(bestView ${ALL_LIBS} mainwindow)

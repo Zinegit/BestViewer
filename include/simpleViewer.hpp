@@ -28,6 +28,8 @@
 #include "include/areInsideFrustum.hpp"
 #include "include/fusionBools.hpp"
 #include "include/isFrontFace.hpp"
+#include "include/incircle.hpp"
+#include "include/projection.hpp"
 #include "external/I3S-Meshing/ply.h"
 #include "external/I3S-Meshing/dat.h"
 

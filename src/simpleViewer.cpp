@@ -3,8 +3,6 @@
 
 using namespace std;
 
-
-
 //vector<bool> isHidden(vector<float> positions)
 //{
 //}
@@ -64,7 +62,7 @@ void Viewer::init()
 	{
 		// ////////////READING .PLY FILES//////////// //
 		Ply ply;
-		ply.readPly("../PLY_FILES/hint.ply");
+		ply.readPly("../PLY_FILES/tetra.ply");
 		// Retrieve geometry
 		m_vertex_positions = ply.getPos();
 		// Retrieve topology
@@ -295,6 +293,14 @@ void Viewer::draw()
 		// Display combination of both
 		m_index_temp = updateIndex(m_triangles_to_show, m_index);
 
+		vector<float> near_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 3);
+		vector<float> far_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 2);
+		vector<float> near_centers(m_index.size(), 0);
+		vector<float> far_centers(m_index.size(), 0);
+		vector<float> near_radius(m_index.size() / 3, 0);
+		vector<float> far_radius(m_index.size() / 3, 0);
+		incircle(near_projected_vertex_positions, m_index, near_centers, near_radius);
+		incircle(far_projected_vertex_positions, m_index, far_centers, far_radius);
 	}
 	else if (observed_camera)
 	{
@@ -304,6 +310,32 @@ void Viewer::draw()
 
 		observed_camera -> getFrustumPlanesCoefficients(plane_coefficients);
 		//drawCam();
+		vector<float> near_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 3);
+		vector<float> far_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 2);
+		vector<float> near_centers(m_index.size(), 0);
+		vector<float> far_centers(m_index.size(), 0);
+		vector<float> near_radius(m_index.size() / 3, 0);
+		vector<float> far_radius(m_index.size() / 3, 0);
+		incircle(near_projected_vertex_positions, m_index, near_centers, near_radius);
+		incircle(far_projected_vertex_positions, m_index, far_centers, far_radius);
+
+		glBegin(GL_LINES);
+			glVertex3f(near_projected_vertex_positions[0], near_projected_vertex_positions[1], near_projected_vertex_positions[2]);
+			glVertex3f(far_projected_vertex_positions[0], far_projected_vertex_positions[1], far_projected_vertex_positions[2]);
+		glEnd();
+		glBegin(GL_LINES);
+			glVertex3f(near_projected_vertex_positions[3], near_projected_vertex_positions[4], near_projected_vertex_positions[5]);
+			glVertex3f(far_projected_vertex_positions[3], far_projected_vertex_positions[4], far_projected_vertex_positions[5]);
+		glEnd();
+		glBegin(GL_LINES);
+			glVertex3f(near_projected_vertex_positions[6], near_projected_vertex_positions[7], near_projected_vertex_positions[8]);
+			glVertex3f(far_projected_vertex_positions[6], far_projected_vertex_positions[7], far_projected_vertex_positions[8]);
+		glEnd();
+
+		glBegin(GL_LINES);
+			glVertex3f(near_centers[0], near_centers[1], near_centers[2]);
+			glVertex3f(far_centers[0], far_centers[1], far_centers[2]);
+		glEnd();
 	}
 	m_pointer_to_index_triangles = m_index_temp.data();
 	m_nb_indices = m_index_temp.size();

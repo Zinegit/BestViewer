@@ -1,6 +1,6 @@
 #include "include/normals.hpp"
 
-std::vector<float> getNormals( std::vector<float>& vertex_positions, std::vector<int>& index_triangles)
+std::vector<float> getNormals(std::vector<float>& vertex_positions, std::vector<int>& index_triangles)
 {
 	std::vector<float> normals(index_triangles.size(), 0);
 	std::vector<float> a(3, 0);
