@@ -17,6 +17,8 @@ float* m_pointer_to_vertex_positions;
 bool m_mix = false;
 std::vector<bool> m_front_face_triangles;
 std::vector<bool> m_inside_frustum_triangles;
+std::vector<bool> m_first_plane_triangles;
+std::vector<float> m_near_projected_vertex_positions;
 std::vector<bool> m_triangles_to_show;
 std::vector<int> m_index_temp;
 GLdouble plane_coefficients[6][4];

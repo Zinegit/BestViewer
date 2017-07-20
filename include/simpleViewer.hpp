@@ -30,6 +30,8 @@
 #include "include/isFrontFace.hpp"
 #include "include/incircle.hpp"
 #include "include/projection.hpp"
+#include "include/isOcculted.hpp"
+#include "include/occultedPoints.hpp"
 #include "external/I3S-Meshing/ply.h"
 #include "external/I3S-Meshing/dat.h"
 
