@@ -1,6 +1,7 @@
 // Include basic libraries
 #include <stdio.h>
 #include <stdlib.h>
+#include <chrono>
 
 // Include GLEW
 #include <GL/glew.h>
@@ -26,12 +27,11 @@
 #include "include/distanceToPlane.hpp"
 #include "include/isInsideFrustum.hpp"
 #include "include/areInsideFrustum.hpp"
+#include "include/notOccultedTriangles.hpp"
 #include "include/fusionBools.hpp"
 #include "include/isFrontFace.hpp"
 #include "include/incircle.hpp"
 #include "include/projection.hpp"
-#include "include/isOcculted.hpp"
-#include "include/occultedPoints.hpp"
 #include "external/I3S-Meshing/ply.h"
 #include "external/I3S-Meshing/dat.h"
 

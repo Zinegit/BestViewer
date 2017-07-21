@@ -1,9 +1,7 @@
-#include "include/isOcculted.hpp"
+#include "include/isNotOcculted.hpp"
 
-bool isOcculted(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, std::vector<float>& point, GLdouble plane_coefficients[6][4])
+bool isNotOcculted(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, std::vector<float>& point, GLdouble plane_coefficients[6][4])
 {
-	std::cout << std::endl;
-	std::vector<bool> points_occulted;
 	for (int i = 0; i < index_triangles.size(); i += 3)
 	{
 		float x1 = vertex_positions[3 * index_triangles[i]];
@@ -28,16 +26,17 @@ bool isOcculted(std::vector<float>& vertex_positions, std::vector<float>& vertex
 		qglviewer::Vec point3(x3, y3, z3);
 		qglviewer::Vec point(x4, y4, z4);
 
-		std::cout << z4 << " " << z1 << " " << z2 << " " << z3 << std::endl;
-
-		if ((eq1 > 0 && eq2 > 0 && eq3 > 0) || (eq1 < 0 && eq2 < 0 && eq3 < 0))
+		if (point != point1 && point != point2 && point != point3)
 		{
 			if ((distanceToPlane(3, point, plane_coefficients) < distanceToPlane(3, point1, plane_coefficients)) && (distanceToPlane(3, point, plane_coefficients) < distanceToPlane(3, point2, plane_coefficients)) && (distanceToPlane(3, point, plane_coefficients) < distanceToPlane(3, point3, plane_coefficients)))
 			{
-				std::cout << "mdr" << std::endl;
+				if ((eq1 > 0 && eq2 > 0 && eq3 > 0) || (eq1 < 0 && eq2 < 0 && eq3 < 0))
+				{
 				return false;
+				}
 			}
 		}
 	}
+
 	return true;
 }
