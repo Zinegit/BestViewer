@@ -32,8 +32,10 @@
 #include "include/isFrontFace.hpp"
 #include "include/incircle.hpp"
 #include "include/projection.hpp"
-#include "external/I3S-Meshing/ply.h"
-#include "external/I3S-Meshing/dat.h"
+#include "include/appearance.hpp"
+#include "ply.h"
+#include "dat.h"
+#include "import_structure.h"
 
 class outsideCamera;
 

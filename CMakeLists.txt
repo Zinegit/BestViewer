@@ -45,6 +45,7 @@ include_directories(
 	${OpenCV_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIR}
 	.
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/"
 )
 
 set(ALL_LIBS
@@ -65,21 +66,20 @@ add_definitions(
 
 #MonProjet
 file(
-	GLOB_RECURSE
+	GLOB
 	SRC_FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/src/*.cpp"
 
 )
-list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/main.cpp")
-# Because of the presence of 2 main
+
 
 file(
 	GLOB_RECURSE
 	INCLUDE_FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*"
 #	"${CMAKE_CURRENT_SOURCE_DIR}/forms/mainwindow.h"
-	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/*.h*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
 )
 
 file(
@@ -89,7 +89,7 @@ file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.fragmentshader"
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -O3")
 
 #add_library(mainwindow "${CMAKE_CURRENT_SOURCE_DIR}/forms/mainwindow.cpp")
 

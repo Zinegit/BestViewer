@@ -56,45 +56,45 @@ void Viewer::init()
 
 	if (!observed_camera)
 	{
-		// ////////////READING .PLY FILES//////////// //
-		Ply ply;
-		ply.readPly("../PLY_FILES/anneau_bin.ply");
-		// Retrieve geometry
-		m_vertex_positions = ply.getPos();
-		// Retrieve topology
-		m_index = ply.getIndex();
-		// ////////////READING .PLY FILES//////////// //
-
-//		// ////////////READING .DAT FILES//////////// //
-//		Dat dat;
-//		dat.readDat("../DAT_FILES/rabbit2.dat", 1);
+//		// ////////////READING .PLY FILES//////////// //
+//		Ply ply;
+//		ply.readPly("../PLY_FILES/cow.ply");
 //		// Retrieve geometry
-//		m_vertex_positions = dat.getPos();
+//		m_vertex_positions = ply.getPos();
 //		// Retrieve topology
-//		m_index = dat.getIndex();
-//		// ////////////READING .DAT FILES//////////// //
+//		m_index = ply.getIndex();
+//		// ////////////READING .PLY FILES//////////// //
 
+		// ////////////READING .DAT FILES//////////// //
+		std::vector<float> geometry_coarse_lvl;
+		std::vector<float> geometry_wanted_lvl;
+		std::vector<float> geometry_wanted_lvl_only;
+		std::vector<int> connectivity_coarse_lvl;
+		std::vector<int> connectivity_wanted_lvl;
+		Dat dat;
+		dat.readDat("../DAT_FILES/rabbit2.dat");
+		readLvlXDat(dat,
+						 1,
+						 geometry_coarse_lvl,
+						 geometry_wanted_lvl,
+						 geometry_wanted_lvl_only,
+						 connectivity_coarse_lvl,
+						 connectivity_wanted_lvl);
+		// Retrieve geometry
+		m_vertex_positions = geometry_wanted_lvl;
+		// Retrieve topology
+		m_index = connectivity_wanted_lvl;
+		// ////////////READING .DAT FILES//////////// //
 
+		m_triangles_to_show_t1.reserve(m_index.size());
+		m_triangles_to_show_t2.reserve(m_index.size());
+		for (int i = 0; i < m_index.size() ; i++)
+		{
+			m_triangles_to_show_t1.push_back(1);
+			m_triangles_to_show_t2.push_back(1);
+		}
 		// Get normal vertices
 		m_normals = getNormals(m_vertex_positions, m_index);
-
-		// Get camera's viewing direction
-		qglviewer::Vec viewer_dir = camera() -> viewDirection();
-
-		m_near_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 3);
-
-		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
-		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index, plane_coefficients);
-		m_first_plane_triangles = notOccultedTriangles(m_near_projected_vertex_positions, m_vertex_positions, m_index, plane_coefficients);
-		// Only display frontface triangles
-		//m_index_temp = updateIndex(m_front_face_triangles, m_index);
-		// Only display triangles in the frustum
-		//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
-		// Only display occulted triangles
-		//m_index_temp = updateIndex(m_first_plane_triangles, m_index);
-		m_triangles_to_show = fusionBools(m_front_face_triangles, m_inside_frustum_triangles, m_first_plane_triangles);
-		// Display combination of both
-		m_index_temp = updateIndex(m_triangles_to_show, m_index);
 
 		m_nb_points_buffer = m_vertex_positions.size();
 		// Create pointer to vector for glBufferData
@@ -114,37 +114,16 @@ void Viewer::init()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
 
-
-
-	//Main viewer configuration
-
-//    // Import camera skin
-//    // Need to change every coordinate to fit the viewer's camera's place
-//    dat.readDat("../DAT_FILES/rabbit1.dat", 0);
-//    m_vertex_positions_cam = dat.getPos();
-//    m_index_cam = dat.getIndex();
-//    m_nb_points_buffer_cam = m_vertex_positions_cam.size();
-//    m_pointer_to_vertex_positions_cam = m_vertex_positions_cam.data();
-//    glGenBuffers(1, &m_vertex_buffer_cam);
-//    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer_cam);
-//    glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer_cam * sizeof(float), m_pointer_to_vertex_positions_cam, GL_STATIC_DRAW);
-//    m_pointer_to_index_triangles_cam = m_index_cam.data();
-//    m_nb_indices_cam = m_index_cam.size();
-//    glGenBuffers(1, &m_index_triangles_cam);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles_cam);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices_cam * sizeof(int), m_pointer_to_index_triangles_cam, GL_STATIC_DRAW);
-
-
-
 	if (observed_camera)
 	{
 		// Place observer
 		camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
-		float max = 2 * *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
+		float max = 4 * *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
 		setSceneRadius(max);
 		const qglviewer::Vec center = barycenter(m_vertex_positions);
 		setSceneCenter(center);
 		showEntireScene();
+		//camera() -> getOrthoWidthHeight(halfWidth, halfHeight);
 	}
 	else
 	{
@@ -228,7 +207,6 @@ void Viewer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
-
 void Viewer::drawSurfaces()
 {
 	// Use our shader
@@ -252,30 +230,6 @@ void Viewer::drawSurfaces()
 	glDisableVertexAttribArray(0);
 }
 
-//void Viewer::drawCam()
-//{
-//    // Use our shader
-//    //glUseProgram(m_program_id);
-
-//    // 1rst attribute buffer : vertices
-//    glEnableVertexAttribArray(0);
-//    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer_cam);
-//    glVertexAttribPointer(
-//       0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-//       3,                  // size
-//       GL_FLOAT,           // type
-//       GL_FALSE,           // normalized?
-//       0,                  // stride
-//       (void*)0            // array buffer offset
-//    );
-
-//    glColor3f(1,1,1);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//    glDrawElements(GL_TRIANGLES, m_nb_indices_cam, GL_UNSIGNED_INT, NULL);
-//    glDisableVertexAttribArray(0);
-//}
-
-
 void Viewer::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -286,25 +240,31 @@ void Viewer::draw()
 		// Get viewer's viewing direction
 		qglviewer::Vec viewer_dir = camera() -> viewDirection();
 
-
 		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
-
-
 		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index, plane_coefficients);
-
-
-		m_first_plane_triangles = notOccultedTriangles(m_near_projected_vertex_positions, m_vertex_positions, m_index, plane_coefficients);
-
+		// Depth culling
+		//m_first_plane_triangles = notOccultedTriangles(m_near_projected_vertex_positions, m_vertex_positions, m_index, plane_coefficients);
 		// Only display frontface triangles
 		//m_index_temp = updateIndex(m_front_face_triangles, m_index);
 		// Only display triangles in the frustum
 		//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
 		// Only display occulted triangles
 		//m_index_temp = updateIndex(m_first_plane_triangles, m_index);
-		m_triangles_to_show = fusionBools(m_front_face_triangles, m_inside_frustum_triangles, m_first_plane_triangles);
+		m_triangles_to_show = fusionBools(m_front_face_triangles, m_inside_frustum_triangles);
 		// Display combination of both
 		m_index_temp = updateIndex(m_triangles_to_show, m_index);
-
+		// Every 100 iteration compare the triangles states with those of the last iteration
+		if (compteur == 10)
+		{
+			for (int i = 0; i < m_triangles_to_show.size(); i++)
+			{
+				m_triangles_to_show_t1[i] = m_triangles_to_show_t2[i];
+				m_triangles_to_show_t2[i] = m_triangles_to_show[i];
+			}
+			m_triangles_to_show = appearance(m_triangles_to_show_t1, m_triangles_to_show_t2);
+			compteur = 0;
+		}
+		compteur += 1;
 
 	}
 	else if (observed_camera)
