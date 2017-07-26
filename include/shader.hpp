@@ -1,6 +1,17 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path);
+class ShaderProgram {
+	GLuint m_program_id;
+
+public:
+
+	ShaderProgram();
+	~ShaderProgram();
+
+	void loadShader(GLenum shaderType, const char* file_path);
+
+	GLuint getProgramId() { return m_program_id; }
+};
 
 #endif

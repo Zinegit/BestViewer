@@ -88,5 +88,3 @@ endif()
 add_library(QGLViewer SHARED ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(QGLViewer ${OPENGL_LIBRARY})
-
-qt5_use_modules(QGLViewer Core OpenGL Xml Svg Gui Widgets)

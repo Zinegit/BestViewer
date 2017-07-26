@@ -8,6 +8,8 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext.hpp>
 
 // Display elements of vectors
 #include <vector>
@@ -78,4 +80,3 @@ private:
 //	qglviewer::Camera *observed_camera = NULL;
 
 //};
-

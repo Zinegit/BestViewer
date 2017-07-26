@@ -19,9 +19,9 @@ int main(int argc, char **argv) {
 
   // Make sure every viewer movement updates the observer
    QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer,
-                    SLOT(update()));
+					SLOT(update()));
    QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer,
-                    SLOT(update()));
+					SLOT(update()));
 
   viewer.setWindowTitle("bestViewer");
   observer.setWindowTitle("observer");
@@ -33,4 +33,3 @@ int main(int argc, char **argv) {
   // Run main loop.
   return application.exec();
 }
-

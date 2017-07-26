@@ -5,7 +5,6 @@ using namespace std;
 
 void Viewer::init()
 {
-
 	camera()->setType(Camera::ORTHOGRAPHIC);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -45,6 +44,12 @@ void Viewer::init()
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		return;
 	}
+
+	// Create and compile our GLSL program from the shaders
+	ShaderProgram shader_program;
+	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/StandardShading.vert");
+	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/StandardShading.frag");
+	m_render_programID = shader_program.getProgramId();
 
 	// Dark red background
 	glClearColor(0.2f, 0.0f, 0.0f, 0.0f);
@@ -233,6 +238,20 @@ void Viewer::drawSurfaces()
 void Viewer::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glm::dmat4 mvp_matrix_d;
+	this->camera()->getModelViewProjectionMatrix(glm::value_ptr(mvp_matrix_d));
+	glm::mat4 mvp_matrix_o;
+	for(int j = 0; j < 4; ++j)
+	{
+		for(int k = 0; k < 4; ++k)
+		{
+			mvp_matrix_o[j][k] = (GLfloat)mvp_matrix_d[j][k];
+		}
+	}
+	// Use our shader
+	glUseProgram(m_render_programID);
+
 	if (!observed_camera)
 	{
 		m_near_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 3);
@@ -309,4 +328,3 @@ QString Viewer::helpString() const {
 	text += "Press <b>Escape</b> to exit the viewer.";
 	return text;
 }
-

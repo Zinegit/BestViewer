@@ -25,4 +25,5 @@ GLdouble plane_coefficients[6][4];
 int compteur = 0;
 std::vector<bool> m_triangles_to_show_t1;
 std::vector<bool> m_triangles_to_show_t2;
+GLuint m_render_programID;
 
