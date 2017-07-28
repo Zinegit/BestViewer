@@ -63,7 +63,7 @@ void Viewer::init()
 	{
 		// ////////////READING .PLY FILES//////////// //
 		Ply ply;
-		ply.readPly("../PLY_FILES/anneau_bin.ply");
+		ply.readPly("../PLY_FILES/cow.ply");
 		// Retrieve geometry
 		m_vertex_positions = ply.getPos();
 		// Retrieve topology
@@ -265,8 +265,26 @@ void Viewer::draw()
 
 	if (observed_camera)
 	{
+
+		glm::mat4 mvp_matrix_o2;
+
+		glUseProgram(0);
 		glColor3f(1.0, 0.0, 0.0);
 		observed_camera -> draw();
+		glUseProgram(m_render_programID);
+
+		for(int j = 0; j < 4; ++j)
+		{
+			for(int k = 0; k < 4; ++k)
+			{
+				mvp_matrix_o2[j][k] = 0;
+			}
+		}
+		mvp_matrix_o2[0][0] = 1;
+		mvp_matrix_o2[1][1] = 1;
+		mvp_matrix_o2[2][2] = 1;
+		mvp_matrix_o2[3][3] = 1;
+		glUniformMatrix4fv(glGetUniformLocation(m_render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 		observed_camera -> getFrustumPlanesCoefficients(plane_coefficients);
 	}
 
@@ -276,6 +294,22 @@ void Viewer::draw()
 
 		// Get viewer's viewing direction
 		qglviewer::Vec viewer_dir = camera() -> viewDirection();
+
+		glm::mat4 mvp_matrix_o2;
+		for(int j = 0; j < 4; ++j)
+		{
+			for(int k = 0; k < 4; ++k)
+			{
+				mvp_matrix_o2[j][k] = 0;
+			}
+		}
+		mvp_matrix_o2[0][0] = 1;
+		mvp_matrix_o2[1][1] = 1;
+		mvp_matrix_o2[2][2] = 1;
+		mvp_matrix_o2[3][3] = 1;
+		// Send our transformation to the currently bound shader,
+		// in the "MVP" uniform
+		glUniformMatrix4fv(glGetUniformLocation(m_render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 
 		m_front_face_triangles = isFrontFace(viewer_dir, m_normals);
 		m_inside_frustum_triangles = areInsideFrustum(m_vertex_positions, m_index, plane_coefficients);
@@ -301,7 +335,6 @@ void Viewer::draw()
 			m_recording = false;
 		}
 	}
-
 	m_colors = colorize( m_triangles_color, m_vertex_positions, m_index);
 	m_pointer_to_colors = m_colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_color_buffer);
@@ -316,7 +349,9 @@ void Viewer::draw()
 	{
 		drawSurfaces();
 	}
+	glUseProgram(0);
 	drawOutlines();
+	glUseProgram(m_render_programID);
 }
 
 QString Viewer::helpString() const {
