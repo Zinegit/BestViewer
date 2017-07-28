@@ -35,6 +35,7 @@
 #include "include/incircle.hpp"
 #include "include/projection.hpp"
 #include "include/appearance.hpp"
+#include "include/addColor.hpp"
 #include "ply.h"
 #include "dat.h"
 #include "import_structure.h"
@@ -52,13 +53,11 @@ protected:
   virtual void init();
   virtual void drawSurfaces();
   virtual void drawOutlines();
-  // virtual void drawCam();
   virtual void keyPressEvent(QKeyEvent *e);
   virtual QString helpString() const;
 
 private:
 	qglviewer::Camera *observed_camera = NULL;
-
 };
 
 //class Observer : public QGLViewer

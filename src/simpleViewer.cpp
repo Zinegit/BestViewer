@@ -47,8 +47,8 @@ void Viewer::init()
 
 	// Create and compile our GLSL program from the shaders
 	ShaderProgram shader_program;
-	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/StandardShading.vert");
-	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/StandardShading.frag");
+	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
+	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 	m_render_programID = shader_program.getProgramId();
 
 	// Dark red background
@@ -56,44 +56,44 @@ void Viewer::init()
 
 	// Creation of VAO
 	GLuint VertexArrayID;
-	glGenVertexArrays(2, &VertexArrayID);
+	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
 	if (!observed_camera)
 	{
-//		// ////////////READING .PLY FILES//////////// //
-//		Ply ply;
-//		ply.readPly("../PLY_FILES/cow.ply");
-//		// Retrieve geometry
-//		m_vertex_positions = ply.getPos();
-//		// Retrieve topology
-//		m_index = ply.getIndex();
-//		// ////////////READING .PLY FILES//////////// //
-
-		// ////////////READING .DAT FILES//////////// //
-		std::vector<float> geometry_coarse_lvl;
-		std::vector<float> geometry_wanted_lvl;
-		std::vector<float> geometry_wanted_lvl_only;
-		std::vector<int> connectivity_coarse_lvl;
-		std::vector<int> connectivity_wanted_lvl;
-		Dat dat;
-		dat.readDat("../DAT_FILES/rabbit2.dat");
-		readLvlXDat(dat,
-						 1,
-						 geometry_coarse_lvl,
-						 geometry_wanted_lvl,
-						 geometry_wanted_lvl_only,
-						 connectivity_coarse_lvl,
-						 connectivity_wanted_lvl);
+		// ////////////READING .PLY FILES//////////// //
+		Ply ply;
+		ply.readPly("../PLY_FILES/anneau_bin.ply");
 		// Retrieve geometry
-		m_vertex_positions = geometry_wanted_lvl;
+		m_vertex_positions = ply.getPos();
 		// Retrieve topology
-		m_index = connectivity_wanted_lvl;
-		// ////////////READING .DAT FILES//////////// //
+		m_index = ply.getIndex();
+		// ////////////READING .PLY FILES//////////// //
 
-		m_triangles_to_show_t1.reserve(m_index.size());
-		m_triangles_to_show_t2.reserve(m_index.size());
-		for (int i = 0; i < m_index.size() ; i++)
+//		// ////////////READING .DAT FILES//////////// //
+//		std::vector<float> geometry_coarse_lvl;
+//		std::vector<float> geometry_wanted_lvl;
+//		std::vector<float> geometry_wanted_lvl_only;
+//		std::vector<int> connectivity_coarse_lvl;
+//		std::vector<int> connectivity_wanted_lvl;
+//		Dat dat;
+//		dat.readDat("../DAT_FILES/rabbit2.dat");
+//		readLvlXDat(dat,
+//						 1,
+//						 geometry_coarse_lvl,
+//						 geometry_wanted_lvl,
+//						 geometry_wanted_lvl_only,
+//						 connectivity_coarse_lvl,
+//						 connectivity_wanted_lvl);
+//		// Retrieve geometry
+//		m_vertex_positions = geometry_wanted_lvl;
+//		// Retrieve topology
+//		m_index = connectivity_wanted_lvl;
+//		// ////////////READING .DAT FILES//////////// //
+
+		m_triangles_to_show_t1.reserve(m_index.size() / 3);
+		m_triangles_to_show_t2.reserve(m_index.size() / 3);
+		for (int i = 0; i < m_index.size() / 3 ; i++)
 		{
 			m_triangles_to_show_t1.push_back(1);
 			m_triangles_to_show_t2.push_back(1);
@@ -105,22 +105,14 @@ void Viewer::init()
 		// Create pointer to vector for glBufferData
 		m_pointer_to_vertex_positions = m_vertex_positions.data();
 		// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
-	}
 
-		glGenBuffers(1, &m_vertex_buffer);
-		// The following commands will talk about our 'm_vertex_buffer' buffer
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
-		// Give our vertices to OpenGL.
-		glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), m_pointer_to_vertex_positions, GL_STATIC_DRAW);
-
-		m_pointer_to_index_triangles = m_index_temp.data();
-		m_nb_indices = m_index_temp.size();
-		glGenBuffers(1, &m_index_triangles);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
-
-	if (observed_camera)
-	{
+		// Place viewer
+		float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
+		setSceneRadius(max);
+		const qglviewer::Vec center = barycenter(m_vertex_positions);
+		setSceneCenter(center);
+		showEntireScene();
+	} else {
 		// Place observer
 		camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
 		float max = 4 * *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
@@ -130,15 +122,20 @@ void Viewer::init()
 		showEntireScene();
 		//camera() -> getOrthoWidthHeight(halfWidth, halfHeight);
 	}
-	else
-	{
-		// Place viewer
-		float max = *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
-		setSceneRadius(max);
-		const qglviewer::Vec center = barycenter(m_vertex_positions);
-		setSceneCenter(center);
-		showEntireScene();
-	}
+
+	glGenBuffers(1, &m_vertex_buffer);
+	// The following commands will talk about our 'm_vertex_buffer' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
+	// Give our vertices to OpenGL.
+	glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), m_pointer_to_vertex_positions, GL_STATIC_DRAW);
+
+	m_pointer_to_index_triangles = m_index_temp.data();
+	m_nb_indices = m_index_temp.size();
+	glGenBuffers(1, &m_index_triangles);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_triangles);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_nb_indices * sizeof(int), m_pointer_to_index_triangles, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &m_color_buffer);
 	// Opens help window
 	//help();
 }
@@ -152,11 +149,11 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	// Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
 	if (e->key() == Qt::Key_L)
 	{
-		if(!glIsEnabled(GL_CULL_FACE))
+		if(m_recording)
 		{
-			glEnable(GL_CULL_FACE);
+			m_recording = false;
 		} else {
-			glDisable(GL_CULL_FACE);
+			m_recording = true;
 		}
 		update();
 	}
@@ -199,12 +196,12 @@ void Viewer::drawOutlines()
 	glEnable(GL_POLYGON_OFFSET_LINE);
 	//Draw lines antialiased
 	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_BLEND);
 	glLineWidth(2.0f);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// Conflict with shader
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//glDrawArrays(GL_POINTS, 0, m_nb_indices);
 	glDrawElements(GL_TRIANGLES, m_nb_indices, GL_UNSIGNED_INT, NULL);
 
 	glDisable(GL_POLYGON_OFFSET_LINE);
@@ -214,19 +211,28 @@ void Viewer::drawOutlines()
 
 void Viewer::drawSurfaces()
 {
-	// Use our shader
-	//glUseProgram(m_program_id);
-
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
 	glVertexAttribPointer(
-		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
 	   GL_FLOAT,           // type
 	   GL_FALSE,           // normalized?
 	   0,                  // stride
 	   (void*)0            // array buffer offset
+	);
+
+	// 2nd attribute buffer : colors
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, m_color_buffer);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
 	);
 
 	glColor3f(1,1,1);
@@ -241,6 +247,7 @@ void Viewer::draw()
 
 	glm::dmat4 mvp_matrix_d;
 	this->camera()->getModelViewProjectionMatrix(glm::value_ptr(mvp_matrix_d));
+
 	glm::mat4 mvp_matrix_o;
 	for(int j = 0; j < 4; ++j)
 	{
@@ -252,7 +259,18 @@ void Viewer::draw()
 	// Use our shader
 	glUseProgram(m_render_programID);
 
-	if (!observed_camera)
+	// Send our transformation to the currently bound shader,
+	// in the "MVP" uniform
+	glUniformMatrix4fv(glGetUniformLocation(m_render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
+
+	if (observed_camera)
+	{
+		glColor3f(1.0, 0.0, 0.0);
+		observed_camera -> draw();
+		observed_camera -> getFrustumPlanesCoefficients(plane_coefficients);
+	}
+
+	else
 	{
 		m_near_projected_vertex_positions = project(m_vertex_positions, plane_coefficients, 3);
 
@@ -272,29 +290,23 @@ void Viewer::draw()
 		m_triangles_to_show = fusionBools(m_front_face_triangles, m_inside_frustum_triangles);
 		// Display combination of both
 		m_index_temp = updateIndex(m_triangles_to_show, m_index);
-		// Every 100 iteration compare the triangles states with those of the last iteration
-		if (compteur == 10)
+		if (m_recording)
 		{
 			for (int i = 0; i < m_triangles_to_show.size(); i++)
 			{
 				m_triangles_to_show_t1[i] = m_triangles_to_show_t2[i];
 				m_triangles_to_show_t2[i] = m_triangles_to_show[i];
 			}
-			m_triangles_to_show = appearance(m_triangles_to_show_t1, m_triangles_to_show_t2);
-			compteur = 0;
+			m_triangles_color = appearance(m_triangles_to_show_t1, m_triangles_to_show_t2);
+			m_recording = false;
 		}
-		compteur += 1;
-
 	}
-	else if (observed_camera)
-	{
-		// Draw viewer's camera orientation
-		glColor3f(1.0, 0.0, 0.0);
-		observed_camera -> draw();
 
-		observed_camera -> getFrustumPlanesCoefficients(plane_coefficients);
-		//drawCam();
-	}
+	m_colors = colorize( m_triangles_color, m_vertex_positions, m_index);
+	m_pointer_to_colors = m_colors.data();
+	glBindBuffer(GL_ARRAY_BUFFER, m_color_buffer);
+	glBufferData(GL_ARRAY_BUFFER, m_nb_points_buffer * sizeof(float), m_pointer_to_colors, GL_STATIC_DRAW);
+
 	m_pointer_to_index_triangles = m_index_temp.data();
 	m_nb_indices = m_index_temp.size();
 	glGenBuffers(1, &m_index_triangles);
@@ -306,7 +318,6 @@ void Viewer::draw()
 	}
 	drawOutlines();
 }
-
 
 QString Viewer::helpString() const {
 	QString text("<h2>B e s t V i e w e r</h2>");

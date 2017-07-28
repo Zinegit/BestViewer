@@ -1,8 +1,9 @@
 #include "include/appearance.hpp"
+#include <iostream>
 
-std::vector<bool> appearance(std::vector<bool> triangles_to_show_t1, std::vector<bool> triangles_to_show_t2)
+std::vector<float> appearance(std::vector<bool> triangles_to_show_t1, std::vector<bool> triangles_to_show_t2)
 {
-	std::vector<bool> appearing_triangles;
+	std::vector<float> appearing_triangles;
 	appearing_triangles.reserve(triangles_to_show_t1.size());
 	for (int i = 0; i < triangles_to_show_t1.size(); i++)
 	{
@@ -18,7 +19,7 @@ std::vector<bool> appearance(std::vector<bool> triangles_to_show_t1, std::vector
 		{
 			appearing_triangles.push_back(0);
 		}
-		else if (triangles_to_show_t1[i] == 0 and triangles_to_show_t2[i] == 0)
+		else if (triangles_to_show_t1[i] == 1 and triangles_to_show_t2[i] == 1)
 		{
 			appearing_triangles.push_back(0);
 		}
