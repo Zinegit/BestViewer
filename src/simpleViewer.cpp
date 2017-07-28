@@ -3,6 +3,27 @@
 
 using namespace std;
 
+qreal PlanesCamera::zNear(){
+	return m_znear;
+}
+
+qreal PlanesCamera::zFar(){
+	return m_zfar;
+}
+
+void PlanesCamera::setZNear(qreal z_near){
+	m_znear = z_near;
+}
+
+void PlanesCamera::setZFar(qreal z_far){
+	m_zfar = z_far;
+}
+
+PlanesCamera::PlanesCamera(qreal z_near, qreal z_far){
+	m_znear = z_near;
+	m_zfar = z_far;
+}
+
 void Viewer::init()
 {
 	camera()->setType(Camera::ORTHOGRAPHIC);
@@ -63,7 +84,7 @@ void Viewer::init()
 	{
 		// ////////////READING .PLY FILES//////////// //
 		Ply ply;
-		ply.readPly("../PLY_FILES/cow.ply");
+		ply.readPly("../PLY_FILES/urne.ply");
 		// Retrieve geometry
 		m_vertex_positions = ply.getPos();
 		// Retrieve topology
@@ -77,7 +98,7 @@ void Viewer::init()
 //		std::vector<int> connectivity_coarse_lvl;
 //		std::vector<int> connectivity_wanted_lvl;
 //		Dat dat;
-//		dat.readDat("../DAT_FILES/rabbit2.dat");
+//		dat.readDat("../DAT_FILES/rabbit1.dat");
 //		readLvlXDat(dat,
 //						 1,
 //						 geometry_coarse_lvl,
@@ -112,7 +133,9 @@ void Viewer::init()
 		const qglviewer::Vec center = barycenter(m_vertex_positions);
 		setSceneCenter(center);
 		showEntireScene();
+
 	} else {
+
 		// Place observer
 		camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
 		float max = 4 * *std::max_element(m_vertex_positions.begin(), m_vertex_positions.end());
@@ -120,7 +143,7 @@ void Viewer::init()
 		const qglviewer::Vec center = barycenter(m_vertex_positions);
 		setSceneCenter(center);
 		showEntireScene();
-		//camera() -> getOrthoWidthHeight(halfWidth, halfHeight);
+
 	}
 
 	glGenBuffers(1, &m_vertex_buffer);
@@ -196,7 +219,7 @@ void Viewer::drawOutlines()
 	glEnable(GL_POLYGON_OFFSET_LINE);
 	//Draw lines antialiased
 	glEnable(GL_LINE_SMOOTH);
-	glLineWidth(2.0f);
+	glLineWidth(1.0f);
 
 	// Conflict with shader
 	//glEnable(GL_BLEND);
@@ -286,6 +309,7 @@ void Viewer::draw()
 		mvp_matrix_o2[3][3] = 1;
 		glUniformMatrix4fv(glGetUniformLocation(m_render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 		observed_camera -> getFrustumPlanesCoefficients(plane_coefficients);
+
 	}
 
 	else
@@ -352,6 +376,7 @@ void Viewer::draw()
 	glUseProgram(0);
 	drawOutlines();
 	glUseProgram(m_render_programID);
+
 }
 
 QString Viewer::helpString() const {

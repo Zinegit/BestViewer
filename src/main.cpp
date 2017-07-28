@@ -14,6 +14,8 @@ int main(int argc, char **argv) {
 
   // Observer gets a outsideCamera
   observer.setOutsideCamera(viewer.camera());
+  PlanesCamera* cam = new PlanesCamera(qreal(0.0001), qreal(1000.));
+  observer.setCamera(cam) ;
 
   //qglviewer::Vec pos = viewer.camera() -> position();
 

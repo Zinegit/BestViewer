@@ -40,13 +40,27 @@
 #include "dat.h"
 #include "import_structure.h"
 
-class outsideCamera;
+class PlanesCamera : public qglviewer::Camera{
+public:
+	PlanesCamera(qreal z_near, qreal z_far);
+
+	virtual qreal zNear();
+	virtual qreal zFar();
+
+	virtual void setZNear(qreal z_near);
+	virtual void setZFar(qreal z_far);
+
+private:
+	qreal m_znear;
+	qreal m_zfar;
+};
 
 class Viewer : public QGLViewer
 {
 
 public:
 	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
+//	void setCamera(qglviewer::Camera * const camera);
 
 protected:
   virtual void draw();
