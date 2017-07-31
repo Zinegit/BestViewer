@@ -1,3 +1,6 @@
+#ifndef VIEWER_HPP
+#define VIEWER_HPP
+
 // Include basic libraries
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,31 +39,15 @@
 #include "include/projection.hpp"
 #include "include/appearance.hpp"
 #include "include/addColor.hpp"
+#include "include/variableToShare.hpp"
 #include "ply.h"
 #include "dat.h"
 #include "import_structure.h"
 
-class PlanesCamera : public qglviewer::Camera{
-public:
-	PlanesCamera(qreal z_near, qreal z_far);
-
-	virtual qreal zNear();
-	virtual qreal zFar();
-
-	virtual void setZNear(qreal z_near);
-	virtual void setZFar(qreal z_far);
-
-private:
-	qreal m_znear;
-	qreal m_zfar;
-};
-
 class Viewer : public QGLViewer
 {
-
-public:
-	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
-//	void setCamera(qglviewer::Camera * const camera);
+private:
+	variable_to_share m_var;
 
 protected:
   virtual void draw();
@@ -70,26 +57,13 @@ protected:
   virtual void keyPressEvent(QKeyEvent *e);
   virtual QString helpString() const;
 
-private:
-	qglviewer::Camera *observed_camera = NULL;
+public:
+	variable_to_share* getVariableToShare()
+	{
+		return &m_var;
+	}
+
 };
 
-//class Observer : public QGLViewer
-//{
 
-//public:
-//	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
-
-//protected:
-//  virtual void draw();
-//  virtual void init();
-//  virtual void drawSurfaces();
-//  virtual void drawOutlines();
-//  // virtual void drawCam();
-//  virtual void keyPressEvent(QKeyEvent *e);
-//  virtual QString helpString() const;
-
-//private:
-//	qglviewer::Camera *observed_camera = NULL;
-
-//};
+#endif // VIEWER_H

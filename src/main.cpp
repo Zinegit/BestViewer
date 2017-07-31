@@ -2,22 +2,21 @@
 #include <qapplication.h>
 #include <QGLViewer/manipulatedCameraFrame.h>
 
-#include "include/simpleViewer.hpp"
+#include "include/viewer.hpp"
+#include "include/observer.hpp"
 
 int main(int argc, char **argv) {
-  // Read command lines arguments.
+  // Read command lines arguments
   QApplication application(argc, argv);
 
-  // Instantiate the viewer.
+  // Instantiate the viewer
   Viewer viewer;
-  Viewer observer;
+  Observer observer(viewer);
 
-  // Observer gets a outsideCamera
+  //Observer gets the viewer's camera as an outsideCamera
   observer.setOutsideCamera(viewer.camera());
   PlanesCamera* cam = new PlanesCamera(qreal(0.0001), qreal(1000.));
   observer.setCamera(cam) ;
-
-  //qglviewer::Vec pos = viewer.camera() -> position();
 
   // Make sure every viewer movement updates the observer
    QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer,
@@ -25,7 +24,7 @@ int main(int argc, char **argv) {
    QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer,
 					SLOT(update()));
 
-  viewer.setWindowTitle("bestViewer");
+  viewer.setWindowTitle("viewer");
   observer.setWindowTitle("observer");
 
   // Make the viewer window visible on screen.
