@@ -54,6 +54,8 @@ void Observer::init()
 	setSceneCenter(center);
 	showEntireScene();
 
+	// Why not putting viewer and observer in the same context? (see qgl multiview example)
+
 	glGenBuffers(1, &m_var -> m_vertex_buffer);
 	// The following commands will talk about our 'm_vertex_buffer' buffer
 	glBindBuffer(GL_ARRAY_BUFFER, m_var -> m_vertex_buffer);

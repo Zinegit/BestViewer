@@ -1,3 +1,10 @@
+/**
+ * \file incircle.hpp
+ * \brief Return incircle of every triangle
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include <vector>
 #include <QGLViewer/qglviewer.h>
 #include "include/barycenter.hpp"

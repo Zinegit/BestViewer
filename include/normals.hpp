@@ -1,3 +1,10 @@
+/**
+ * \file normals.hpp
+ * \brief Calculate normals of every triangle
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include <vector>
 #include <Eigen/Dense>
 

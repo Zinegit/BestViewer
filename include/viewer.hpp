@@ -1,6 +1,14 @@
 #ifndef VIEWER_HPP
 #define VIEWER_HPP
 
+/**
+ * \file viewer.hpp
+ * \brief The viewer whose job is to observe the object
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
+
 // Include basic libraries
 #include <stdio.h>
 #include <stdlib.h>

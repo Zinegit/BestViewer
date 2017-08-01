@@ -1,3 +1,10 @@
+/**
+ * \file isNotOcculted.hpp
+ * \brief Return a boolean representing whether a triangle is occulted or not
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include <vector>
 #include <iostream>
 #include <chrono>

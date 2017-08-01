@@ -1,3 +1,10 @@
+/**
+ * \file observer.hpp
+ * \brief The observer class. Its job is to observe the viewer
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 // Include basic libraries
 #include <stdio.h>
 #include <stdlib.h>

@@ -74,18 +74,18 @@ void Viewer::init()
 //	std::vector<int> connectivity_coarse_lvl;
 //	std::vector<int> connectivity_wanted_lvl;
 //	Dat dat;
-//	dat.readDat("../DAT_FILES/rabbit1.dat");
+//	dat.readDat("../DAT_FILES/Teapot_Res3.dat");
 //	readLvlXDat(dat,
-//					 1,
+//					 2,
 //					 geometry_coarse_lvl,
 //					 geometry_wanted_lvl,
 //					 geometry_wanted_lvl_only,
 //					 connectivity_coarse_lvl,
 //					 connectivity_wanted_lvl);
 //	// Retrieve geometry
-//	m_vertex_positions = geometry_wanted_lvl;
+//	m_var.m_vertex_positions = geometry_wanted_lvl;
 //	// Retrieve topology
-//	m_index = connectivity_wanted_lvl;
+//	m_var.m_index = connectivity_wanted_lvl;
 //	// ////////////READING .DAT FILES//////////// //
 
 	m_var.m_triangles_to_show_t1.reserve(m_var.m_index.size() / 3);
@@ -124,7 +124,6 @@ void Viewer::init()
 	glGenBuffers(1, &m_var.m_color_buffer);
 	// Opens help window
 	//help();
-	cout << m_var.m_vertex_positions.size() << endl;
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -297,7 +296,7 @@ void Viewer::draw()
 		m_var.m_recording = false;
 	}
 
-	m_var.m_colors = colorize( m_var.m_triangles_color, m_var.m_vertex_positions, m_var.m_index);
+	m_var.m_colors = colorize(m_var.m_triangles_color, m_var.m_vertex_positions, m_var.m_index);
 	m_var.m_pointer_to_colors = m_var.m_colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_color_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_var.m_nb_points_buffer * sizeof(float), m_var.m_pointer_to_colors, GL_STATIC_DRAW);

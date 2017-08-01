@@ -1,6 +1,13 @@
 #ifndef VARIABLETOSHARE_H
 #define VARIABLETOSHARE_H
 
+/**
+ * \file variableToShare.hpp
+ * \brief The structure containing every variable shared between viewer and observer
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 typedef struct variable_to_share
 {
 	std::vector<int> m_index;

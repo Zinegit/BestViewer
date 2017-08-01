@@ -1,3 +1,10 @@
+/**
+* \file main.cpp
+* \author Tom Mourot-Faraut
+* \version 1.0
+* \date 01/08/2017
+*/
+
 #include <GL/glew.h>
 #include <qapplication.h>
 #include <QGLViewer/manipulatedCameraFrame.h>
@@ -5,6 +12,12 @@
 #include "include/viewer.hpp"
 #include "include/observer.hpp"
 
+/**
+ * \fn int main (int argc, char **argv)
+ * \brief Entry of the program.
+ *
+ * \return application.exec() - Boucle draw.
+ */
 int main(int argc, char **argv) {
   // Read command lines arguments
   QApplication application(argc, argv);
