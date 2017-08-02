@@ -88,13 +88,17 @@ void Viewer::init()
 //	m_var.m_index = connectivity_wanted_lvl;
 //	// ////////////READING .DAT FILES//////////// //
 
-	m_var.m_triangles_to_show_t1.reserve(m_var.m_index.size() / 3);
-	m_var.m_triangles_to_show_t2.reserve(m_var.m_index.size() / 3);
-	for (int i = 0; i < m_var.m_index.size() / 3 ; i++)
-	{
-		m_var.m_triangles_to_show_t1.push_back(1);
-		m_var.m_triangles_to_show_t2.push_back(1);
-	}
+	m_var.m_colors.resize(m_var.m_index.size(), 1.f);
+	m_var.m_triangles_to_show_t1.resize(m_var.m_index.size() / 3, 1);
+	m_var.m_triangles_to_show_t2.resize(m_var.m_index.size() / 3, 1);
+
+//	m_var.m_triangles_to_show_t1.reserve(m_var.m_index.size() / 3);
+//	m_var.m_triangles_to_show_t2.reserve(m_var.m_index.size() / 3);
+//	for (int i = 0; i < m_var.m_index.size() / 3 ; i++)
+//	{
+//		m_var.m_triangles_to_show_t1.push_back(1);
+//		m_var.m_triangles_to_show_t2.push_back(1);
+//	}
 	// Get normal vertices
 	m_var.m_normals = getNormals(m_var.m_vertex_positions, m_var.m_index);
 
@@ -124,6 +128,7 @@ void Viewer::init()
 	glGenBuffers(1, &m_var.m_color_buffer);
 	// Opens help window
 	//help();
+
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -135,10 +140,16 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	// Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
 	if (e->key() == Qt::Key_L)
 	{
-		if(m_var.m_recording)
+		if (m_var.m_recording)
 		{
+			m_var.m_triangles_to_show_t2 = m_var.m_triangles_to_show;
+			m_var.m_triangles_status = appearance(m_var.m_triangles_to_show_t1, m_var.m_triangles_to_show_t2);
+			getFrontLine(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index);
+
+			m_var.m_colors = colorize(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index);
 			m_var.m_recording = false;
 		} else {
+			m_var.m_triangles_to_show_t1 = m_var.m_triangles_to_show;
 			m_var.m_recording = true;
 		}
 		update();
@@ -285,18 +296,7 @@ void Viewer::draw()
 	m_var.m_triangles_to_show = fusionBools(m_var.m_front_face_triangles, m_var.m_inside_frustum_triangles);
 	// Display combination of both
 	m_var.m_index_temp = updateIndex(m_var.m_triangles_to_show, m_var.m_index);
-	if (m_var.m_recording)
-	{
-		for (int i = 0; i < m_var.m_triangles_to_show.size(); i++)
-		{
-			m_var.m_triangles_to_show_t1[i] = m_var.m_triangles_to_show_t2[i];
-			m_var.m_triangles_to_show_t2[i] = m_var.m_triangles_to_show[i];
-		}
-		m_var.m_triangles_color = appearance(m_var.m_triangles_to_show_t1, m_var.m_triangles_to_show_t2);
-		m_var.m_recording = false;
-	}
 
-	m_var.m_colors = colorize(m_var.m_triangles_color, m_var.m_vertex_positions, m_var.m_index);
 	m_var.m_pointer_to_colors = m_var.m_colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_color_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_var.m_nb_points_buffer * sizeof(float), m_var.m_pointer_to_colors, GL_STATIC_DRAW);
@@ -313,7 +313,6 @@ void Viewer::draw()
 	glUseProgram(0);
 	drawOutlines();
 	glUseProgram(m_var.m_render_programID);
-
 }
 
 QString Viewer::helpString() const {

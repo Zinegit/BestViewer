@@ -34,7 +34,7 @@ typedef struct variable_to_share
 	std::vector<bool> m_triangles_to_show_t1;
 	std::vector<bool> m_triangles_to_show_t2;
 	GLuint m_render_programID;
-	std::vector<float> m_triangles_color;
+	std::vector<int> m_triangles_status;
 	bool m_recording = false;
 } variable_to_share;
 
