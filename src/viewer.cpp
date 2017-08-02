@@ -60,7 +60,7 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/anneau_bin.ply");
+	ply.readPly("../PLY_FILES/cow.ply");
 	// Retrieve geometry
 	m_var.m_vertex_positions = ply.getPos();
 	// Retrieve topology
@@ -144,9 +144,9 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		{
 			m_var.m_triangles_to_show_t2 = m_var.m_triangles_to_show;
 			m_var.m_triangles_status = appearance(m_var.m_triangles_to_show_t1, m_var.m_triangles_to_show_t2);
-			getFrontLine(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index);
-
-			m_var.m_colors = colorize(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index);
+			vector<int> frontline_colors;
+			getFrontLine(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index, frontline_colors);
+			m_var.m_colors = colorize(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index, frontline_colors);
 			m_var.m_recording = false;
 		} else {
 			m_var.m_triangles_to_show_t1 = m_var.m_triangles_to_show;

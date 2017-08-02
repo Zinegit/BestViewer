@@ -1,29 +1,34 @@
 #include "include/frontLine.hpp"
 
-std::vector<int> getFrontLine(std::vector<int>& triangles_status, std::vector<float>& vertex_positions, std::vector<int>& index_triangles)
+std::vector<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& frontline_colors)
 {
-	std::vector<FaceIter> frontLine;
+	frontline_colors.resize(triangles_status.size(), 0);
+	std::vector<FaceIter> frontline;
 	std::list<MR_Face> multi_res_connectivity;
 	HalfedgeMesh halfedgeMesh;
 	halfedgeMesh.build(vertex_positions, index_triangles, multi_res_connectivity);
-	for (FaceIter f = halfedgeMesh.facesBegin(); f != halfedgeMesh.facesEnd(); f++)
+	int counter = 0;
+	for (FaceIter f = halfedgeMesh.facesBegin(); f != halfedgeMesh.facesEnd(); f++,++counter)
 	{
-		HalfedgeIter h = f -> halfedge();
-		HalfedgeIter h_cur = h;
-		do
+		if(triangles_status[counter] != 1)
 		{
-			if (!h->twin()->face()->isBoundary())
+			HalfedgeIter h = f->halfedge();
+			HalfedgeIter h_cur = h;
+			do
 			{
-				if(std::distance(halfedgeMesh.facesBegin(), h -> twin() -> face()) >= triangles_status.size())
-					std::cout << "pas bon" << std::endl;
-				if (triangles_status[std::distance(halfedgeMesh.facesBegin(), h -> twin() -> face())] == 1)
+				if (!h_cur->twin()->face()->isBoundary())
 				{
-					frontLine.push_back(f);
-					break;
+					if (triangles_status[std::distance(halfedgeMesh.facesBegin(), h_cur->twin()->face())] == 1)
+					{
+						frontline.push_back(f);
+						frontline_colors[counter] = 1;
+						break;
+					}
 				}
-			}
-			h_cur = h_cur -> next();
-		} while (h_cur == h);
+				h_cur = h_cur->next();
+			} while (h_cur != h);
+		}
 	}
+	return frontline;
 }
 
