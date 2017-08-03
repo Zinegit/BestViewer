@@ -1,5 +1,23 @@
+/**
+ * \file incircle.cpp
+ * \brief Return incircle of every triangle
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/incircle.hpp"
 
+/**
+ * \fn void incircle (std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<float>& centers, std::vector<float>& radius, bool far_plane)
+ * \brief This function returns the incircle of each triangle. This function is not currently used by could be in order to simplify the depth culling that is currently to slow to be used.
+ *
+ * \param vertex_positions : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \param centers : The center of each incircle
+ * \param radius : The radius of each incircle
+ * \param far_plane : if true, the z coordinate of the center is the same as the far plane's. If not, the z coordiante is the one of the barycenter of the triangle.
+ * \return nothing but fills the vectors describing each incircle
+ */
 void incircle (std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<float>& centers, std::vector<float>& radius, bool far_plane)
 {
 	for (int i = 0; i < index_triangles.size(); i += 3)
@@ -27,7 +45,6 @@ void incircle (std::vector<float>& vertex_positions, std::vector<int>& index_tri
 			pos[8] = vertex_positions[3 * index_triangles[i+2] + 2];
 
 			qglviewer::Vec qgl_bar = barycenter(pos);
-			std::cout << qgl_bar[2] << std::endl;
 			centers[i+2] = qgl_bar[1];
 		}
 		radius.push_back(std::sqrt(s * (s - a) * (s - b) * (s - c)) / s);

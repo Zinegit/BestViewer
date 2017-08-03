@@ -1,7 +1,21 @@
+/**
+ * \file observer.cpp
+ * \brief The observer class. Its job is to observe the viewer
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/observer.hpp"
 
 using namespace std;
 
+/**
+ * \fn void Observer::init()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Observer::init()
 {
 	camera() -> setType(qglviewer::Camera::ORTHOGRAPHIC);
@@ -70,6 +84,13 @@ void Observer::init()
 
 }
 
+/**
+ * \fn void Observer::drawOutlines()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Observer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
@@ -104,6 +125,13 @@ void Observer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
+/**
+ * \fn void Observer::drawSurfaces()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Observer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
@@ -136,6 +164,13 @@ void Observer::drawSurfaces()
 	glDisableVertexAttribArray(0);
 }
 
+/**
+ * \fn void Observer::draw()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Observer::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

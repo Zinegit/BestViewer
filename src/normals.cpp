@@ -1,5 +1,20 @@
+/**
+ * \file normals.cpp
+ * \brief Calculate the normal of every triangle
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/normals.hpp"
 
+/**
+ * \fn std::vector<float> getNormals(std::vector<float>& vertex_positions, std::vector<int>& index_triangles)
+ * \brief This function calculates the normal of every triangle using the cross product of two vertices.
+ *
+ * \param vertex_positions : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \return The normal of each triangle
+ */
 std::vector<float> getNormals(std::vector<float>& vertex_positions, std::vector<int>& index_triangles)
 {
 	std::vector<float> normals(index_triangles.size(), 0);

@@ -1,5 +1,22 @@
+/**
+ * \file frontLine.cpp
+ * \brief Return faces of every triangle belonging to the frontline.
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/frontLine.hpp"
 
+/**
+ * \fn std::vector<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& frontline_colors)
+ * \brief This function returns a vector of faces that belong to the frontline using the halfedge structure
+ *
+ * \param triangles_status : State of every triangle (appeared/disappeared/same state)
+ * \param vertex_positions : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \param frontline_colors : The triangles that belong to the frontline
+ * \return a vector of the faces that belong to the frontline
+ */
 std::vector<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& frontline_colors)
 {
 	frontline_colors.resize(triangles_status.size(), 0);

@@ -1,10 +1,3 @@
-/**
- * \file notOccultedPoints.hpp
- * \brief Return a boolean vector representing which point is occulted and which is not
- * \author Tom Mourot-Faraut
- * \version 1.0
- */
-
 #include <vector>
 #include <chrono>
 #include <QGLViewer/qglviewer.h>

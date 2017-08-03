@@ -1,5 +1,19 @@
+/**
+ * \file barycenter.cpp
+ * \brief Return the barycenter of an object
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/barycenter.hpp"
 
+/**
+ * \fn const qglviewer::Vec barycenter(std::vector<float>& vertices)
+ * \brief This function returns the barycenter of the object
+ *
+ * \param vertices : Geometrical description of the object
+ * \return The barycenter of the object
+ */
 const qglviewer::Vec barycenter(std::vector<float>& vertices)
 {
     int nb_points = vertices.size();

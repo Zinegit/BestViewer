@@ -1,8 +1,24 @@
+/**
+ * \file areInsideFrustum.cpp
+ * \brief Return a list of boolean representing which triangle is inside the frustum.
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/areInsideFrustum.hpp"
 
 #include <QGLViewer/qglviewer.h>
 
-std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4] )
+/**
+ * \fn std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
+ * \brief This function checks for every triangle whether it is in the frustum or not. If at least one of the vertices of a triangle is in the frustum then the triangle is considered in the frustum. For each triangle this function calls isInsideFrustum in order to check if one of its vertices is inside the frustum
+ *
+ * \param vertex_positions : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ * \return Vector of booleans describing which triangle is inside the frustum and which is not
+ */
+std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
 {
 	// Create a boolean table returning true for each point inside the frustum and false for each point that is not
 	std::vector<bool> inside_frustum_points;

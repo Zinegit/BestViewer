@@ -2,7 +2,7 @@
 # CMake entry point
 cmake_minimum_required (VERSION 2.8.12)
 
-project (MonProjet)
+project (BestViewer)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -63,7 +63,7 @@ add_definitions(
 	${QT_DEFINITIONS}
 )
 
-#MonProjet
+#BestViewer
 file(
 	GLOB
 	SRC_FILES

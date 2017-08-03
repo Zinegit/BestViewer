@@ -1,5 +1,21 @@
+/**
+ * \file projection.cpp
+ * \brief Return the coordinates of the triangles projected on the near plane
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/projection.hpp"
 
+/**
+ * \fn std::vector<float> project(std::vector<float>& vertex_positions, GLdouble plane_coefficients[6][4], int nb_plane)
+ * \brief This function projects every vertex in the near/far plane
+ *
+ * \param vertex_positions : Geometrical description of the object
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ * \param nb_plane : 0 -> 5 describes which plane of the frustum is used (3 or 4 should be used because they represent the near and far planes)
+ * \return vertex_positions with the z coordinate of every vertex being the z coordinate of the near/far plane
+ */
 std::vector<float> project(std::vector<float>& vertex_positions, GLdouble plane_coefficients[6][4], int nb_plane)
 {
 	std::vector<float> projected_vertex_positions;

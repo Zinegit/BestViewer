@@ -1,5 +1,6 @@
 /**
 * \file main.cpp
+* \brief Instantiate viewer and observer, connect them and run the main loop
 * \author Tom Mourot-Faraut
 * \version 1.0
 * \date 01/08/2017

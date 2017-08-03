@@ -1,10 +1,3 @@
-/**
- * \file notOccultedTriangles.hpp
- * \brief Return a boolean vector representing which triangle is occulted and which is not
- * \author Tom Mourot-Faraut
- * \version 1.0
- */
-
 #include <vector>
 #include <QGLViewer/qglviewer.h>
 #include "include/notOccultedPoints.hpp"

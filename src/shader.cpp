@@ -1,3 +1,10 @@
+/**
+ * \file shader.cpp
+ * \brief Load the shaders
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -21,6 +28,13 @@ ShaderProgram::ShaderProgram()
 ShaderProgram::~ShaderProgram()
 {}
 
+/**
+ * \fn void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
 {
 	GLuint shader_id = glCreateShader(shaderType);

@@ -1,7 +1,21 @@
+/**
+ * \file viewer.cpp
+ * \brief The viewer whose job is to observe the object
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/viewer.hpp"
 
 using namespace std;
 
+/**
+ * \fn void Viewer::init()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Viewer::init()
 {
 	camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
@@ -60,7 +74,7 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/cow.ply");
+	ply.readPly("../PLY_FILES/anneau_bin.ply");
 	// Retrieve geometry
 	m_var.m_vertex_positions = ply.getPos();
 	// Retrieve topology
@@ -131,6 +145,13 @@ void Viewer::init()
 
 }
 
+/**
+ * \fn void Viewer::keyPressEvent(QKeyEvent *e)
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
 	this->update();
@@ -168,6 +189,13 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		QGLViewer::keyPressEvent(e);
 }
 
+/**
+ * \fn void Viewer::drawOutlines()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Viewer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
@@ -206,6 +234,13 @@ void Viewer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
+/**
+ * \fn void Viewer::drawSurfaces()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Viewer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
@@ -238,6 +273,13 @@ void Viewer::drawSurfaces()
 	glDisableVertexAttribArray(0);
 }
 
+/**
+ * \fn void Viewer::draw()
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 void Viewer::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -315,6 +357,13 @@ void Viewer::draw()
 	glUseProgram(m_var.m_render_programID);
 }
 
+/**
+ * \fn QString Viewer::helpString() const {
+ * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ *
+ * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
+ * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ */
 QString Viewer::helpString() const {
 	QString text("<h2>B e s t V i e w e r</h2>");
 	text += "<b> First of all Press C </b> to deactivate auto frustum culling.<br> <br>";

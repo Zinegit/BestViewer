@@ -1,5 +1,22 @@
+/**
+ * \file notOccultedTriangles.cpp
+ * \brief Return a boolean vector representing which triangle is occulted and which is not
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #include "include/notOccultedTriangles.hpp"
 
+/**
+ * \fn std::vector<bool> notOccultedTriangles(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
+ * \brief This function returns a vector of booleans. True is for a triangle visible and false for an occulted triangle. This function is to heavy to run so it is not used here.
+ *
+ * \param vertex_positions : Geometrical description of the object projected in the near_plane
+ * \param vertex_positions_3d : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ * \return Vector of booleans describing which triangle is occulted and which is not
+ */
 std::vector<bool> notOccultedTriangles(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
 {
 	std::vector<float> distances;
