@@ -10,11 +10,10 @@
 using namespace std;
 
 /**
- * \fn void Viewer::init()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void init()
+ * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Viewer::init()
 {
@@ -146,11 +145,11 @@ void Viewer::init()
 }
 
 /**
- * \fn void Viewer::keyPressEvent(QKeyEvent *e)
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void keyPressEvent(QKeyEvent *e)
+ * \brief This function records keystrokes. If the pressed key is L and is pressed 2 times, the colors of appearing/disappearing/frontline triangles are updated. If K is pressed, m_mix is set to true or false and make the object appear in filled form or in line form.
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \param e : the pressed key
+ * \return void
  */
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
@@ -190,11 +189,10 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 }
 
 /**
- * \fn void Viewer::drawOutlines()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void drawOutlines()
+ * \brief This function draws the outlines of the triangles composing the object
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Viewer::drawOutlines()
 {
@@ -235,11 +233,10 @@ void Viewer::drawOutlines()
 }
 
 /**
- * \fn void Viewer::drawSurfaces()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void drawSurfaces()
+ * \brief This function draws the surfaces of the triangles composing the object
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Viewer::drawSurfaces()
 {
@@ -274,11 +271,10 @@ void Viewer::drawSurfaces()
 }
 
 /**
- * \fn void Viewer::draw()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
- *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \fn void draw()
+ * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is manipulated.
+
+ * \return void
  */
 void Viewer::draw()
 {
@@ -359,10 +355,9 @@ void Viewer::draw()
 
 /**
  * \fn QString Viewer::helpString() const {
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \brief This function opens a help windows
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return a help window
  */
 QString Viewer::helpString() const {
 	QString text("<h2>B e s t V i e w e r</h2>");

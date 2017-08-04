@@ -1,13 +1,49 @@
 /**
- * \file areInsideFrustum.cpp
- * \brief Return a list of boolean representing which triangle is inside the frustum.
+ * \file frustumCulling.cpp
+ * \brief Contains all the functions used for frustum culling process
  * \author Tom Mourot-Faraut
  * \version 1.0
  */
 
-#include "include/areInsideFrustum.hpp"
+#include "include/frustumCulling.hpp"
 
 #include <QGLViewer/qglviewer.h>
+
+/**
+ * \fn float distanceToPlane(int i, qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
+ * \brief This function calculates the distance of a vertex from one of the frustum's planes
+ *
+ * \param i : 0 -> 5 describes which plane of the frustum is used
+ * \param pos : A vertex
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ * \return The distance of a vertex from one of the frustum's planes
+ */
+float distanceToPlane(int i, qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
+{
+	float distance = (std::abs(plane_coefficients[i][0] * pos[0] + plane_coefficients[i][1] * pos[1] + plane_coefficients[i][2] * pos[2] - plane_coefficients[i][3])) / std::sqrt(std::pow(plane_coefficients[i][0], 2.0) + std::pow(plane_coefficients[i][1], 2.0) + std::pow(plane_coefficients[i][2], 2.0) );
+	return distance;
+}
+
+
+/**
+ * \fn bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
+ * \brief This function checks for a vertex whether it is in the frustum or not
+ *
+ * \param pos : A vertex
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ *
+ * \return A boolean being true if the point is in the frustum and false if it is not
+ */
+bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
+{
+	for (int k = 0; k < 6; k += 2)
+	{
+		if (distanceToPlane(k, pos, plane_coefficients) + distanceToPlane(k+1, pos, plane_coefficients) - plane_coefficients[k][3] - plane_coefficients[k+1][3] > 0.0001)
+			return false;
+	}
+	return true;
+}
+
 
 /**
  * \fn std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])

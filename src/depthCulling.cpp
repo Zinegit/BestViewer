@@ -1,11 +1,12 @@
 /**
- * \file isNotOcculted.cpp
- * \brief Return a boolean representing whether a triangle is occulted or not
+ * \file depthCulling.cpp
+ * \brief Contains all the functions used for depth culling process. The algorithm is to heavy to run so it is not used here
  * \author Tom Mourot-Faraut
  * \version 1.0
  */
 
-#include "include/isNotOcculted.hpp"
+#include "include/depthCulling.hpp"
+#include "include/frustumCulling.hpp"
 
 /**
  * \fn float sign (qglviewer::Vec p1, qglviewer::Vec p2, qglviewer::Vec p3)
@@ -88,4 +89,65 @@ bool isNotOcculted(std::vector<float>& vertex_positions, std::vector<float>& ver
 	}
 
 	return true;
+}
+
+/**
+ * \fn std::vector<bool> notOccultedPoints(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4], std::vector<float>& distances)
+ * \brief This function returns a vector of booleans. True is for a point visible and false for an occulted point. This function is to heavy to run so it is not used here.
+ *
+ * \param vertex_positions : Geometrical description of the object projected in the near_plane
+ * \param vertex_positions_3d : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ * \param distances : The distances of every vertex from the near plane
+ * \return Vector of booleans describing which point is occulted and which is not
+ */
+std::vector<bool> notOccultedPoints(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4], std::vector<float>& distances)
+{
+	std::vector<bool> not_occulted_points;
+	not_occulted_points.reserve(vertex_positions.size() / 3);
+	int j = 0;
+	for (int i = 0; i < vertex_positions.size(); i += 3)
+	{
+		std::vector<float> point;
+		point.push_back(vertex_positions[i]);
+		point.push_back(vertex_positions[i+1]);
+		point.push_back(vertex_positions_3d[i+2]);
+		float d4 = distances[j];
+		not_occulted_points.push_back(isNotOcculted(vertex_positions, vertex_positions_3d, index_triangles, point, j, plane_coefficients, distances, d4));
+		j += 1;
+	}
+	return not_occulted_points;
+}
+
+/**
+ * \fn std::vector<bool> notOccultedTriangles(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
+ * \brief This function returns a vector of booleans. True is for a triangle visible and false for an occulted triangle. This function is to heavy to run so it is not used here.
+ *
+ * \param vertex_positions : Geometrical description of the object projected in the near_plane
+ * \param vertex_positions_3d : Geometrical description of the object
+ * \param index_triangles : Topological description of the object
+ * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
+ * \return Vector of booleans describing which triangle is occulted and which is not
+ */
+std::vector<bool> notOccultedTriangles(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
+{
+	std::vector<float> distances;
+	distances.reserve(vertex_positions.size() / 3);
+	for (int i = 0; i < vertex_positions.size(); i += 3)
+	{
+		float x = vertex_positions[i];
+		float y = vertex_positions[i + 1];
+		float z = vertex_positions_3d[i + 2];
+		qglviewer::Vec point1(x, y, z);
+		distances.push_back(distanceToPlane(3, point1, plane_coefficients));
+	}
+	std::vector<bool> not_occulted_triangles;
+	not_occulted_triangles.reserve(index_triangles.size() / 3);
+	std::vector<bool> not_occulted_points = notOccultedPoints(vertex_positions, vertex_positions_3d, index_triangles, plane_coefficients, distances);
+	for (int i = 0; i < index_triangles.size(); i += 3)
+	{
+		not_occulted_triangles.push_back(not_occulted_points[index_triangles[i]] || not_occulted_points[index_triangles[i+1]] || not_occulted_points[index_triangles[i+2]]);
+	}
+	return not_occulted_triangles;
 }

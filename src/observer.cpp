@@ -10,11 +10,10 @@
 using namespace std;
 
 /**
- * \fn void Observer::init()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void init()
+ * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Observer::init()
 {
@@ -85,11 +84,10 @@ void Observer::init()
 }
 
 /**
- * \fn void Observer::drawOutlines()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void drawOutlines()
+ * \brief This function draws the outlines of the triangles composing the object
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Observer::drawOutlines()
 {
@@ -126,11 +124,10 @@ void Observer::drawOutlines()
 }
 
 /**
- * \fn void Observer::drawSurfaces()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void drawSurfaces()
+ * \brief This function draws the surfaces of the triangles composing the object
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Observer::drawSurfaces()
 {
@@ -165,11 +162,10 @@ void Observer::drawSurfaces()
 }
 
 /**
- * \fn void Observer::draw()
- * \brief Fonction de création d'une nouvelle instance d'un objet Str_t.
+ * \fn void draw()
+ * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is calculated in viewer
  *
- * \param sz Chaîne à stocker dans l'objet Str_t, ne peut être NULL.
- * \return Instance nouvellement allouée d'un objet de type Str_t ou NULL.
+ * \return void
  */
 void Observer::draw()
 {
