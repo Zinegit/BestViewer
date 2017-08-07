@@ -61,7 +61,7 @@ void Viewer::init()
 	ShaderProgram shader_program;
 	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
 	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
-	m_var.m_render_programID = shader_program.getProgramId();
+	m_var.render_programID = shader_program.getProgramId();
 
 	// Dark red background
 	glClearColor(0.2f, 0.0f, 0.0f, 0.0f);
@@ -73,11 +73,11 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/anneau_bin.ply");
+	ply.readPly("../PLY_FILES/cow.ply");
 	// Retrieve geometry
-	m_var.m_vertex_positions = ply.getPos();
+	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
-	m_var.m_index = ply.getIndex();
+	m_var.index = ply.getIndex();
 	// ////////////READING .PLY FILES//////////// //
 
 //	// ////////////READING .DAT FILES//////////// //
@@ -101,9 +101,9 @@ void Viewer::init()
 //	m_var.m_index = connectivity_wanted_lvl;
 //	// ////////////READING .DAT FILES//////////// //
 
-	m_var.m_colors.resize(m_var.m_index.size(), 1.f);
-	m_var.m_triangles_to_show_t1.resize(m_var.m_index.size() / 3, 1);
-	m_var.m_triangles_to_show_t2.resize(m_var.m_index.size() / 3, 1);
+	m_var.colors.resize(m_var.index.size(), 1.f);
+	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
+	m_var.triangles_to_show_t2.resize(m_var.index.size() / 3, 1);
 
 //	m_var.m_triangles_to_show_t1.reserve(m_var.m_index.size() / 3);
 //	m_var.m_triangles_to_show_t2.reserve(m_var.m_index.size() / 3);
@@ -113,34 +113,36 @@ void Viewer::init()
 //		m_var.m_triangles_to_show_t2.push_back(1);
 //	}
 	// Get normal vertices
-	m_var.m_normals = getNormals(m_var.m_vertex_positions, m_var.m_index);
+	m_var.normals = getNormals(m_var.vertex_positions, m_var.index);
 
 	// Place viewer
-	float max = *std::max_element(m_var.m_vertex_positions.begin(), m_var.m_vertex_positions.end());
+	float max = *std::max_element(m_var.vertex_positions.begin(), m_var.vertex_positions.end());
 	setSceneRadius(max);
-	const qglviewer::Vec center = barycenter(m_var.m_vertex_positions);
+	const qglviewer::Vec center = barycenter(m_var.vertex_positions);
 	setSceneCenter(center);
 	showEntireScene();
 
-	m_var.m_nb_points_buffer = m_var.m_vertex_positions.size();
+	m_var.nb_points_buffer = m_var.vertex_positions.size();
 	// Create pointer to vector for glBufferData
-	m_var.m_pointer_to_vertex_positions = m_var.m_vertex_positions.data();
+	m_var.pointer_to_vertex_positions = m_var.vertex_positions.data();
 	// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
-	glGenBuffers(1, &m_var.m_vertex_buffer);
+	glGenBuffers(1, &m_var.vertex_buffer);
 	// The following commands will talk about our 'm_vertex_buffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertex_buffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, m_var.m_nb_points_buffer * sizeof(float), m_var.m_pointer_to_vertex_positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_vertex_positions, GL_STATIC_DRAW);
 
-	m_var.m_pointer_to_index_triangles = m_var.m_index_temp.data();
-	m_var.m_nb_indices = m_var.m_index_temp.size();
-	glGenBuffers(1, &m_var.m_index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.m_index_triangles);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.m_nb_indices * sizeof(int), m_var.m_pointer_to_index_triangles, GL_STATIC_DRAW);
+	m_var.pointer_to_index_triangles = m_var.index_temp.data();
+	m_var.nb_indices = m_var.index_temp.size();
+	glGenBuffers(1, &m_var.index_triangles);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_triangles);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var.m_color_buffer);
+	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	//help();
+	std::list<MR_Face> multi_res_connectivity;
+	m_var.halfedgeMesh.build(m_var.vertex_positions, m_var.index, multi_res_connectivity);
 
 }
 
@@ -160,27 +162,38 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	// Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
 	if (e->key() == Qt::Key_L)
 	{
-		if (m_var.m_recording)
+		if (m_var.recording)
 		{
-			m_var.m_triangles_to_show_t2 = m_var.m_triangles_to_show;
-			m_var.m_triangles_status = appearance(m_var.m_triangles_to_show_t1, m_var.m_triangles_to_show_t2);
-			vector<int> frontline_colors;
-			getFrontLine(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index, frontline_colors);
-			m_var.m_colors = colorize(m_var.m_triangles_status, m_var.m_vertex_positions, m_var.m_index, frontline_colors);
-			m_var.m_recording = false;
+			m_var.triangles_to_show_t2 = m_var.triangles_to_show;
+			m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
+			m_var.frontline = getFrontLine(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
+			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+			m_var.recording = false;
 		} else {
-			m_var.m_triangles_to_show_t1 = m_var.m_triangles_to_show;
-			m_var.m_recording = true;
+			m_var.triangles_to_show_t1 = m_var.triangles_to_show;
+			m_var.recording = true;
 		}
 		update();
 	}
-	else if ((e->key() == Qt::Key_K))
+	else if (e->key() == Qt::Key_M)
 	{
-		if (m_var.m_mix)
+		updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+		update();
+	}
+	else if (e->key() == Qt::Key_N)
+	{
+		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+		update();
+	}
+	else if (e->key() == Qt::Key_K)
+	{
+		if (m_var.mix)
 		{
-			m_var.m_mix = false;
+			m_var.mix = false;
 		} else {
-			m_var.m_mix = true;
+			m_var.mix = true;
 		}
 		update();
 	}
@@ -198,7 +211,7 @@ void Viewer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertex_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -208,7 +221,7 @@ void Viewer::drawOutlines()
 	   (void*)0            // array buffer offset
 	);
 
-	if (m_var.m_mix)// Set object color to black
+	if (m_var.mix)// Set object color to black
 		glColor3f(0,0,0);
 	else // Set object color to white
 		glColor3f(1,1,1);
@@ -225,7 +238,7 @@ void Viewer::drawOutlines()
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDrawElements(GL_TRIANGLES, m_var.m_nb_indices, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, m_var.nb_indices, GL_UNSIGNED_INT, NULL);
 
 	glDisable(GL_POLYGON_OFFSET_LINE);
 
@@ -242,7 +255,7 @@ void Viewer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertex_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -254,7 +267,7 @@ void Viewer::drawSurfaces()
 
 	// 2nd attribute buffer : colors
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_color_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
 	glVertexAttribPointer(
 		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
 		3,                                // size
@@ -266,7 +279,7 @@ void Viewer::drawSurfaces()
 
 	glColor3f(1,1,1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawElements(GL_TRIANGLES, m_var.m_nb_indices, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, m_var.nb_indices, GL_UNSIGNED_INT, NULL);
 	glDisableVertexAttribArray(0);
 }
 
@@ -292,15 +305,15 @@ void Viewer::draw()
 		}
 	}
 	// Use our shader
-	glUseProgram(m_var.m_render_programID);
+	glUseProgram(m_var.render_programID);
 
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var.m_render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
+	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
 
 	this -> camera() -> getFrustumPlanesCoefficients(m_var.plane_coefficients);
 
-	m_var.m_near_projected_vertex_positions = project(m_var.m_vertex_positions, m_var.plane_coefficients, 3);
+	m_var.near_projected_vertex_positions = project(m_var.vertex_positions, m_var.plane_coefficients, 3);
 
 	// Get viewer's viewing direction
 	qglviewer::Vec viewer_dir = camera() -> viewDirection();
@@ -319,10 +332,10 @@ void Viewer::draw()
 	mvp_matrix_o2[3][3] = 1;
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var.m_render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
+	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 
-	m_var.m_front_face_triangles = isFrontFace(viewer_dir, m_var.m_normals);
-	m_var.m_inside_frustum_triangles = areInsideFrustum(m_var.m_vertex_positions, m_var.m_index, m_var.plane_coefficients);
+	m_var.front_face_triangles = isFrontFace(viewer_dir, m_var.normals);
+	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertex_positions, m_var.index, m_var.plane_coefficients);
 	// Depth culling
 	//m_first_plane_triangles = notOccultedTriangles(m_near_projected_vertex_positions, m_vertex_positions, m_index, plane_coefficients);
 	// Only display frontface triangles
@@ -331,26 +344,26 @@ void Viewer::draw()
 	//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
 	// Only display occulted triangles
 	//m_index_temp = updateIndex(m_first_plane_triangles, m_index);
-	m_var.m_triangles_to_show = fusionBools(m_var.m_front_face_triangles, m_var.m_inside_frustum_triangles);
+	m_var.triangles_to_show = fusionBools(m_var.front_face_triangles, m_var.inside_frustum_triangles);
 	// Display combination of both
-	m_var.m_index_temp = updateIndex(m_var.m_triangles_to_show, m_var.m_index);
+	m_var.index_temp = updateIndex(m_var.triangles_to_show, m_var.index);
 
-	m_var.m_pointer_to_colors = m_var.m_colors.data();
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.m_color_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.m_nb_points_buffer * sizeof(float), m_var.m_pointer_to_colors, GL_STATIC_DRAW);
+	m_var.pointer_to_colors = m_var.colors.data();
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
+	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_colors, GL_STATIC_DRAW);
 
-	m_var.m_pointer_to_index_triangles = m_var.m_index_temp.data();
-	m_var.m_nb_indices = m_var.m_index_temp.size();
-	glGenBuffers(1, &m_var.m_index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.m_index_triangles);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.m_nb_indices * sizeof(int), m_var.m_pointer_to_index_triangles, GL_STATIC_DRAW);
-	if (m_var.m_mix)
+	m_var.pointer_to_index_triangles = m_var.index_temp.data();
+	m_var.nb_indices = m_var.index_temp.size();
+	glGenBuffers(1, &m_var.index_triangles);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_triangles);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
+	if (m_var.mix)
 	{
 		drawSurfaces();
 	}
 	glUseProgram(0);
 	drawOutlines();
-	glUseProgram(m_var.m_render_programID);
+	glUseProgram(m_var.render_programID);
 }
 
 /**

@@ -1,6 +1,8 @@
 #ifndef VARIABLETOSHARE_H
 #define VARIABLETOSHARE_H
 
+#include "halfedgemesh.h"
+
 /**
  * \file variableToShare.hpp
  * \brief The structure containing every variable shared between viewer and observer
@@ -10,32 +12,35 @@
 
 typedef struct variable_to_share
 {
-	std::vector<int> m_index;
-	std::vector<float> m_vertex_positions;
-	std::vector <float> m_colors;
-	GLuint m_vertex_buffer;
-	GLuint m_nb_points_buffer;
-	GLuint m_color_buffer;
-	GLuint m_index_triangles;
-	GLuint m_nb_indices;
-	std::vector<float> m_normals;
-	int* m_pointer_to_index_triangles;
-	float* m_pointer_to_vertex_positions;
-	float* m_pointer_to_colors;
-	bool m_mix = true;
-	std::vector<bool> m_front_face_triangles;
-	std::vector<bool> m_inside_frustum_triangles;
-	std::vector<bool> m_first_plane_triangles;
-	std::vector<float> m_near_projected_vertex_positions;
-	std::vector<bool> m_triangles_to_show;
-	std::vector<int> m_index_temp;
+	std::vector<int> index;
+	std::vector<float> vertex_positions;
+	std::vector <float> colors;
+	GLuint vertex_buffer;
+	GLuint nb_points_buffer;
+	GLuint color_buffer;
+	GLuint index_triangles;
+	GLuint nb_indices;
+	std::vector<float> normals;
+	int* pointer_to_index_triangles;
+	float* pointer_to_vertex_positions;
+	float* pointer_to_colors;
+	bool mix = true;
+	std::vector<bool> front_face_triangles;
+	std::vector<bool> inside_frustum_triangles;
+	std::vector<bool> first_plane_triangles;
+	std::vector<float> near_projected_vertex_positions;
+	std::vector<bool> triangles_to_show;
+	std::vector<int> index_temp;
 	GLdouble plane_coefficients[6][4];
 	int compteur = 0;
-	std::vector<bool> m_triangles_to_show_t1;
-	std::vector<bool> m_triangles_to_show_t2;
-	GLuint m_render_programID;
-	std::vector<int> m_triangles_status;
-	bool m_recording = false;
+	std::vector<bool> triangles_to_show_t1;
+	std::vector<bool> triangles_to_show_t2;
+	GLuint render_programID;
+	std::vector<int> triangles_status;
+	bool recording = false;
+	HalfedgeMesh halfedgeMesh;
+	std::list<FaceIter> frontline;
+	vector<int> frontline_colors;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_H

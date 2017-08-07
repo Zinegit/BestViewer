@@ -60,26 +60,26 @@ void Observer::init()
 
 	// Place observer
 	camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
-	cout << m_var -> m_vertex_positions.size() << endl;
-	float max = 4 * *std::max_element(m_var -> m_vertex_positions.begin(), m_var -> m_vertex_positions.end());
+	cout << m_var -> vertex_positions.size() << endl;
+	float max = 4 * *std::max_element(m_var -> vertex_positions.begin(), m_var -> vertex_positions.end());
 	setSceneRadius(max);
-	const qglviewer::Vec center = barycenter(m_var -> m_vertex_positions);
+	const qglviewer::Vec center = barycenter(m_var -> vertex_positions);
 	setSceneCenter(center);
 	showEntireScene();
 
 	// Why not putting viewer and observer in the same context? (see qgl multiview example)
 
-	glGenBuffers(1, &m_var -> m_vertex_buffer);
+	glGenBuffers(1, &m_var -> vertex_buffer);
 	// The following commands will talk about our 'm_vertex_buffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> m_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertex_buffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, m_var -> m_nb_points_buffer * sizeof(float), m_var -> m_pointer_to_vertex_positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_points_buffer * sizeof(float), m_var -> pointer_to_vertex_positions, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> m_index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> m_index_triangles);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> m_nb_indices * sizeof(int), m_var -> m_pointer_to_index_triangles, GL_STATIC_DRAW);
+	glGenBuffers(1, &m_var -> index_triangles);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_triangles);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_index_triangles, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> m_color_buffer);
+	glGenBuffers(1, &m_var -> color_buffer);
 
 }
 
@@ -93,7 +93,7 @@ void Observer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> m_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertex_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -103,7 +103,7 @@ void Observer::drawOutlines()
 	   (void*)0            // array buffer offset
 	);
 
-	if (m_var -> m_mix)// Set object color to black
+	if (m_var -> mix)// Set object color to black
 		glColor3f(0,0,0);
 	else // Set object color to white
 		glColor3f(1,1,1);
@@ -116,7 +116,7 @@ void Observer::drawOutlines()
 	glEnable(GL_LINE_SMOOTH);
 	glLineWidth(1.0f);
 
-	glDrawElements(GL_TRIANGLES, m_var -> m_nb_indices, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, m_var -> nb_indices, GL_UNSIGNED_INT, NULL);
 
 	glDisable(GL_POLYGON_OFFSET_LINE);
 
@@ -133,7 +133,7 @@ void Observer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> m_vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertex_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -145,7 +145,7 @@ void Observer::drawSurfaces()
 
 	// 2nd attribute buffer : colors
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> m_color_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> color_buffer);
 	glVertexAttribPointer(
 	    1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
 	    3,                                // size
@@ -157,7 +157,7 @@ void Observer::drawSurfaces()
 
 	glColor3f(1,1,1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawElements(GL_TRIANGLES, m_var -> m_nb_indices, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, m_var -> nb_indices, GL_UNSIGNED_INT, NULL);
 	glDisableVertexAttribArray(0);
 }
 
@@ -183,11 +183,11 @@ void Observer::draw()
 		}
 	}
 	// Use our shader
-	glUseProgram(m_var -> m_render_programID);
+	glUseProgram(m_var -> render_programID);
 
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var -> m_render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
+	glUniformMatrix4fv(glGetUniformLocation(m_var -> render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
 
 
 	glm::mat4 mvp_matrix_o2;
@@ -195,7 +195,7 @@ void Observer::draw()
 	glUseProgram(0);
 	glColor3f(1.0, 0.0, 0.0);
 	observed_camera -> draw();
-	glUseProgram(m_var -> m_render_programID);
+	glUseProgram(m_var -> render_programID);
 
 	for(int j = 0; j < 4; ++j)
 	{
@@ -208,21 +208,21 @@ void Observer::draw()
 	mvp_matrix_o2[1][1] = 1;
 	mvp_matrix_o2[2][2] = 1;
 	mvp_matrix_o2[3][3] = 1;
-	glUniformMatrix4fv(glGetUniformLocation(m_var -> m_render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
+	glUniformMatrix4fv(glGetUniformLocation(m_var -> render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 	observed_camera -> getFrustumPlanesCoefficients(m_var -> plane_coefficients);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> m_color_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var -> m_nb_points_buffer * sizeof(float), m_var -> m_pointer_to_colors, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> color_buffer);
+	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_points_buffer * sizeof(float), m_var -> pointer_to_colors, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> m_index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> m_index_triangles);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> m_nb_indices * sizeof(int), m_var -> m_pointer_to_index_triangles, GL_STATIC_DRAW);
-	if (m_var -> m_mix)
+	glGenBuffers(1, &m_var -> index_triangles);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_triangles);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_index_triangles, GL_STATIC_DRAW);
+	if (m_var -> mix)
 	{
 		drawSurfaces();
 	}
 	glUseProgram(0);
 	drawOutlines();
-	glUseProgram(m_var -> m_render_programID);
+	glUseProgram(m_var -> render_programID);
 
 }

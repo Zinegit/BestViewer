@@ -25,51 +25,78 @@ std::vector<float> colorize(std::vector<int>& triangles_status, std::vector<floa
 		// If triangle's state does not change, color is white
 		if (triangles_status[i] == 0)
 		{
-			colors[3 * index_triangles[3 * i]] = 1.0;
-			colors[3 * index_triangles[3 * i] + 1] = 1.0;
-			colors[3 * index_triangles[3 * i] + 2] = 1.0;
+			// If the vertex color is already blue then do not change anything
+			if (!(colors[3 * index_triangles[3 * i]] == 0 && colors[3 * index_triangles[3 * i] + 1] == 0 && colors[3 * index_triangles[3 * i] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i]] = 1.0;
+				colors[3 * index_triangles[3 * i] + 1] = 1.0;
+				colors[3 * index_triangles[3 * i] + 2] = 1.0;
+			}
 
-			colors[3 * index_triangles[3 * i + 1]] = 1.0;
-			colors[3 * index_triangles[3 * i + 1] + 1] = 1.0;
-			colors[3 * index_triangles[3 * i + 1] + 2] = 1.0;
+			if (!(colors[3 * index_triangles[3 * i + 1]] == 0 && colors[3 * index_triangles[3 * i + 1] + 1] == 0 && colors[3 * index_triangles[3 * i + 1] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i + 1]] = 1.0;
+				colors[3 * index_triangles[3 * i + 1] + 1] = 1.0;
+				colors[3 * index_triangles[3 * i + 1] + 2] = 1.0;
+			}
 
-			colors[3 * index_triangles[3 * i + 2]] = 1.0;
-			colors[3 * index_triangles[3 * i + 2] + 1] = 1.0;
-			colors[3 * index_triangles[3 * i + 2] + 2] = 1.0;
+			if (!(colors[3 * index_triangles[3 * i + 2]] == 0 && colors[3 * index_triangles[3 * i + 2] + 1] == 0 && colors[3 * index_triangles[3 * i + 2] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i + 2]] = 1.0;
+				colors[3 * index_triangles[3 * i + 2] + 1] = 1.0;
+				colors[3 * index_triangles[3 * i + 2] + 2] = 1.0;
+			}
 		}
 		// If triangle appears, color is green
 		else if (triangles_status[i] == 1)
 		{
-			colors[3 * index_triangles[3 * i]] = 0;
-			colors[3 * index_triangles[3 * i] + 1] = 1.0;
-			colors[3 * index_triangles[3 * i] + 2] = 0;
+			if (!(colors[3 * index_triangles[3 * i]] == 0 && colors[3 * index_triangles[3 * i] + 1] == 0 && colors[3 * index_triangles[3 * i] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i]] = 0;
+				colors[3 * index_triangles[3 * i] + 1] = 1.0;
+				colors[3 * index_triangles[3 * i] + 2] = 0;
+			}
 
-			colors[3 * index_triangles[3 * i + 1]] = 0;
-			colors[3 * index_triangles[3 * i + 1] + 1] = 1.0;
-			colors[3 * index_triangles[3 * i + 1] + 2] = 0;
+			if (!(colors[3 * index_triangles[3 * i + 1]] == 0 && colors[3 * index_triangles[3 * i + 1] + 1] == 0 && colors[3 * index_triangles[3 * i + 1] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i + 1]] = 0;
+				colors[3 * index_triangles[3 * i + 1] + 1] = 1.0;
+				colors[3 * index_triangles[3 * i + 1] + 2] = 0;
+			}
 
-			colors[3 * index_triangles[3 * i + 2]] = 0;
-			colors[3 * index_triangles[3 * i + 2] + 1] = 1.0;
-			colors[3 * index_triangles[3 * i + 2] + 2] = 0;
+			if (!(colors[3 * index_triangles[3 * i + 2]] == 0 && colors[3 * index_triangles[3 * i + 2] + 1] == 0 && colors[3 * index_triangles[3 * i + 2] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i + 2]] = 0;
+				colors[3 * index_triangles[3 * i + 2] + 1] = 1.0;
+				colors[3 * index_triangles[3 * i + 2] + 2] = 0;
+			}
 		}
 		// If triangle disappears, color is red
 		else if (triangles_status[i] == 2)
 		{
-			colors[3 * index_triangles[3 * i]] = 1.0;
-			colors[3 * index_triangles[3 * i] + 1] = 0;
-			colors[3 * index_triangles[3 * i] + 2] = 0;
+			if (!(colors[3 * index_triangles[3 * i]] == 0 && colors[3 * index_triangles[3 * i] + 1] == 0 && colors[3 * index_triangles[3 * i] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i]] = 1.0;
+				colors[3 * index_triangles[3 * i] + 1] = 0;
+				colors[3 * index_triangles[3 * i] + 2] = 0;
+			}
 
-			colors[3 * index_triangles[3 * i + 1]] = 1.0;
-			colors[3 * index_triangles[3 * i + 1] + 1] = 0;
-			colors[3 * index_triangles[3 * i + 1] + 2] = 0;
+			if (!(colors[3 * index_triangles[3 * i + 1]] == 0 && colors[3 * index_triangles[3 * i + 1] + 1] == 0 && colors[3 * index_triangles[3 * i + 1] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i + 1]] = 1.0;
+				colors[3 * index_triangles[3 * i + 1] + 1] = 0;
+				colors[3 * index_triangles[3 * i + 1] + 2] = 0;
+			}
 
-			colors[3 * index_triangles[3 * i + 2]] = 1.0;
-			colors[3 * index_triangles[3 * i + 2] + 1] = 0;
-			colors[3 * index_triangles[3 * i + 2] + 2] = 0;
+			if (!(colors[3 * index_triangles[3 * i + 2]] == 0 && colors[3 * index_triangles[3 * i + 2] + 1] == 0 && colors[3 * index_triangles[3 * i + 2] + 2] == 1.0))
+			{
+				colors[3 * index_triangles[3 * i + 2]] = 1.0;
+				colors[3 * index_triangles[3 * i + 2] + 1] = 0;
+				colors[3 * index_triangles[3 * i + 2] + 2] = 0;
+			}
 		}
 		if (frontline_colors[i] == 1)
 		{
-			std::cout << "blue" << std::endl;
 			colors[3 * index_triangles[3 * i]] = 0;
 			colors[3 * index_triangles[3 * i] + 1] = 0;
 			colors[3 * index_triangles[3 * i] + 2] = 1.0;

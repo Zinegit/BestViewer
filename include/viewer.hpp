@@ -39,6 +39,7 @@
 #include "ply.h"
 #include "dat.h"
 #include "import_structure.h"
+#include "halfedgemesh.h"
 
 class Viewer : public QGLViewer
 {
