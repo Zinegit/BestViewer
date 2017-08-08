@@ -1,3 +1,16 @@
+/* Documentation tag for Doxygen
+ */
+
+/*! \mainpage BestViewer documentation
+ *
+ * \section intro_sec Introduction
+ *
+ * This documentation provides a description of every class, every file and every function inside it.
+ *
+ * <BR><BR>
+ *
+ */
+
 /**
 * \file main.cpp
 * \brief Instantiate viewer and observer, connect them and run the main loop

@@ -24,7 +24,6 @@ float distanceToPlane(int i, qglviewer::Vec& pos, GLdouble plane_coefficients[6]
 	return distance;
 }
 
-
 /**
  * \fn bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
  * \brief This function checks for a vertex whether it is in the frustum or not

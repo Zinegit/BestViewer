@@ -73,7 +73,7 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/cow.ply");
+	ply.readPly("../PLY_FILES/anneau_bin.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
@@ -166,7 +166,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		{
 			m_var.triangles_to_show_t2 = m_var.triangles_to_show;
 			m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
-			m_var.frontline = getFrontLine(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
+			m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
 			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 			m_var.recording = false;
 		} else {
@@ -177,15 +177,18 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	}
 	else if (e->key() == Qt::Key_M)
 	{
-		updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
+		updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
 		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 		update();
 	}
 	else if (e->key() == Qt::Key_N)
 	{
-		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
-		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
-		update();
+		if (!m_var.frontline.empty())
+		{
+			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
+			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+			update();
+		}
 	}
 	else if (e->key() == Qt::Key_K)
 	{
@@ -369,7 +372,6 @@ void Viewer::draw()
 /**
  * \fn QString Viewer::helpString() const {
  * \brief This function opens a help windows
- *
  * \return a help window
  */
 QString Viewer::helpString() const {

@@ -10,6 +10,11 @@
  * \version 1.0
  */
 
+/**
+ * \struct variable_to_share
+ * \brief Set of variable shared by the viewer and the observer
+ */
+
 typedef struct variable_to_share
 {
 	std::vector<int> index;
