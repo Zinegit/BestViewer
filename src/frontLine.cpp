@@ -64,7 +64,7 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<i
  * \return void
  */
 
-void TempUpdateFrontLine(std::list<FaceIter>& frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)
+std::vector<float> TempUpdateFrontLine(std::list<FaceIter>& frontline, std::vector<int>& triangles_status, std::vector<float> vertex_positions, std::vector<int> index_triangles, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)
 {
 	HalfedgeIter h = frontline.front()->halfedge();
 	HalfedgeIter h_cur = h;
@@ -79,6 +79,7 @@ void TempUpdateFrontLine(std::list<FaceIter>& frontline, std::vector<int>& trian
 			// If the triangle next to the current triangle appeared, then the current triangle belongs to the front line
 			if (status == 1)
 			{
+				std::vector<float> true_vertex = vertex_positions[index_triangles[3 * i]];
 				std::vector<float> predicted_vertex = predictTriangle(frontline.front(), h_cur, halfedgeMesh);
 				std::cout << predicted_vertex[0] << " " << predicted_vertex[1] << " " << predicted_vertex[2] << std::endl;
 				frontline.push_back(h_cur->twin()->face());
@@ -136,7 +137,7 @@ std::list<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector
 }
 
 /**
- * \fn std::vector<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)
+ * \fn std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& frontline_halfedge, HalfedgeMesh& halfedgeMesh)
  * \brief This function returns a vector of faces that belong to the frontline using the halfedge structure
  * \param triangles_status : State of every triangle (appeared/disappeared/same state)
  * \param vertex_positions : Geometrical description of the object

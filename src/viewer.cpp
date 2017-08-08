@@ -185,7 +185,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	{
 		if (!m_var.frontline.empty())
 		{
-			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
+			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
 			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 			update();
 		}
