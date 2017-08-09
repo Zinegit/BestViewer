@@ -88,12 +88,12 @@ std::vector<float> TempUpdateFrontLine(std::list<FaceIter>& frontline,
 			if (status == 1)
 			{
 				true_vertex[0] = vertex_positions[3 * index_triangles[3 * dist1]];
-				true_vertex[1] = vertex_positions[3 * index_triangles[3 * dist1]];
-				true_vertex[2] = vertex_positions[3 * index_triangles[3 * dist1]];
+				true_vertex[1] = vertex_positions[3 * index_triangles[3 * dist1] + 1];
+				true_vertex[2] = vertex_positions[3 * index_triangles[3 * dist1] + 2];
 				predicted_vertex = predictTriangle(frontline.front(), h_cur, halfedgeMesh);
-				distances[0] = std::abs(true_vertex[0] - predicted_vertex[0]);
-				distances[1] = std::abs(true_vertex[1] - predicted_vertex[1]);
-				distances[2] = std::abs(true_vertex[2] - predicted_vertex[2]);
+				distances[0] = std::abs(true_vertex[0] - predicted_vertex[9]);
+				distances[1] = std::abs(true_vertex[1] - predicted_vertex[10]);
+				distances[2] = std::abs(true_vertex[2] - predicted_vertex[11]);
 				frontline.push_back(h_cur->twin()->face());
 				frontline_colors[dist1] = 1;
 				triangles_status[dist1] = 0;
@@ -103,6 +103,7 @@ std::vector<float> TempUpdateFrontLine(std::list<FaceIter>& frontline,
 		h_cur = h_cur->next();
 	} while (h_cur != h);
 	frontline.pop_front();
+	std::cout << distances[0] << " " << distances[1] << " " << distances[2] << std::endl;
 	return distances;
 }
 
@@ -165,6 +166,7 @@ std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& f
 	VertexIter vec1 = frontline_halfedge->vertex();
 	VertexIter vec2 = frontline_halfedge->next()->vertex();
 	VertexIter vec3 = frontline_halfedge->next()->next()->vertex();
+	// For debugging
 	pos[0] = vec1->x;
 	pos[1] = vec1->y;
 	pos[2] = vec1->z;
@@ -174,10 +176,10 @@ std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& f
 	pos[6] = vec2->x;
 	pos[7] = vec2->y;
 	pos[8] = vec2->z;
+	// For debugging
 	pos[9] = vec1->x + vec2->x - vec3->x;
 	pos[10] = vec1->y + vec2->y - vec3->y;
 	pos[11] = vec1->z + vec2->z - vec3->z;
-
 	return pos;
 }
 
