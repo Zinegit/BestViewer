@@ -64,7 +64,7 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<i
  * \return void
  */
 
-std::vector<float> TempUpdateFrontLine(std::list<FaceIter>& frontline,
+float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 									   std::vector<int>& triangles_status,
 									   std::vector<float>& vertex_positions,
 									   std::vector<int>& index_triangles,
@@ -73,7 +73,7 @@ std::vector<float> TempUpdateFrontLine(std::list<FaceIter>& frontline,
 									   std::vector<float>& true_vertex,
 									   std::vector<float>& predicted_vertex)
 {
-	std::vector<float> distances(3, 0);
+	float dist_true_predicted;
 	HalfedgeIter h = frontline.front()->halfedge();
 	HalfedgeIter h_cur = h;
 	int dist2 = std::distance(halfedgeMesh.facesBegin(), frontline.front());
@@ -91,20 +91,19 @@ std::vector<float> TempUpdateFrontLine(std::list<FaceIter>& frontline,
 				true_vertex[1] = vertex_positions[3 * index_triangles[3 * dist1] + 1];
 				true_vertex[2] = vertex_positions[3 * index_triangles[3 * dist1] + 2];
 				predicted_vertex = predictTriangle(frontline.front(), h_cur, halfedgeMesh);
-				distances[0] = std::abs(true_vertex[0] - predicted_vertex[9]);
-				distances[1] = std::abs(true_vertex[1] - predicted_vertex[10]);
-				distances[2] = std::abs(true_vertex[2] - predicted_vertex[11]);
 				frontline.push_back(h_cur->twin()->face());
 				frontline_colors[dist1] = 1;
 				triangles_status[dist1] = 0;
+				dist_true_predicted = std::sqrt(std::pow(true_vertex[0] - predicted_vertex[9], 2) + std::pow(true_vertex[1] - predicted_vertex[10], 2) + std::pow(true_vertex[2] - predicted_vertex[11], 2));
+				std::cout << std::pow(true_vertex[0] - predicted_vertex[9], 2) + std::pow(true_vertex[1] - predicted_vertex[10], 2) + std::pow(true_vertex[2] - predicted_vertex[11], 2) << std::endl;
+				std::cout << dist_true_predicted << std::endl;
 			}
 			frontline_colors[dist2] = 0;
 		}
 		h_cur = h_cur->next();
 	} while (h_cur != h);
 	frontline.pop_front();
-	std::cout << distances[0] << " " << distances[1] << " " << distances[2] << std::endl;
-	return distances;
+	return dist_true_predicted;
 }
 
 /**

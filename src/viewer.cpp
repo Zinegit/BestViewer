@@ -73,7 +73,7 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/cow.ply");
+	ply.readPly("../PLY_FILES/anneau_bin.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
@@ -382,11 +382,6 @@ void Viewer::draw()
 
 	glBegin(GL_LINES);
 	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
-	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
-	glEnd();
-
-	glBegin(GL_LINES);
-	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
 	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
 	glEnd();
 
