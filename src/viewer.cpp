@@ -27,9 +27,9 @@ void Viewer::init()
 	//glCullFace( GL_BACK );
 	//glEnable(GL_CULL_FACE);
 
-	// Set 'L' as the key to enable backface culling
 	setKeyDescription(Qt::Key_L, "Toggles backface culling");
-	// Set 'K' as the key to mix between fill and line
+	setKeyDescription(Qt::Key_M, "Toggles frontline updating");
+	setKeyDescription(Qt::Key_N, "Toggles partial frontline updating");
 	setKeyDescription(Qt::Key_K, "Toggles surface filling");
 
 	// Enlighten everything (not just the well-oriented faces of the triangles)
@@ -143,7 +143,8 @@ void Viewer::init()
 	//help();
 	std::list<MR_Face> multi_res_connectivity;
 	m_var.halfedgeMesh.build(m_var.vertex_positions, m_var.index, multi_res_connectivity);
-
+	m_var.predicted_vertex.resize(12, 0);
+	m_var.true_vertex.resize(3, 0);
 }
 
 /**
@@ -185,7 +186,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	{
 		if (!m_var.frontline.empty())
 		{
-			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh);
+			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
 			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 			update();
 		}
@@ -367,6 +368,27 @@ void Viewer::draw()
 	glUseProgram(0);
 	drawOutlines();
 	glUseProgram(m_var.render_programID);
+
+	glColor3f(1.0, 0.0, 0.0);
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.1);
+	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.1);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.1);
+	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.1);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.1);
+	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.1);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.1);
+	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.1);
+	glEnd();
 }
 
 /**

@@ -46,6 +46,8 @@ typedef struct variable_to_share
 	HalfedgeMesh halfedgeMesh;
 	std::list<FaceIter> frontline;
 	vector<int> frontline_colors;
+	std::vector<float> true_vertex;
+	std::vector<float> predicted_vertex;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_H
