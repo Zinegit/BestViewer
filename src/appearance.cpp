@@ -11,7 +11,6 @@
 /**
  * \fn std::vector<int> appearance(std::vector<bool>& triangles_to_show_t1, std::vector<bool>& triangles_to_show_t2)
  * \brief This function compares the triangles visible at t1 and t2 and return a vector discribing which ones disappeared/appeared or stayed in the same state
- *
  * \param triangles_to_show_t1 : vector showing which triangle is visible or not at t1
  * \param triangles_to_show_t2 : vector showing which triangle is visible or not at t2
  * \return The vector discribing if a triangle appears/disappears/stays in the same state

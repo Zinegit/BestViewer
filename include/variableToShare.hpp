@@ -23,7 +23,7 @@ typedef struct variable_to_share
 	GLuint vertex_buffer;
 	GLuint nb_points_buffer;
 	GLuint color_buffer;
-	GLuint index_triangles;
+	GLuint index_buffer;
 	GLuint nb_indices;
 	std::vector<float> normals;
 	int* pointer_to_index_triangles;

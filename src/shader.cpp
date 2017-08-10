@@ -39,7 +39,6 @@ ShaderProgram::~ShaderProgram()
 /**
  * \fn void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
  * \brief This function loads the fragment and vertex shaders given to it
- *
  * \param shaderType : The type of the shader
  * \param shader_file_path : The path to the shader
  * \return void

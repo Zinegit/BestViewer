@@ -12,7 +12,6 @@ using namespace std;
 /**
  * \fn void init()
  * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
- *
  * \return void
  */
 void Observer::init()
@@ -75,8 +74,8 @@ void Observer::init()
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_points_buffer * sizeof(float), m_var -> pointer_to_vertex_positions, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_triangles);
+	glGenBuffers(1, &m_var -> index_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_index_triangles, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m_var -> color_buffer);
@@ -86,7 +85,6 @@ void Observer::init()
 /**
  * \fn void drawOutlines()
  * \brief This function draws the outlines of the triangles composing the object
- *
  * \return void
  */
 void Observer::drawOutlines()
@@ -126,7 +124,6 @@ void Observer::drawOutlines()
 /**
  * \fn void drawSurfaces()
  * \brief This function draws the surfaces of the triangles composing the object
- *
  * \return void
  */
 void Observer::drawSurfaces()
@@ -164,7 +161,6 @@ void Observer::drawSurfaces()
 /**
  * \fn void draw()
  * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is calculated in viewer
- *
  * \return void
  */
 void Observer::draw()
@@ -214,8 +210,8 @@ void Observer::draw()
 	glBindBuffer(GL_ARRAY_BUFFER, m_var -> color_buffer);
 	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_points_buffer * sizeof(float), m_var -> pointer_to_colors, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_triangles);
+	glGenBuffers(1, &m_var -> index_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_index_triangles, GL_STATIC_DRAW);
 	if (m_var -> mix)
 	{

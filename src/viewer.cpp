@@ -12,7 +12,6 @@ using namespace std;
 /**
  * \fn void init()
  * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
- *
  * \return void
  */
 void Viewer::init()
@@ -71,35 +70,35 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// ////////////READING .PLY FILES//////////// //
-	Ply ply;
-	ply.readPly("../PLY_FILES/anneau_bin.ply");
-	// Retrieve geometry
-	m_var.vertex_positions = ply.getPos();
-	// Retrieve topology
-	m_var.index = ply.getIndex();
-	// ////////////READING .PLY FILES//////////// //
-
-//	// ////////////READING .DAT FILES//////////// //
-//	std::vector<float> geometry_coarse_lvl;
-//	std::vector<float> geometry_wanted_lvl;
-//	std::vector<float> geometry_wanted_lvl_only;
-//	std::vector<int> connectivity_coarse_lvl;
-//	std::vector<int> connectivity_wanted_lvl;
-//	Dat dat;
-//	dat.readDat("../DAT_FILES/Teapot_Res3.dat");
-//	readLvlXDat(dat,
-//					 2,
-//					 geometry_coarse_lvl,
-//					 geometry_wanted_lvl,
-//					 geometry_wanted_lvl_only,
-//					 connectivity_coarse_lvl,
-//					 connectivity_wanted_lvl);
+//	// ////////////READING .PLY FILES//////////// //
+//	Ply ply;
+//	ply.readPly("../PLY_FILES/anneau_bin.ply");
 //	// Retrieve geometry
-//	m_var.m_vertex_positions = geometry_wanted_lvl;
+//	m_var.vertex_positions = ply.getPos();
 //	// Retrieve topology
-//	m_var.m_index = connectivity_wanted_lvl;
-//	// ////////////READING .DAT FILES//////////// //
+//	m_var.index = ply.getIndex();
+//	// ////////////READING .PLY FILES//////////// //
+
+	// ////////////READING .DAT FILES//////////// //
+	std::vector<float> geometry_coarse_lvl;
+	std::vector<float> geometry_wanted_lvl;
+	std::vector<float> geometry_wanted_lvl_only;
+	std::vector<int> connectivity_coarse_lvl;
+	std::vector<int> connectivity_wanted_lvl;
+	Dat dat;
+	dat.readDat("../DAT_FILES/Dodecahedron_Res5.dat");
+	readLvlXDat(dat,
+					 4,
+					 geometry_coarse_lvl,
+					 geometry_wanted_lvl,
+					 geometry_wanted_lvl_only,
+					 connectivity_coarse_lvl,
+					 connectivity_wanted_lvl);
+	// Retrieve geometry
+	m_var.vertex_positions = geometry_wanted_lvl;
+	// Retrieve topology
+	m_var.index = connectivity_wanted_lvl;
+	// ////////////READING .DAT FILES//////////// //
 
 	m_var.colors.resize(m_var.index.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
@@ -134,8 +133,8 @@ void Viewer::init()
 
 	m_var.pointer_to_index_triangles = m_var.index_temp.data();
 	m_var.nb_indices = m_var.index_temp.size();
-	glGenBuffers(1, &m_var.index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_triangles);
+	glGenBuffers(1, &m_var.index_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m_var.color_buffer);
@@ -150,7 +149,6 @@ void Viewer::init()
 /**
  * \fn void keyPressEvent(QKeyEvent *e)
  * \brief This function records keystrokes. If the pressed key is L and is pressed 2 times, the colors of appearing/disappearing/frontline triangles are updated. If K is pressed, m_mix is set to true or false and make the object appear in filled form or in line form.
- *
  * \param e : the pressed key
  * \return void
  */
@@ -178,7 +176,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	}
 	else if (e->key() == Qt::Key_M)
 	{
-		updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
+		updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
 		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 		update();
 	}
@@ -208,7 +206,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 /**
  * \fn void drawOutlines()
  * \brief This function draws the outlines of the triangles composing the object
- *
  * \return void
  */
 void Viewer::drawOutlines()
@@ -252,7 +249,6 @@ void Viewer::drawOutlines()
 /**
  * \fn void drawSurfaces()
  * \brief This function draws the surfaces of the triangles composing the object
- *
  * \return void
  */
 void Viewer::drawSurfaces()
@@ -290,7 +286,6 @@ void Viewer::drawSurfaces()
 /**
  * \fn void draw()
  * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is manipulated.
-
  * \return void
  */
 void Viewer::draw()
@@ -358,8 +353,8 @@ void Viewer::draw()
 
 	m_var.pointer_to_index_triangles = m_var.index_temp.data();
 	m_var.nb_indices = m_var.index_temp.size();
-	glGenBuffers(1, &m_var.index_triangles);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_triangles);
+	glGenBuffers(1, &m_var.index_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
 	if (m_var.mix)
 	{

@@ -12,15 +12,24 @@
  * \brief This function updates the frontline untill every triangle is predicted
  * \param frontline : The initialized frontline of the object
  * \param triangles_status : State of every triangle (appeared/disappeared/same state)
+ * \param frontline_colors : The triangles that belong to the frontline are associated with one in order to colorize them in blue in addColor
  * \param vertex_positions : Geometrical description of the object
  * \param index_triangles : Topological description of the object
- * \param frontline_colors : The triangles that belong to the frontline are associated with one in order to colorize them in blue in addColor
+ * \param halfedgeMesh : The instanciation of the halfedgeMesh class
  * \return void
  */
 
-std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)
+// Think about setting all colors to white
+std::vector<float> updateFrontLine(std::list<FaceIter>& frontline,
+								   std::vector<int>& triangles_status,
+								   std::vector<int>& frontline_colors,
+								   std::vector<float>& vertex_positions,
+								   std::vector<int>& index_triangles,
+								   HalfedgeMesh& halfedgeMesh)
 {
+	std::vector<float> dist_true_predicted;
 	std::vector<float> predicted_vertices;
+	std::vector<float> true_vertices;
 	while (!frontline.empty())
 	{
 		HalfedgeIter h = frontline.front()->halfedge();
@@ -36,10 +45,13 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<i
 				// If the triangle next to the current triangle appeared, then the current triangle belongs to the front line
 				if (status == 1)
 				{
+					true_vertices.push_back(vertex_positions[3 * index_triangles[3 * dist1]]);
+					true_vertices.push_back(vertex_positions[3 * index_triangles[3 * dist1] + 1]);
+					true_vertices.push_back(vertex_positions[3 * index_triangles[3 * dist1] + 2]);
 					std::vector<float> pos = predictTriangle(frontline.front(), h_cur, halfedgeMesh);
-					predicted_vertices.push_back(pos[0]);
-					predicted_vertices.push_back(pos[1]);
-					predicted_vertices.push_back(pos[2]);
+					predicted_vertices.push_back(pos[9]);
+					predicted_vertices.push_back(pos[10]);
+					predicted_vertices.push_back(pos[11]);
 					frontline.push_back(h_cur->twin()->face());
 					frontline_colors[dist1] = 1;
 					triangles_status[dist1] = 0;
@@ -50,28 +62,37 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<i
 		} while (h_cur != h);
 		frontline.pop_front();
 	}
-	return predicted_vertices;
+	for (int i = 0; i < predicted_vertices.size(); i += 3)
+	{
+		float dist = std::sqrt(std::pow(true_vertices[i] - predicted_vertices[i], 2) + std::pow(true_vertices[i+1] - predicted_vertices[i+1], 2) + std::pow(true_vertices[i+2] - predicted_vertices[i+2], 2));
+		dist_true_predicted.push_back(dist);
+		std::cout << dist << std::endl;
+	}
+	return dist_true_predicted;
 }
 
 /**
  * \fn void TempUpdateFrontLine(std::list<FaceIter> frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)
- * \brief This function updates the frontline triangle by triangle
+ * \brief This function updates the frontline triangle by triangle, predicts their position and return the distance between the predicted and the real position
  * \param frontline : The initialized frontline of the object
  * \param triangles_status : State of every triangle (appeared/disappeared/same state)
  * \param vertex_positions : Geometrical description of the object
  * \param index_triangles : Topological description of the object
  * \param frontline_colors : The triangles that belong to the frontline are associated with one in order to colorize them in blue in addColor
- * \return void
+ * \param halfedgeMesh : The instanciation of the halfedgeMesh class
+ * \param true_vertex : The true geometrical description of the triangles to predict
+ * \param predicted_vertex : The predicted geometrical description of the triangles to predict
+ * \return float
  */
 
 float TempUpdateFrontLine(std::list<FaceIter>& frontline,
-									   std::vector<int>& triangles_status,
-									   std::vector<float>& vertex_positions,
-									   std::vector<int>& index_triangles,
-									   std::vector<int>& frontline_colors,
-									   HalfedgeMesh& halfedgeMesh,
-									   std::vector<float>& true_vertex,
-									   std::vector<float>& predicted_vertex)
+						  std::vector<int>& triangles_status,
+						  std::vector<float>& vertex_positions,
+						  std::vector<int>& index_triangles,
+						  std::vector<int>& frontline_colors,
+						  HalfedgeMesh& halfedgeMesh,
+						  std::vector<float>& true_vertex,
+						  std::vector<float>& predicted_vertex)
 {
 	float dist_true_predicted;
 	HalfedgeIter h = frontline.front()->halfedge();
@@ -95,8 +116,7 @@ float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 				frontline_colors[dist1] = 1;
 				triangles_status[dist1] = 0;
 				dist_true_predicted = std::sqrt(std::pow(true_vertex[0] - predicted_vertex[9], 2) + std::pow(true_vertex[1] - predicted_vertex[10], 2) + std::pow(true_vertex[2] - predicted_vertex[11], 2));
-				std::cout << std::pow(true_vertex[0] - predicted_vertex[9], 2) + std::pow(true_vertex[1] - predicted_vertex[10], 2) + std::pow(true_vertex[2] - predicted_vertex[11], 2) << std::endl;
-				std::cout << dist_true_predicted << std::endl;
+				//std::cout << dist_true_predicted << std::endl;
 			}
 			frontline_colors[dist2] = 0;
 		}
@@ -113,6 +133,7 @@ float TempUpdateFrontLine(std::list<FaceIter>& frontline,
  * \param vertex_positions : Geometrical description of the object
  * \param index_triangles : Topological description of the object
  * \param frontline_colors : The triangles that belong to the frontline
+ * \param halfedgeMesh : The instanciation of the halfedgeMesh class
  * \return a vector of the faces that belong to the frontline
  */
 
@@ -156,6 +177,7 @@ std::list<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector
  * \param vertex_positions : Geometrical description of the object
  * \param index_triangles : Topological description of the object
  * \param frontline_colors : The triangles that belong to the frontline
+ * \param halfedgeMesh : The instanciation of the halfedgeMesh class
  * \return a vector of the faces that belong to the frontline
  */
 

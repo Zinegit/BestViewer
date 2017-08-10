@@ -29,7 +29,6 @@
 /**
  * \fn int main (int argc, char **argv)
  * \brief Entry of the program.
- *
  * \return application.exec() - Boucle draw.
  */
 int main(int argc, char **argv) {
