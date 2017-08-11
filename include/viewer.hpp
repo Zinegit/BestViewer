@@ -37,6 +37,7 @@
 #include "include/variableToShare.hpp"
 #include "include/frontLine.hpp"
 #include "include/statistics.hpp"
+#include "include/toTxt.hpp"
 #include "ply.h"
 #include "dat.h"
 #include "import_structure.h"
@@ -51,6 +52,7 @@ class Viewer : public QGLViewer
 {
 private:
 	variable_to_share m_var;
+	bool debug_mode = false;
 
 protected:
   virtual void draw();
@@ -66,6 +68,10 @@ public:
 		return &m_var;
 	}
 
+	Viewer(bool debug)
+	{
+		debug_mode = debug;
+	}
 };
 
 

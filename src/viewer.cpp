@@ -155,55 +155,59 @@ void Viewer::init()
  */
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
-	this->update();
-	// Get event modifiers key
-	const Qt::KeyboardModifiers modifiers = e->modifiers();
+	if (Viewer::debug_mode == true)
+	{
+		this->update();
+		// Get event modifiers key
+		const Qt::KeyboardModifiers modifiers = e->modifiers();
 
-	// Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
-	if (e->key() == Qt::Key_L)
-	{
-		if (m_var.recording)
+		// Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
+		if (e->key() == Qt::Key_L)
 		{
-			m_var.triangles_to_show_t2 = m_var.triangles_to_show;
-			m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
-			m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
-			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
-			m_var.recording = false;
-		} else {
-			m_var.triangles_to_show_t1 = m_var.triangles_to_show;
-			m_var.recording = true;
-		}
-		update();
-	}
-	else if (e->key() == Qt::Key_M)
-	{
-		std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
-		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
-		float mean_distances = mean(dist_true_predicted);
-		std::cout << "mean_distances = " << mean_distances << std::endl;
-		update();
-	}
-	else if (e->key() == Qt::Key_N)
-	{
-		if (!m_var.frontline.empty())
-		{
-			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
-			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+			if (m_var.recording)
+			{
+				m_var.triangles_to_show_t2 = m_var.triangles_to_show;
+				m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
+				m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
+				m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+				m_var.recording = false;
+			} else {
+				m_var.triangles_to_show_t1 = m_var.triangles_to_show;
+				m_var.recording = true;
+			}
 			update();
 		}
-	}
-	else if (e->key() == Qt::Key_K)
-	{
-		if (m_var.mix)
+		else if (e->key() == Qt::Key_M)
 		{
-			m_var.mix = false;
-		} else {
-			m_var.mix = true;
+			std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
+			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+			float mean_distances = mean(dist_true_predicted);
+			std::cout << "mean_distances = " << mean_distances << std::endl;
+			exportToTxt(dist_true_predicted, "data.txt");
+			update();
 		}
-		update();
+		else if (e->key() == Qt::Key_N)
+		{
+			if (!m_var.frontline.empty())
+			{
+				TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
+				m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+				update();
+			}
+		}
+		else if (e->key() == Qt::Key_K)
+		{
+			if (m_var.mix)
+			{
+				m_var.mix = false;
+			} else {
+				m_var.mix = true;
+			}
+			update();
+		}
+		else
+			QGLViewer::keyPressEvent(e);
 	}
-	else
-		QGLViewer::keyPressEvent(e);
 }
 
 /**

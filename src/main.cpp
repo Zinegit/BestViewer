@@ -19,6 +19,8 @@
 * \date 01/08/2017
 */
 
+#include <typeinfo>
+
 #include <GL/glew.h>
 #include <qapplication.h>
 #include <QGLViewer/manipulatedCameraFrame.h>
@@ -32,31 +34,42 @@
  * \return application.exec() - Boucle draw.
  */
 int main(int argc, char **argv) {
-  // Read command lines arguments
-  QApplication application(argc, argv);
 
-  // Instantiate the viewer
-  Viewer viewer;
-  Observer observer(viewer);
+	// Mode debug
+	bool debug = false;
+	if (argv[1][2] != 0)
+	{
+		std::cout << "Debug mode activated" << std::endl;
+		debug = true;
+	}
 
-  //Observer gets the viewer's camera as an outsideCamera
-  observer.setOutsideCamera(viewer.camera());
-  PlanesCamera* cam = new PlanesCamera(qreal(0.0001), qreal(1000.));
-  observer.setCamera(cam) ;
+	// Read command lines arguments
+	QApplication application(argc, argv);
 
-  // Make sure every viewer movement updates the observer
-   QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer,
-					SLOT(update()));
-   QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer,
-					SLOT(update()));
+	// Instantiate the viewer
+	Viewer viewer(debug);
+	Observer observer(viewer);
 
-  viewer.setWindowTitle("viewer");
-  observer.setWindowTitle("observer");
+	viewer.setWindowTitle("viewer");
+	// Make the viewer window visible on screen.
+	viewer.show();
 
-  // Make the viewer window visible on screen.
-  viewer.show();
-  observer.show();
+	if (debug)
+	{
+		//Observer gets the viewer's camera as an outsideCamera
+		observer.setOutsideCamera(viewer.camera());
+		PlanesCamera* cam = new PlanesCamera(qreal(0.0001), qreal(1000.));
+		observer.setCamera(cam) ;
 
-  // Run main loop.
-  return application.exec();
+		// Make sure every viewer movement updates the observer
+		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
+		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
+
+		observer.setWindowTitle("observer");
+
+		observer.show();
+	}
+
+	// Run main loop.
+	return application.exec();
 }
