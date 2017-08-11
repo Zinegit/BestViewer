@@ -177,8 +177,10 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	}
 	else if (e->key() == Qt::Key_M)
 	{
-		updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
+		std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
 		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+		float mean_distances = mean(dist_true_predicted);
+		std::cout << "mean_distances = " << mean_distances << std::endl;
 		update();
 	}
 	else if (e->key() == Qt::Key_N)

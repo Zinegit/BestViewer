@@ -36,6 +36,7 @@
 #include "include/addColor.hpp"
 #include "include/variableToShare.hpp"
 #include "include/frontLine.hpp"
+#include "include/statistics.hpp"
 #include "ply.h"
 #include "dat.h"
 #include "import_structure.h"
