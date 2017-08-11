@@ -1,10 +1,3 @@
-/**
- * \file shader.cpp
- * \brief Load the shaders
- * \author Tom Mourot-Faraut
- * \version 1.0
- */
-
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -20,29 +13,14 @@ using namespace std;
 
 #include "include/shader.hpp"
 
-/**
- * \fn ShaderProgram()
- * \brief Constructor
- */
 ShaderProgram::ShaderProgram()
 {
 	m_program_id = glCreateProgram();
 }
 
-/**
- * \fn ~ShaderProgram()
- * \brief Destructor
- */
 ShaderProgram::~ShaderProgram()
 {}
 
-/**
- * \fn void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
- * \brief This function loads the fragment and vertex shaders given to it
- * \param shaderType : The type of the shader
- * \param shader_file_path : The path to the shader
- * \return void
- */
 void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
 {
 	GLuint shader_id = glCreateShader(shaderType);

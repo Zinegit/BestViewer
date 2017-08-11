@@ -1,19 +1,7 @@
-/**
- * \file viewer.cpp
- * \brief The viewer whose job is to observe the object
- * \author Tom Mourot-Faraut
- * \version 1.0
- */
-
 #include "include/viewer.hpp"
 
 using namespace std;
 
-/**
- * \fn void init()
- * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
- * \return void
- */
 void Viewer::init()
 {
 	camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
@@ -72,7 +60,7 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/anneau_bin.ply");
+	ply.readPly("../PLY_FILES/Tracteur.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
@@ -146,16 +134,9 @@ void Viewer::init()
 	m_var.true_vertex.resize(3, 0);
 }
 
-/**
- * \fn void keyPressEvent(QKeyEvent *e)
- * \brief This function records keystrokes. If the pressed key is L and is pressed 2 times, the colors of appearing/disappearing/frontline triangles are updated. If K is pressed, m_mix is set to true or false and make the object appear in filled form or in line form.
- * \brief If the pressed key is M all triangles are predicted. If the pressed key is N then the prediction is made triangle by triangle
- * \param e : the pressed key
- * \return void
- */
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
-	if (Viewer::debug_mode == true)
+	if (Viewer::debug_mode)
 	{
 		this->update();
 		// Get event modifiers key
@@ -182,8 +163,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 			std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
 			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 			float mean_distances = mean(dist_true_predicted);
-			std::cout << "mean_distances = " << mean_distances << std::endl;
-			exportToTxt(dist_true_predicted, "data.txt");
+			exportToTxt(dist_true_predicted, "../analyses/data.txt");
 			update();
 		}
 		else if (e->key() == Qt::Key_N)
@@ -210,11 +190,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 	}
 }
 
-/**
- * \fn void drawOutlines()
- * \brief This function draws the outlines of the triangles composing the object
- * \return void
- */
 void Viewer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
@@ -253,11 +228,6 @@ void Viewer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
-/**
- * \fn void drawSurfaces()
- * \brief This function draws the surfaces of the triangles composing the object
- * \return void
- */
 void Viewer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
@@ -290,11 +260,6 @@ void Viewer::drawSurfaces()
 	glDisableVertexAttribArray(0);
 }
 
-/**
- * \fn void draw()
- * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is manipulated.
- * \return void
- */
 void Viewer::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -405,11 +370,6 @@ void Viewer::draw()
 	glEnd();
 }
 
-/**
- * \fn QString Viewer::helpString() const {
- * \brief This function opens a help windows
- * \return a help window
- */
 QString Viewer::helpString() const {
 	QString text("<h2>B e s t V i e w e r</h2>");
 	text += "<b> First of all Press C </b> to deactivate auto frustum culling.<br> <br>";

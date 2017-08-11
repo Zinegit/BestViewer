@@ -1,3 +1,13 @@
+/**
+ * \file observer.hpp
+ * \brief The observer class. Its job is to observe the viewer
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
+#ifndef OBSERVER_HPP
+#define OBSERVER_HPP
+
 // Include basic libraries
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,8 +101,33 @@ public:
 	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
 
 protected:
-  virtual void draw();
-  virtual void init();
-  virtual void drawSurfaces();
-  virtual void drawOutlines();
+	/**
+	 * \fn void draw()
+	 * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is calculated in viewer
+	 * \return void
+	 */
+	virtual void draw();
+
+	/**
+	 * \fn void init()
+	 * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
+	 * \return void
+	 */
+	virtual void init();
+
+	/**
+	 * \fn void drawSurfaces()
+	 * \brief This function draws the surfaces of the triangles composing the object
+	 * \return void
+	 */
+	virtual void drawSurfaces();
+
+	/**
+	 * \fn void drawOutlines()
+	 * \brief This function draws the outlines of the triangles composing the object
+	 * \return void
+	 */
+	virtual void drawOutlines();
 };
+
+#endif // OBSERVER_HPP

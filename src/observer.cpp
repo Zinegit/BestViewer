@@ -1,19 +1,7 @@
-/**
- * \file observer.cpp
- * \brief The observer class. Its job is to observe the viewer
- * \author Tom Mourot-Faraut
- * \version 1.0
- */
-
 #include "include/observer.hpp"
 
 using namespace std;
 
-/**
- * \fn void init()
- * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
- * \return void
- */
 void Observer::init()
 {
 	camera() -> setType(qglviewer::Camera::ORTHOGRAPHIC);
@@ -59,7 +47,6 @@ void Observer::init()
 
 	// Place observer
 	camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
-	cout << m_var -> vertex_positions.size() << endl;
 	float max = 4 * *std::max_element(m_var -> vertex_positions.begin(), m_var -> vertex_positions.end());
 	setSceneRadius(max);
 	const qglviewer::Vec center = barycenter(m_var -> vertex_positions);
@@ -82,11 +69,6 @@ void Observer::init()
 
 }
 
-/**
- * \fn void drawOutlines()
- * \brief This function draws the outlines of the triangles composing the object
- * \return void
- */
 void Observer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
@@ -121,11 +103,6 @@ void Observer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
-/**
- * \fn void drawSurfaces()
- * \brief This function draws the surfaces of the triangles composing the object
- * \return void
- */
 void Observer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
@@ -158,11 +135,6 @@ void Observer::drawSurfaces()
 	glDisableVertexAttribArray(0);
 }
 
-/**
- * \fn void draw()
- * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is calculated in viewer
- * \return void
- */
 void Observer::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

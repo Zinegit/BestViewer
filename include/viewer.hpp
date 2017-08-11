@@ -1,3 +1,10 @@
+/**
+ * \file viewer.hpp
+ * \brief The viewer whose job is to observe the object
+ * \author Tom Mourot-Faraut
+ * \version 1.0
+ */
+
 #ifndef VIEWER_HPP
 #define VIEWER_HPP
 
@@ -55,12 +62,51 @@ private:
 	bool debug_mode = false;
 
 protected:
-  virtual void draw();
-  virtual void init();
-  virtual void drawSurfaces();
-  virtual void drawOutlines();
-  virtual void keyPressEvent(QKeyEvent *e);
-  virtual QString helpString() const;
+
+	/**
+	 * \fn void draw()
+	 * \brief This function is called repeatedly until the program is stopped. It draws the object according to how it is manipulated.
+	 * \return void
+	 */
+	virtual void draw();
+
+	/**
+	 * \fn void init()
+	 * \brief This function initializes the viewer, loads the object, shaders and generates buffers to send to the GPU
+	 * \return void
+	 */
+	virtual void init();
+
+	/**
+	 * \fn void drawSurfaces()
+	 * \brief This function draws the surfaces of the triangles composing the object
+	 * \return void
+	 */
+	virtual void drawSurfaces();
+
+	/**
+	 * \fn void drawOutlines()
+	 * \brief This function draws the outlines of the triangles composing the object
+	 * \return void
+	 */
+	virtual void drawOutlines();
+
+	/**
+	 * \fn void keyPressEvent(QKeyEvent *e)
+	 * \brief This function records keystrokes. If the pressed key is L and is pressed 2 times, the colors of appearing/disappearing/frontline triangles are updated. If K is pressed, m_mix is set to true or false and make the object appear in filled form or in line form.
+	 * \brief If the pressed key is M all triangles are predicted. If the pressed key is N then the prediction is made triangle by triangle
+	 * \param e : the pressed key
+	 * \return void
+	 */
+	virtual void keyPressEvent(QKeyEvent *e);
+
+
+	/**
+	 * \fn QString Viewer::helpString() const {
+	 * \brief This function opens a help windows
+	 * \return a help window
+	 */
+	virtual QString helpString() const;
 
 public:
 	variable_to_share* getVariableToShare()
@@ -74,5 +120,4 @@ public:
 	}
 };
 
-
-#endif // VIEWER_H
+#endif // VIEWER_HPP

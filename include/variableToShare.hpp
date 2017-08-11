@@ -1,14 +1,14 @@
-#ifndef VARIABLETOSHARE_H
-#define VARIABLETOSHARE_H
-
-#include "halfedgemesh.h"
-
 /**
  * \file variableToShare.hpp
  * \brief The structure containing every variable shared between viewer and observer
  * \author Tom Mourot-Faraut
  * \version 1.0
  */
+
+#ifndef VARIABLETOSHARE_H
+#define VARIABLETOSHARE_H
+
+#include "halfedgemesh.h"
 
 /**
  * \struct variable_to_share
@@ -50,4 +50,4 @@ typedef struct variable_to_share
 	std::vector<float> predicted_vertex;
 } variable_to_share;
 
-#endif // VARIABLETOSHARE_H
+#endif // VARIABLETOSHARE_HPP

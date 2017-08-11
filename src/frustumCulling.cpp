@@ -1,36 +1,12 @@
-/**
- * \file frustumCulling.cpp
- * \brief Contains all the functions used for frustum culling process
- * \author Tom Mourot-Faraut
- * \version 1.0
- */
-
 #include "include/frustumCulling.hpp"
-
 #include <QGLViewer/qglviewer.h>
 
-/**
- * \fn float distanceToPlane(int i, qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
- * \brief This function calculates the distance of a vertex from one of the frustum's planes
- * \param i : 0 -> 5 describes which plane of the frustum is used
- * \param pos : A vertex
- * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
- * \return The distance of a vertex from one of the frustum's planes
- */
 float distanceToPlane(int i, qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
 {
 	float distance = (std::abs(plane_coefficients[i][0] * pos[0] + plane_coefficients[i][1] * pos[1] + plane_coefficients[i][2] * pos[2] - plane_coefficients[i][3])) / std::sqrt(std::pow(plane_coefficients[i][0], 2.0) + std::pow(plane_coefficients[i][1], 2.0) + std::pow(plane_coefficients[i][2], 2.0) );
 	return distance;
 }
 
-/**
- * \fn bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
- * \brief This function checks for a vertex whether it is in the frustum or not
- * \param pos : A vertex
- * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
- *
- * \return A boolean being true if the point is in the frustum and false if it is not
- */
 bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
 {
 	for (int k = 0; k < 6; k += 2)
@@ -41,15 +17,6 @@ bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4])
 	return true;
 }
 
-
-/**
- * \fn std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
- * \brief This function checks for every triangle whether it is in the frustum or not. If at least one of the vertices of a triangle is in the frustum then the triangle is considered in the frustum. For each triangle this function calls isInsideFrustum in order to check if one of its vertices is inside the frustum
- * \param vertex_positions : Geometrical description of the object
- * \param index_triangles : Topological description of the object
- * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
- * \return Vector of booleans describing which triangle is inside the frustum and which is not
- */
 std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
 {
 	// Create a boolean table returning true for each point inside the frustum and false for each point that is not
