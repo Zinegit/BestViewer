@@ -19,8 +19,8 @@ void Viewer::init()
 	camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// We made these functions better
-	// Enable depth test
+	//We made these functions better
+	//Enable depth test
 	//glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS);
 	//glCullFace( GL_BACK );
@@ -70,35 +70,35 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-//	// ////////////READING .PLY FILES//////////// //
-//	Ply ply;
-//	ply.readPly("../PLY_FILES/anneau_bin.ply");
-//	// Retrieve geometry
-//	m_var.vertex_positions = ply.getPos();
-//	// Retrieve topology
-//	m_var.index = ply.getIndex();
-//	// ////////////READING .PLY FILES//////////// //
-
-	// ////////////READING .DAT FILES//////////// //
-	std::vector<float> geometry_coarse_lvl;
-	std::vector<float> geometry_wanted_lvl;
-	std::vector<float> geometry_wanted_lvl_only;
-	std::vector<int> connectivity_coarse_lvl;
-	std::vector<int> connectivity_wanted_lvl;
-	Dat dat;
-	dat.readDat("../DAT_FILES/Dodecahedron_Res5.dat");
-	readLvlXDat(dat,
-					 4,
-					 geometry_coarse_lvl,
-					 geometry_wanted_lvl,
-					 geometry_wanted_lvl_only,
-					 connectivity_coarse_lvl,
-					 connectivity_wanted_lvl);
+	// ////////////READING .PLY FILES//////////// //
+	Ply ply;
+	ply.readPly("../PLY_FILES/anneau_bin.ply");
 	// Retrieve geometry
-	m_var.vertex_positions = geometry_wanted_lvl;
+	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
-	m_var.index = connectivity_wanted_lvl;
-	// ////////////READING .DAT FILES//////////// //
+	m_var.index = ply.getIndex();
+	// ////////////READING .PLY FILES//////////// //
+
+//	// ////////////READING .DAT FILES//////////// //
+//	std::vector<float> geometry_coarse_lvl;
+//	std::vector<float> geometry_wanted_lvl;
+//	std::vector<float> geometry_wanted_lvl_only;
+//	std::vector<int> connectivity_coarse_lvl;
+//	std::vector<int> connectivity_wanted_lvl;
+//	Dat dat;
+//	dat.readDat("../DAT_FILES/rabbit2.dat");
+//	readLvlXDat(dat,
+//					 1,
+//					 geometry_coarse_lvl,
+//					 geometry_wanted_lvl,
+//					 geometry_wanted_lvl_only,
+//					 connectivity_coarse_lvl,
+//					 connectivity_wanted_lvl);
+//	// Retrieve geometry
+//	m_var.vertex_positions = geometry_wanted_lvl;
+//	// Retrieve topology
+//	m_var.index = connectivity_wanted_lvl;
+//	// ////////////READING .DAT FILES//////////// //
 
 	m_var.colors.resize(m_var.index.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
@@ -149,6 +149,7 @@ void Viewer::init()
 /**
  * \fn void keyPressEvent(QKeyEvent *e)
  * \brief This function records keystrokes. If the pressed key is L and is pressed 2 times, the colors of appearing/disappearing/frontline triangles are updated. If K is pressed, m_mix is set to true or false and make the object appear in filled form or in line form.
+ * \brief If the pressed key is M all triangles are predicted. If the pressed key is N then the prediction is made triangle by triangle
  * \param e : the pressed key
  * \return void
  */
@@ -364,30 +365,37 @@ void Viewer::draw()
 	drawOutlines();
 	glUseProgram(m_var.render_programID);
 
-	glColor3f(1.0, 0.0, 0.0);
-	glBegin(GL_LINES);
-	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
-	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
-	glEnd();
+	// Display of predictions
+
+//	glColor3f(1.0, 0.0, 0.0);
+//	glBegin(GL_LINES);
+//	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
+//	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
+//	glEnd();
+
+//	glBegin(GL_LINES);
+//	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
+//	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
+//	glEnd();
+
+//	glBegin(GL_LINES);
+//	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
+//	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
+//	glEnd();
+
+//	glBegin(GL_LINES);
+//	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
+//	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
+//	glEnd();
+
+//	glBegin(GL_LINES);
+//	glVertex3f(0, 0, 0);
+//	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]+0.01);
+//	glEnd();
 
 	glBegin(GL_LINES);
-	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
-	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
-	glEnd();
-
-	glBegin(GL_LINES);
-	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
-	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
-	glEnd();
-
-	glBegin(GL_LINES);
-	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
-	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
-	glEnd();
-
-	glBegin(GL_LINES);
-	glVertex3f(0, 0, 0);
-	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]+0.01);
+	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]);
+	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]);
 	glEnd();
 }
 

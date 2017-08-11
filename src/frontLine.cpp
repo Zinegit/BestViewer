@@ -16,10 +16,9 @@
  * \param vertex_positions : Geometrical description of the object
  * \param index_triangles : Topological description of the object
  * \param halfedgeMesh : The instanciation of the halfedgeMesh class
- * \return void
+ * \return The distances between each vertex and its prediction
  */
 
-// Think about setting all colors to white
 std::vector<float> updateFrontLine(std::list<FaceIter>& frontline,
 								   std::vector<int>& triangles_status,
 								   std::vector<int>& frontline_colors,
@@ -82,7 +81,7 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline,
  * \param halfedgeMesh : The instanciation of the halfedgeMesh class
  * \param true_vertex : The true geometrical description of the triangles to predict
  * \param predicted_vertex : The predicted geometrical description of the triangles to predict
- * \return float
+ * \return The distance between the vertex and its prediction
  */
 
 float TempUpdateFrontLine(std::list<FaceIter>& frontline,
@@ -116,7 +115,7 @@ float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 				frontline_colors[dist1] = 1;
 				triangles_status[dist1] = 0;
 				dist_true_predicted = std::sqrt(std::pow(true_vertex[0] - predicted_vertex[9], 2) + std::pow(true_vertex[1] - predicted_vertex[10], 2) + std::pow(true_vertex[2] - predicted_vertex[11], 2));
-				//std::cout << dist_true_predicted << std::endl;
+				std::cout << dist_true_predicted << std::endl;
 			}
 			frontline_colors[dist2] = 0;
 		}

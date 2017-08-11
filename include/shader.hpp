@@ -1,6 +1,11 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
+/**
+ * \class ShaderProgram
+ * \brief This class is used to load the vertex and fragment shaders
+ */
+
 class ShaderProgram {
 	GLuint m_program_id;
 
