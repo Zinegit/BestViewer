@@ -129,7 +129,7 @@ std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& f
 	VertexIter vec1 = frontline_halfedge->vertex();
 	VertexIter vec2 = frontline_halfedge->next()->vertex();
 	VertexIter vec3 = frontline_halfedge->next()->next()->vertex();
-	// For debugging
+	// For debugging use
 	pos[0] = vec1->x;
 	pos[1] = vec1->y;
 	pos[2] = vec1->z;
@@ -139,7 +139,7 @@ std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& f
 	pos[6] = vec2->x;
 	pos[7] = vec2->y;
 	pos[8] = vec2->z;
-	// For debugging
+	// For debugging use
 	pos[9] = vec1->x + vec2->x - vec3->x;
 	pos[10] = vec1->y + vec2->y - vec3->y;
 	pos[11] = vec1->z + vec2->z - vec3->z;

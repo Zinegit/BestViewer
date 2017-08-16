@@ -75,6 +75,7 @@ file(
 	GLOB
 	INCLUDE_FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*"
+	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
 )
 QT4_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
@@ -91,7 +92,15 @@ file(
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -O3")
 
 add_executable(bestView
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/main.cpp"
+	${SRC_FILES}
+	${INCLUDE_FILES_MOC}
+	${INCLUDE_FILES}
+	${SHADER_FILES}
+)
+
+add_executable(bestViewServer
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/mainServer.cpp"
 	${SRC_FILES}
 	${INCLUDE_FILES_MOC}
 	${INCLUDE_FILES}
@@ -99,9 +108,12 @@ add_executable(bestView
 )
 
 
-
 target_link_libraries(bestView
 	${ALL_LIBS}
+)
+
+target_link_libraries(bestViewServer
+${ALL_LIBS}
 )
 
 

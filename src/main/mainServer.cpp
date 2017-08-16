@@ -27,6 +27,7 @@
 
 #include "include/viewer.hpp"
 #include "include/observer.hpp"
+//#include "test.h"
 
 /**
  * \fn int main (int argc, char **argv)
@@ -50,6 +51,9 @@ int main(int argc, char **argv) {
 	// Instantiate the viewer
 	Viewer viewer(debug);
 	Observer observer(viewer);
+
+//	Test window;
+//	window.show();
 
 	viewer.setWindowTitle("viewer");
 	// Make the viewer window visible on screen.

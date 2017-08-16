@@ -58,35 +58,35 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// ////////////READING .PLY FILES//////////// //
-	Ply ply;
-	ply.readPly("../PLY_FILES/Tracteur.ply");
-	// Retrieve geometry
-	m_var.vertex_positions = ply.getPos();
-	// Retrieve topology
-	m_var.index = ply.getIndex();
+//	// ////////////READING .PLY FILES//////////// //
+//	Ply ply;
+//	ply.readPly("../PLY_FILES/Tracteur.ply");
+//	// Retrieve geometry
+//	m_var.vertex_positions = ply.getPos();
+//	// Retrieve topology
+//	m_var.index = ply.getIndex();
 	// ////////////READING .PLY FILES//////////// //
 
-//	// ////////////READING .DAT FILES//////////// //
-//	std::vector<float> geometry_coarse_lvl;
-//	std::vector<float> geometry_wanted_lvl;
-//	std::vector<float> geometry_wanted_lvl_only;
-//	std::vector<int> connectivity_coarse_lvl;
-//	std::vector<int> connectivity_wanted_lvl;
-//	Dat dat;
-//	dat.readDat("../DAT_FILES/rabbit2.dat");
-//	readLvlXDat(dat,
-//					 1,
-//					 geometry_coarse_lvl,
-//					 geometry_wanted_lvl,
-//					 geometry_wanted_lvl_only,
-//					 connectivity_coarse_lvl,
-//					 connectivity_wanted_lvl);
-//	// Retrieve geometry
-//	m_var.vertex_positions = geometry_wanted_lvl;
-//	// Retrieve topology
-//	m_var.index = connectivity_wanted_lvl;
-//	// ////////////READING .DAT FILES//////////// //
+	// ////////////READING .DAT FILES//////////// //
+	std::vector<float> geometry_coarse_lvl;
+	std::vector<float> geometry_wanted_lvl;
+	std::vector<float> geometry_wanted_lvl_only;
+	std::vector<int> connectivity_coarse_lvl;
+	std::vector<int> connectivity_wanted_lvl;
+	Dat dat;
+	dat.readDat("../DAT_FILES/rabbit2.dat");
+	readLvlXDat(dat,
+					 1,
+					 geometry_coarse_lvl,
+					 geometry_wanted_lvl,
+					 geometry_wanted_lvl_only,
+					 connectivity_coarse_lvl,
+					 connectivity_wanted_lvl);
+	// Retrieve geometry
+	m_var.vertex_positions = geometry_wanted_lvl;
+	// Retrieve topology
+	m_var.index = connectivity_wanted_lvl;
+	// ////////////READING .DAT FILES//////////// //
 
 	m_var.colors.resize(m_var.index.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
@@ -338,36 +338,36 @@ void Viewer::draw()
 
 	// Display of predictions
 
-//	glColor3f(1.0, 0.0, 0.0);
-//	glBegin(GL_LINES);
-//	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
-//	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
-//	glEnd();
-
-//	glBegin(GL_LINES);
-//	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
-//	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
-//	glEnd();
-
-//	glBegin(GL_LINES);
-//	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
-//	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
-//	glEnd();
-
-//	glBegin(GL_LINES);
-//	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
-//	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
-//	glEnd();
-
-//	glBegin(GL_LINES);
-//	glVertex3f(0, 0, 0);
-//	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]+0.01);
-//	glEnd();
+	glColor3f(1.0, 0.0, 0.0);
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
+	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
+	glEnd();
 
 	glBegin(GL_LINES);
-	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]);
-	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]);
+	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
+	glVertex3f(m_var.predicted_vertex[3], m_var.predicted_vertex[4], m_var.predicted_vertex[5]+0.01);
 	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[0], m_var.predicted_vertex[1], m_var.predicted_vertex[2]+0.01);
+	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(m_var.predicted_vertex[6], m_var.predicted_vertex[7], m_var.predicted_vertex[8]+0.01);
+	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]+0.01);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(0, 0, 0);
+	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]+0.01);
+	glEnd();
+
+//	glBegin(GL_LINES);
+//	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]);
+//	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]);
+//	glEnd();
 }
 
 QString Viewer::helpString() const {
