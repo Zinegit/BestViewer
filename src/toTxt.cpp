@@ -11,6 +11,5 @@ void exportToTxt(std::vector<float> dist_true_predicted,  std::string target_fil
 			fileStream << dist_true_predicted[i] << "\n ";
 		}
 	}
-	fileStream << "moyenne des erreurs de prédiction: " << mean(dist_true_predicted);
 	fileStream.close ();
 }

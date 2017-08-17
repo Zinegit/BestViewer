@@ -55,13 +55,9 @@ std::list<FaceIter> getFrontLine(std::vector<int>& triangle_status, std::vector<
 /**
  * \fn std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& frontline_halfedge, HalfedgeMesh& halfedgeMesh)
  * \brief This function returns a vector of faces that belong to the frontline using the halfedge structure
- * \param triangles_status : State of every triangle (appeared/disappeared/same state)
- * \param vertex_positions : Geometrical description of the object
- * \param index_triangles : Topological description of the object
- * \param frontline_colors : The triangles that belong to the frontline
- * \param halfedgeMesh : The instanciation of the halfedgeMesh class
+ * \param frontline_halfedge : halfedge of the frontline
  * \return a vector of the faces that belong to the frontline
  */
-std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& frontline_halfedge, HalfedgeMesh& halfedgeMesh);
+std::vector<float> predictTriangle(HalfedgeIter& frontline_halfedge);
 
 #endif // FRONTLINE_HPP

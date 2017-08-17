@@ -17,6 +17,7 @@ void Viewer::init()
 	setKeyDescription(Qt::Key_L, "Toggles backface culling");
 	setKeyDescription(Qt::Key_M, "Toggles frontline updating");
 	setKeyDescription(Qt::Key_N, "Toggles partial frontline updating");
+	setKeyDescription(Qt::Key_T, "Produces the coefficients file");
 	setKeyDescription(Qt::Key_K, "Toggles surface filling");
 
 	// Enlighten everything (not just the well-oriented faces of the triangles)
@@ -174,6 +175,10 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 				m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
 				update();
 			}
+		}
+		else if (e->key() == Qt::Key_T)
+		{
+			findCoefficients(m_var.vertex_positions, m_var.index, m_var.triangles_status, m_var.halfedgeMesh);
 		}
 		else if (e->key() == Qt::Key_K)
 		{

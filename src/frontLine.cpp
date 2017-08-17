@@ -28,7 +28,7 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline,
 					true_vertices.push_back(vertex_positions[3 * index_triangles[3 * dist1]]);
 					true_vertices.push_back(vertex_positions[3 * index_triangles[3 * dist1] + 1]);
 					true_vertices.push_back(vertex_positions[3 * index_triangles[3 * dist1] + 2]);
-					std::vector<float> pos = predictTriangle(frontline.front(), h_cur, halfedgeMesh);
+					std::vector<float> pos = predictTriangle(h_cur);
 					predicted_vertices.push_back(pos[9]);
 					predicted_vertices.push_back(pos[10]);
 					predicted_vertices.push_back(pos[11]);
@@ -76,7 +76,7 @@ float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 				true_vertex[0] = vertex_positions[3 * index_triangles[3 * dist1]];
 				true_vertex[1] = vertex_positions[3 * index_triangles[3 * dist1] + 1];
 				true_vertex[2] = vertex_positions[3 * index_triangles[3 * dist1] + 2];
-				predicted_vertex = predictTriangle(frontline.front(), h_cur, halfedgeMesh);
+				predicted_vertex = predictTriangle(h_cur);
 				frontline.push_back(h_cur->twin()->face());
 				frontline_colors[dist1] = 1;
 				triangles_status[dist1] = 0;
@@ -123,7 +123,7 @@ std::list<FaceIter> getFrontLine(std::vector<int>& triangles_status, std::vector
 	return frontline;
 }
 
-std::vector<float> predictTriangle(FaceIter& frontline_triangle, HalfedgeIter& frontline_halfedge, HalfedgeMesh& halfedgeMesh)
+std::vector<float> predictTriangle(HalfedgeIter& frontline_halfedge)
 {
 	std::vector<float> pos(12, 0);
 	VertexIter vec1 = frontline_halfedge->vertex();
