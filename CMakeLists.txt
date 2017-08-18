@@ -34,18 +34,14 @@ if( CMAKE_BINARY_DIR MATCHES " " )
 	message( "Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause." )
 endif()
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 
 include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
         ${GLM_INCLUDE_DIRS}
-        ${Qt5Core_INCLUDE_DIRS}
-        ${Qt5Gui_INCLUDE_DIRS}
-        ${Qt5Widgets_INCLUDE_DIRS}
-        ${Qt5Xml_INCLUDE_DIRS}
-        ${Qt5OpenGL_INCLUDE_DIRS}
         ${EIGEN3_INCLUDE_DIR}
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/"
         "${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
@@ -56,11 +52,6 @@ include_directories(
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
         ${GLEW_LIBRARIES}
-        ${Qt5Core_LIBRARIES}
-        ${Qt5Gui_LIBRARIES}
-        ${Qt5Widgets_LIBRARIES}
-        ${Qt5Xml_LIBRARIES}
-        ${Qt5OpenGL_LIBRARIES}
         QGLViewer
 	${OpenCV_LIBRARIES}
 )
@@ -71,11 +62,6 @@ add_definitions(
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
         -D_CRT_SECURE_NO_WARNINGS
-        ${Qt5Core_DEFINITIONS}
-        ${Qt5Gui_DEFINITIONS}
-        ${Qt5Widgets_DEFINITIONS}
-        ${Qt5Xml_DEFINITIONS}
-        ${Qt5OpenGL_DEFINITIONS}
 )
 
 #BestViewer
@@ -102,30 +88,38 @@ file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/shaders/*.frag"
 )
 
+file(
+        GLOB
+        UI_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/forms/*.ui"
+)
+
+ qt5_wrap_ui(UI_FILES_MOC ${UI_FILES})
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -O3")
 
 add_executable(bestView
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/main.cpp"
-	${SRC_FILES}
-	${INCLUDE_FILES_MOC}
+        ${SRC_FILES}
 	${INCLUDE_FILES}
 	${SHADER_FILES}
 )
 
 add_executable(bestViewServer
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/mainServer.cpp"
-	${SRC_FILES}
-	${INCLUDE_FILES_MOC}
+        ${SRC_FILES}
 	${INCLUDE_FILES}
 	${SHADER_FILES}
+        ${UI_FILES_MOC}
 )
-
-qt5_use_modules(bestView Gui Widgets Xml OpenGL)
-
 
 target_link_libraries(bestView
 	${ALL_LIBS}
+        Qt5::Gui
+        Qt5::Widgets
+        Qt5::Xml
+        Qt5::OpenGL
 )
 
 target_link_libraries(bestViewServer

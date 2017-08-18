@@ -19,9 +19,10 @@
 * \date 01/08/2017
 */
 
+#include <GL/glew.h>
+
 #include <typeinfo>
 
-#include <GL/glew.h>
 #include <qapplication.h>
 #include <QGLViewer/manipulatedCameraFrame.h>
 

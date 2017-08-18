@@ -8,13 +8,14 @@
 #ifndef VIEWER_HPP
 #define VIEWER_HPP
 
+// Include GLEW
+#include <GL/glew.h>
+
 // Include basic libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <chrono>
 
-// Include GLEW
-#include <GL/glew.h>
 
 #include <QGLViewer/qglviewer.h>
 #include <glm/glm.hpp>

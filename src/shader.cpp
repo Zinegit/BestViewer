@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -8,8 +10,6 @@ using namespace std;
 
 #include <stdlib.h>
 #include <string.h>
-
-#include <GL/glew.h>
 
 #include "include/shader.hpp"
 

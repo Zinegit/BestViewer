@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <GL/glew.h>
 #include <QMainWindow>
 
 namespace Ui {

@@ -8,8 +8,9 @@
 #ifndef FRONTLINE_HPP
 #define FRONTLINE_HPP
 
-#include <vector>
 #include <GL/glew.h>
+
+#include <vector>
 #include "external/I3S-Meshing/include/halfedgemesh.h"
 
 /**

@@ -1,11 +1,16 @@
 PROJECT(QGLViewer)
 FIND_PACKAGE(OpenGL REQUIRED)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
+
+find_package(Qt5 COMPONENTS Core Gui Widgets Xml OpenGL REQUIRED)
 
 # in order to be able to include generated files (ui and moc)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
 
 set(HEADER_FILES
 	qglviewer.h
@@ -50,6 +55,8 @@ set(UI_FILES
 	VRenderInterface.ui
 	)
 
+ qt5_wrap_ui(UI_FILES_MOC ${UI_FILES})
+
 # these header files do not need MOCcing
 list(APPEND HEADER_FILES
 	config.h
@@ -71,11 +78,7 @@ list(APPEND HEADER_FILES
 	VRender/Vector2.h
 	VRender/Vector3.h
 	VRender/VRender.h
-	)
-
-# set(MOC_FILES_GROUP "Generated")
-# set(MOC_UI_FILES_GROUP "Generated")
-# set(FORM_FILES_GROUP "Generated")
+        )
 
 include_directories("..")
 
@@ -85,6 +88,13 @@ else()
 	ADD_DEFINITIONS(-fPIC)
 endif()
 
-add_library(QGLViewer SHARED ${HEADER_FILES} ${SOURCE_FILES})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
-target_link_libraries(QGLViewer ${OPENGL_LIBRARY})
+add_library(QGLViewer SHARED ${HEADER_FILES} ${SOURCE_FILES} ${UI_FILES_MOC})
+
+target_link_libraries(QGLViewer
+    ${OPENGL_LIBRARY}
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::Xml
+    Qt5::OpenGL)
