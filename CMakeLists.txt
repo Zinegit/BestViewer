@@ -107,7 +107,6 @@ add_executable(bestViewServer
 	${SHADER_FILES}
 )
 
-
 target_link_libraries(bestView
 	${ALL_LIBS}
 )

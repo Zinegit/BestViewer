@@ -46,6 +46,7 @@
 #include "include/statistics.hpp"
 #include "include/toTxt.hpp"
 #include "include/coefficients.hpp"
+#include "include/texture.hpp"
 #include "ply.h"
 #include "dat.h"
 #include "import_structure.h"

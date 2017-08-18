@@ -27,7 +27,7 @@
 
 #include "include/viewer.hpp"
 #include "include/observer.hpp"
-//#include "include/test.h"
+#include "include/test.h"
 
 /**
  * \fn int main (int argc, char **argv)

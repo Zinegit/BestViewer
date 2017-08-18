@@ -12,8 +12,7 @@ uniform mat4 MVP2;
 
 void main(){
 
-	// Output position of the vertex, in clip space : MVP * position
-//	    gl_Position =  MVP * vec4(vertexPositions, 1);
+	// Output position of the vertex
 	gl_Position = MVP * inverse(MVP2)  * vec4(vertexPositions, 1);
 
 	// The color of each vertex will be interpolated
