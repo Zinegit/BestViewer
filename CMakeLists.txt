@@ -9,9 +9,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
-find_package(Qt4 REQUIRED)
-find_package(QGLViewer REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets Xml OpenGL REQUIRED)
 find_package(Eigen3 REQUIRED)
+
+add_subdirectory(
+        "${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer"
+        "${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer/build"
+)
 
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
 
@@ -36,21 +40,28 @@ set(CMAKE_AUTOUIC ON)
 include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
-	${GLM_INCLUDE_DIRS}
-	${QT_INCLUDE_DIR}
-	${EIGEN3_INCLUDE_DIR}
-	.
+        ${GLM_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS}
+        ${Qt5Gui_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS}
+        ${Qt5Xml_INCLUDE_DIRS}
+        ${Qt5OpenGL_INCLUDE_DIRS}
+        ${EIGEN3_INCLUDE_DIR}
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/"
+        "${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
+        ${CMAKE_CURRENT_BINARY_DIR}
+        .
 )
-
-
-INCLUDE(${QT_USE_FILE})
 
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
-	${GLEW_LIBRARIES}
-	${QT_LIBRARIES}
-	${QGLVIEWER_LIBRARY}
+        ${GLEW_LIBRARIES}
+        ${Qt5Core_LIBRARIES}
+        ${Qt5Gui_LIBRARIES}
+        ${Qt5Widgets_LIBRARIES}
+        ${Qt5Xml_LIBRARIES}
+        ${Qt5OpenGL_LIBRARIES}
+        QGLViewer
 	${OpenCV_LIBRARIES}
 )
 
@@ -59,8 +70,12 @@ add_definitions(
 	-DTW_NO_LIB_PRAGMA
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
-	-D_CRT_SECURE_NO_WARNINGS
-	${QT_DEFINITIONS}
+        -D_CRT_SECURE_NO_WARNINGS
+        ${Qt5Core_DEFINITIONS}
+        ${Qt5Gui_DEFINITIONS}
+        ${Qt5Widgets_DEFINITIONS}
+        ${Qt5Xml_DEFINITIONS}
+        ${Qt5OpenGL_DEFINITIONS}
 )
 
 #BestViewer
@@ -78,7 +93,6 @@ file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
 )
-QT4_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
 
 
 file(
@@ -106,6 +120,8 @@ add_executable(bestViewServer
 	${INCLUDE_FILES}
 	${SHADER_FILES}
 )
+
+qt5_use_modules(bestView Gui Widgets Xml OpenGL)
 
 
 target_link_libraries(bestView

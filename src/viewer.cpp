@@ -285,7 +285,7 @@ void Viewer::draw()
 
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
+    glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o));  //&MVP[0][0]
 
 	this -> camera() -> getFrustumPlanesCoefficients(m_var.plane_coefficients);
 
@@ -308,7 +308,7 @@ void Viewer::draw()
 	mvp_matrix_o2[3][3] = 1;
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
+    glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP2"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 
 	m_var.front_face_triangles = isFrontFace(viewer_dir, m_var.normals);
 	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertex_positions, m_var.index, m_var.plane_coefficients);
