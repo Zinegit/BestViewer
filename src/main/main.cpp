@@ -40,50 +40,42 @@ int main(int argc, char **argv) {
 
 	// Mode debug
 	bool debug = false;
-    if (argc > 1 && argv[1][2] != 0)
+	if (argc > 1 && argv[1][2] != 0)
 	{
 		std::cout << "Debug mode activated" << std::endl;
 		debug = true;
 	}
 
-    // Initialize GLEW
-//    glewExperimental = true; // Needed for core profile
-//    if (glewInit() != GLEW_OK)
-//    {
-//        fprintf(stderr, "Failed to initialize GLEW\n");
-//        return -1;
-//    }
-
 	// Read command lines arguments
 	QApplication application(argc, argv);
 
 	// Instantiate the viewer
-//	Viewer viewer(debug);
-//	Observer observer(viewer);
+	Viewer viewer(debug);
+	Observer observer(viewer);
 
 	// GUI
-    MainWindow window;
-    window.show();
+	MainWindow window;
+	window.show();
 
-//	viewer.setWindowTitle("viewer");
-//	// Make the viewer window visible on screen.
-//	viewer.show();
+	viewer.setWindowTitle("viewer");
+	// Make the viewer window visible on screen.
+	viewer.show();
 
-//	if (debug)
-//	{
-//		//Observer gets the viewer's camera as an outsideCamera
-//		observer.setOutsideCamera(viewer.camera());
-//		PlanesCamera* cam = new PlanesCamera(qreal(0.0001), qreal(1000.));
-//		observer.setCamera(cam) ;
+	if (debug)
+	{
+		//Observer gets the viewer's camera as an outsideCamera
+		observer.setOutsideCamera(viewer.camera());
+		PlanesCamera* cam = new PlanesCamera(qreal(0.0001), qreal(1000.));
+		observer.setCamera(cam) ;
 
-//		// Make sure every viewer movement updates the observer
-//		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
-//		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
+		// Make sure every viewer movement updates the observer
+		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
+		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
 
-//		observer.setWindowTitle("observer");
+		observer.setWindowTitle("observer");
 
-//		observer.show();
-//	}
+		observer.show();
+	}
 
 	// Run main loop.
 	return application.exec();

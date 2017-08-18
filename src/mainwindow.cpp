@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	//Ici tu dois donner associer à opengl_widget le viewer que tu souhaites afficher dans ta fenêtre
+//	ui->opengl_widget = ;
 //	ui->openGLWidget = simple
 }
 

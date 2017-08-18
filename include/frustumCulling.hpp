@@ -9,6 +9,7 @@
 #define FRUSTUMCULLING_HPP
 
 #include <vector>
+#include <cmath>
 #include <QGLViewer/qglviewer.h>
 
 /**
