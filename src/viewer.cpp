@@ -47,10 +47,10 @@ void Viewer::init()
 
 	// Create and compile our GLSL program from the shaders
 	ShaderProgram shader_program;
-//	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
-//	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
-	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
-	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
+	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
+	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
+//	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
+//	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
 	m_var.render_programID = shader_program.getProgramId();
 
 	// Dark red background
@@ -128,45 +128,6 @@ void Viewer::init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
 
-	m_var.texture = {
-		0.000059f, 1.0f-0.000004f,
-		0.000103f, 1.0f-0.336048f,
-		0.335973f, 1.0f-0.335903f,
-		1.000023f, 1.0f-0.000013f,
-		0.667979f, 1.0f-0.335851f,
-		0.999958f, 1.0f-0.336064f,
-		0.667979f, 1.0f-0.335851f,
-		0.336024f, 1.0f-0.671877f,
-		0.667969f, 1.0f-0.671889f,
-		1.000023f, 1.0f-0.000013f,
-		0.668104f, 1.0f-0.000013f,
-		0.667979f, 1.0f-0.335851f,
-		0.000059f, 1.0f-0.000004f,
-		0.335973f, 1.0f-0.335903f,
-		0.336098f, 1.0f-0.000071f,
-		0.667979f, 1.0f-0.335851f,
-		0.335973f, 1.0f-0.335903f,
-		0.336024f, 1.0f-0.671877f,
-		1.000004f, 1.0f-0.671847f,
-		0.999958f, 1.0f-0.336064f,
-		0.667979f, 1.0f-0.335851f,
-		0.668104f, 1.0f-0.000013f,
-		0.335973f, 1.0f-0.335903f,
-		0.667979f, 1.0f-0.335851f,
-		0.335973f, 1.0f-0.335903f,
-		0.668104f, 1.0f-0.000013f,
-		0.336098f, 1.0f-0.000071f,
-		0.000103f, 1.0f-0.336048f,
-		0.000004f, 1.0f-0.671870f,
-		0.336024f, 1.0f-0.671877f,
-		0.000103f, 1.0f-0.336048f,
-		0.336024f, 1.0f-0.671877f,
-		0.335973f, 1.0f-0.335903f,
-		0.667969f, 1.0f-0.671889f,
-		1.000004f, 1.0f-0.671847f,
-		0.667979f, 1.0f-0.335851f
-	};
-
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	// help();
@@ -176,26 +137,57 @@ void Viewer::init()
 	m_var.true_vertex.resize(3, 0);
 
 
-	// Texture
+//	// Texture
+//	m_var.texture = {
+//		0.000059f, 1.0f-0.000004f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.335973f, 1.0f-0.335903f,
+//		1.000023f, 1.0f-0.000013f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.999958f, 1.0f-0.336064f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.667969f, 1.0f-0.671889f,
+//		1.000023f, 1.0f-0.000013f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.000059f, 1.0f-0.000004f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.336098f, 1.0f-0.000071f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.336024f, 1.0f-0.671877f,
+//		1.000004f, 1.0f-0.671847f,
+//		0.999958f, 1.0f-0.336064f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.336098f, 1.0f-0.000071f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.000004f, 1.0f-0.671870f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.667969f, 1.0f-0.671889f,
+//		1.000004f, 1.0f-0.671847f,
+//		0.667979f, 1.0f-0.335851f
+//	};
+//	// Create one OpenGL texture
+//	glGenTextures(1, &m_var.textureID);
 
-	// Create one OpenGL texture
-	glGenTextures(1, &m_var.textureID);
+//	// "Bind" the newly created texture : all future texture functions will modify this texture
+//	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
 
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
+//	m_var.Texture = loadBMP_custom("../uvtemplate.bmp");
 
-//	// Give the image to OpenGL
-//	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	m_var.Texture = loadBMP_custom("../uvtemplate.bmp");
-
-	m_var.pointer_to_texture = m_var.texture.data();
-	glGenBuffers(1, &m_var.texture_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
+//	m_var.pointer_to_texture = m_var.texture.data();
+//	glGenBuffers(1, &m_var.texture_buffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -310,35 +302,35 @@ void Viewer::drawSurfaces()
 	   (void*)0            // array buffer offset
 	);
 
-//	// 2nd attribute buffer : colors
-//	glEnableVertexAttribArray(1);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
-//	glVertexAttribPointer(
-//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-//		3,                                // size
-//		GL_FLOAT,                         // type
-//		GL_FALSE,                         // normalized?
-//		0,                                // stride
-//		(void*)0                          // array buffer offset
-//	);
-
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
-	// Set our "myTextureSampler" sampler to user Texture Unit 0
-	glUniform1i(m_var.textureID, 0);
-
-	// 2nd bis attribute buffer : texture
+	// 2nd attribute buffer : colors
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
 	glVertexAttribPointer(
 		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-		2,                                // size
+		3,                                // size
 		GL_FLOAT,                         // type
 		GL_FALSE,                         // normalized?
 		0,                                // stride
 		(void*)0                          // array buffer offset
 	);
+
+//	// Bind our texture in Texture Unit 0
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
+//	// Set our "myTextureSampler" sampler to user Texture Unit 0
+//	glUniform1i(m_var.textureID, 0);
+
+//	// 2nd bis attribute buffer : texture
+//	glEnableVertexAttribArray(1);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glVertexAttribPointer(
+//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+//		2,                                // size
+//		GL_FLOAT,                         // type
+//		GL_FALSE,                         // normalized?
+//		0,                                // stride
+//		(void*)0                          // array buffer offset
+//	);
 
 
 	glColor3f(1,1,1);
@@ -367,7 +359,7 @@ void Viewer::draw()
 
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, value_ptr(mvp_matrix_o));  //&MVP[0][0]
+	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o));  //&MVP[0][0]
 
 	this -> camera() -> getFrustumPlanesCoefficients(m_var.plane_coefficients);
 
@@ -390,7 +382,7 @@ void Viewer::draw()
 	mvp_matrix_o2[3][3] = 1;
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP2"), 1, GL_FALSE, value_ptr(mvp_matrix_o2));  //&MVP[0][0]
+    glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP2"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 
 	m_var.front_face_triangles = isFrontFace(viewer_dir, m_var.normals);
 	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertex_positions, m_var.index, m_var.plane_coefficients);

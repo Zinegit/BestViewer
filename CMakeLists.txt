@@ -1,4 +1,3 @@
-
 # CMake entry point
 cmake_minimum_required (VERSION 2.8.12)
 
@@ -76,7 +75,7 @@ file(
 	INCLUDE_FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*"
 	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
 )
 QT4_WRAP_CPP(INCLUDE_FILES_MOC ${INCLUDE_FILES})
 
@@ -107,6 +106,7 @@ add_executable(bestViewServer
 	${SHADER_FILES}
 )
 
+
 target_link_libraries(bestView
 	${ALL_LIBS}
 )
@@ -114,5 +114,3 @@ target_link_libraries(bestView
 target_link_libraries(bestViewServer
 ${ALL_LIBS}
 )
-
-
