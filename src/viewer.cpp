@@ -91,6 +91,10 @@ void Viewer::init()
 //	m_var.index = connectivity_wanted_lvl;
 //	// ////////////READING .DAT FILES//////////// //
 
+//	// ////////////READING .OBJ FILES//////////// //
+
+//	 ////////////READING .OBJ FILES//////////// //
+
 	m_var.colors.resize(m_var.index.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
 	m_var.triangles_to_show_t2.resize(m_var.index.size() / 3, 1);
