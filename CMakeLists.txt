@@ -106,13 +106,13 @@ add_executable(bestView
 	${SHADER_FILES}
 )
 
-add_executable(bestViewServer
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/mainServer.cpp"
-		${SRC_FILES}
-	${INCLUDE_FILES}
-	${SHADER_FILES}
-		${UI_FILES_MOC}
-)
+#add_executable(bestViewServer
+#	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/mainServer.cpp"
+#		${SRC_FILES}
+#	${INCLUDE_FILES}
+#	${SHADER_FILES}
+#		${UI_FILES_MOC}
+#)
 
 target_link_libraries(bestView
 	${ALL_LIBS}
@@ -122,6 +122,6 @@ target_link_libraries(bestView
 	Qt5::OpenGL
 )
 
-target_link_libraries(bestViewServer
-${ALL_LIBS}
-)
+#target_link_libraries(bestViewServer
+#${ALL_LIBS}
+#)

@@ -118,7 +118,7 @@ public:
 		return &m_var;
 	}
 
-	Viewer(bool debug)
+	Viewer(bool debug = false)
 	{
 		debug_mode = debug;
 	}

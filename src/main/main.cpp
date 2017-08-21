@@ -49,17 +49,18 @@ int main(int argc, char **argv) {
 	// Read command lines arguments
 	QApplication application(argc, argv);
 
-	// Instantiate the viewer
-	Viewer viewer(debug);
-	Observer observer(viewer);
-
 	// GUI
 	MainWindow window;
-	window.show();
 
-	viewer.setWindowTitle("viewer");
-	// Make the viewer window visible on screen.
-	viewer.show();
+	// Instantiate the viewer
+	Viewer viewer(debug);
+	Observer observer(&viewer);
+
+	window.addViewer(&viewer);
+
+//	viewer.setWindowTitle("viewer");
+//	// Make the viewer window visible on screen.
+//	viewer.show();
 
 	if (debug)
 	{
@@ -72,10 +73,12 @@ int main(int argc, char **argv) {
 		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
 		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
 
-		observer.setWindowTitle("observer");
+//		observer.show();
 
-		observer.show();
+		window.addViewer(&observer);
 	}
+
+	window.show();
 
 	// Run main loop.
 	return application.exec();

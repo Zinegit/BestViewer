@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	QApplication application(argc, argv);
 
 	// Instantiate the viewer
-	Viewer viewer(debug);
+	Viewer viewer(NULL, debug);
 	Observer observer(viewer);
 
 //	Test window;

@@ -94,9 +94,10 @@ private:
 	qglviewer::Camera *observed_camera = NULL;
 
 public:
-	Observer(Viewer& viewer)
+	Observer(Viewer* viewer = NULL)
 	{
-		m_var = viewer.getVariableToShare();
+		if(viewer)
+			m_var = viewer->getVariableToShare();
 	}
 	void setOutsideCamera(qglviewer::Camera *oc) { observed_camera = oc;}
 
