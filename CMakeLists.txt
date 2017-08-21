@@ -13,8 +13,8 @@ find_package(Qt5 COMPONENTS Core Gui Widgets Xml OpenGL REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 add_subdirectory(
-        "${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer"
-        "${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer/build"
+	"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer"
+		"${CMAKE_SOURCE_DIR}/external/libQGLViewer/QGLViewer/build"
 )
 
 find_package(Boost COMPONENTS filesystem regex system REQUIRED)
@@ -41,18 +41,18 @@ set(CMAKE_AUTOMOC ON)
 include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${GLEW_INCLUDE_DIRS}
-        ${GLM_INCLUDE_DIRS}
-        ${EIGEN3_INCLUDE_DIR}
+	${GLM_INCLUDE_DIRS}
+	${EIGEN3_INCLUDE_DIR}
 	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/"
-        "${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
-        ${CMAKE_CURRENT_BINARY_DIR}
-        .
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/libQGLViewer/"
+	${CMAKE_CURRENT_BINARY_DIR}
+		.
 )
 
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
-        ${GLEW_LIBRARIES}
-        QGLViewer
+	${GLEW_LIBRARIES}
+	QGLViewer
 	${OpenCV_LIBRARIES}
 )
 
@@ -61,7 +61,7 @@ add_definitions(
 	-DTW_NO_LIB_PRAGMA
 	-DTW_NO_DIRECT3D
 	-DGLEW_STATIC
-        -D_CRT_SECURE_NO_WARNINGS
+	-D_CRT_SECURE_NO_WARNINGS
 )
 
 #BestViewer
@@ -77,7 +77,7 @@ file(
 	INCLUDE_FILES
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/*.h*"
 	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
+	"${CMAKE_CURRENT_SOURCE_DIR}/external/I3S-Meshing/include/*.h*"
 )
 
 
@@ -89,37 +89,37 @@ file(
 )
 
 file(
-        GLOB
-        UI_FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/forms/*.ui"
+	GLOB
+	UI_FILES
+	"${CMAKE_CURRENT_SOURCE_DIR}/forms/*.ui"
 )
 
- qt5_wrap_ui(UI_FILES_MOC ${UI_FILES})
+qt5_wrap_ui(UI_FILES_MOC ${UI_FILES})
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -O3")
 
 add_executable(bestView
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/main.cpp"
-        ${SRC_FILES}
+	${SRC_FILES}
 	${INCLUDE_FILES}
 	${SHADER_FILES}
 )
 
 add_executable(bestViewServer
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main/mainServer.cpp"
-        ${SRC_FILES}
+		${SRC_FILES}
 	${INCLUDE_FILES}
 	${SHADER_FILES}
-        ${UI_FILES_MOC}
+		${UI_FILES_MOC}
 )
 
 target_link_libraries(bestView
 	${ALL_LIBS}
-        Qt5::Gui
-        Qt5::Widgets
-        Qt5::Xml
-        Qt5::OpenGL
+	Qt5::Gui
+	Qt5::Widgets
+	Qt5::Xml
+	Qt5::OpenGL
 )
 
 target_link_libraries(bestViewServer
