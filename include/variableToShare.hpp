@@ -20,15 +20,18 @@ typedef struct variable_to_share
 	std::vector<int> index;
 	std::vector<float> vertex_positions;
 	std::vector <float> colors;
+	std::vector <float> texture;
 	GLuint vertex_buffer;
 	GLuint nb_points_buffer;
 	GLuint color_buffer;
+	GLuint texture_buffer;
 	GLuint index_buffer;
 	GLuint nb_indices;
 	std::vector<float> normals;
 	int* pointer_to_index_triangles;
 	float* pointer_to_vertex_positions;
 	float* pointer_to_colors;
+	float* pointer_to_texture;
 	bool mix = true;
 	std::vector<bool> front_face_triangles;
 	std::vector<bool> inside_frustum_triangles;
@@ -48,6 +51,8 @@ typedef struct variable_to_share
 	vector<int> frontline_colors;
 	std::vector<float> true_vertex;
 	std::vector<float> predicted_vertex;
+	GLuint textureID;
+	GLuint Texture;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_HPP

@@ -49,6 +49,8 @@ void Viewer::init()
 	ShaderProgram shader_program;
 	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
 	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
+//	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
+//	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
 	m_var.render_programID = shader_program.getProgramId();
 
 	// Dark red background
@@ -59,35 +61,35 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-//	// ////////////READING .PLY FILES//////////// //
-//	Ply ply;
-//	ply.readPly("../PLY_FILES/Tracteur.ply");
-//	// Retrieve geometry
-//	m_var.vertex_positions = ply.getPos();
-//	// Retrieve topology
-//	m_var.index = ply.getIndex();
 	// ////////////READING .PLY FILES//////////// //
-
-	// ////////////READING .DAT FILES//////////// //
-	std::vector<float> geometry_coarse_lvl;
-	std::vector<float> geometry_wanted_lvl;
-	std::vector<float> geometry_wanted_lvl_only;
-	std::vector<int> connectivity_coarse_lvl;
-	std::vector<int> connectivity_wanted_lvl;
-	Dat dat;
-	dat.readDat("../DAT_FILES/rabbit2.dat");
-	readLvlXDat(dat,
-					 1,
-					 geometry_coarse_lvl,
-					 geometry_wanted_lvl,
-					 geometry_wanted_lvl_only,
-					 connectivity_coarse_lvl,
-					 connectivity_wanted_lvl);
+	Ply ply;
+	ply.readPly("../PLY_FILES/cube.ply");
 	// Retrieve geometry
-	m_var.vertex_positions = geometry_wanted_lvl;
+	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
-	m_var.index = connectivity_wanted_lvl;
-	// ////////////READING .DAT FILES//////////// //
+	m_var.index = ply.getIndex();
+	 ////////////READING .PLY FILES//////////// //
+
+//	// ////////////READING .DAT FILES//////////// //
+//	std::vector<float> geometry_coarse_lvl;
+//	std::vector<float> geometry_wanted_lvl;
+//	std::vector<float> geometry_wanted_lvl_only;
+//	std::vector<int> connectivity_coarse_lvl;
+//	std::vector<int> connectivity_wanted_lvl;
+//	Dat dat;
+//	dat.readDat("../DAT_FILES/rabbit2.dat");
+//	readLvlXDat(dat,
+//					 1,
+//					 geometry_coarse_lvl,
+//					 geometry_wanted_lvl,
+//					 geometry_wanted_lvl_only,
+//					 connectivity_coarse_lvl,
+//					 connectivity_wanted_lvl);
+//	// Retrieve geometry
+//	m_var.vertex_positions = geometry_wanted_lvl;
+//	// Retrieve topology
+//	m_var.index = connectivity_wanted_lvl;
+//	// ////////////READING .DAT FILES//////////// //
 
 	m_var.colors.resize(m_var.index.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
@@ -128,11 +130,64 @@ void Viewer::init()
 
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
-	//help();
+	// help();
 	std::list<MR_Face> multi_res_connectivity;
 	m_var.halfedgeMesh.build(m_var.vertex_positions, m_var.index, multi_res_connectivity);
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
+
+
+//	// Texture
+//	m_var.texture = {
+//		0.000059f, 1.0f-0.000004f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.335973f, 1.0f-0.335903f,
+//		1.000023f, 1.0f-0.000013f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.999958f, 1.0f-0.336064f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.667969f, 1.0f-0.671889f,
+//		1.000023f, 1.0f-0.000013f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.000059f, 1.0f-0.000004f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.336098f, 1.0f-0.000071f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.336024f, 1.0f-0.671877f,
+//		1.000004f, 1.0f-0.671847f,
+//		0.999958f, 1.0f-0.336064f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.336098f, 1.0f-0.000071f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.000004f, 1.0f-0.671870f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.667969f, 1.0f-0.671889f,
+//		1.000004f, 1.0f-0.671847f,
+//		0.667979f, 1.0f-0.335851f
+//	};
+//	// Create one OpenGL texture
+//	glGenTextures(1, &m_var.textureID);
+
+//	// "Bind" the newly created texture : all future texture functions will modify this texture
+//	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
+
+//	m_var.Texture = loadBMP_custom("../uvtemplate.bmp");
+
+//	m_var.pointer_to_texture = m_var.texture.data();
+//	glGenBuffers(1, &m_var.texture_buffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -259,6 +314,25 @@ void Viewer::drawSurfaces()
 		(void*)0                          // array buffer offset
 	);
 
+//	// Bind our texture in Texture Unit 0
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
+//	// Set our "myTextureSampler" sampler to user Texture Unit 0
+//	glUniform1i(m_var.textureID, 0);
+
+//	// 2nd bis attribute buffer : texture
+//	glEnableVertexAttribArray(1);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glVertexAttribPointer(
+//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+//		2,                                // size
+//		GL_FLOAT,                         // type
+//		GL_FALSE,                         // normalized?
+//		0,                                // stride
+//		(void*)0                          // array buffer offset
+//	);
+
+
 	glColor3f(1,1,1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawElements(GL_TRIANGLES, m_var.nb_indices, GL_UNSIGNED_INT, NULL);
@@ -285,7 +359,7 @@ void Viewer::draw()
 
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o));  //&MVP[0][0]
+	glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o));  //&MVP[0][0]
 
 	this -> camera() -> getFrustumPlanesCoefficients(m_var.plane_coefficients);
 

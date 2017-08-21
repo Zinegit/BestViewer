@@ -125,5 +125,3 @@ target_link_libraries(bestView
 target_link_libraries(bestViewServer
 ${ALL_LIBS}
 )
-
-
