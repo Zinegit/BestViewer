@@ -40,10 +40,34 @@ int main(int argc, char **argv) {
 
 	// Mode debug
 	bool debug = false;
-	if (argc > 1 && argv[1][2] != 0)
+	if (argc <= 2)
 	{
-		std::cout << "Debug mode activated" << std::endl;
-		debug = true;
+		if(argc == 2)
+		{
+			std::string arg(argv[1]);
+			if(arg == "-debug")
+			{
+				debug = true;
+			}
+			else
+			{
+				std::cerr << "Usage : " << argv[0] << " [-debug (activates the debugging mode)]" << std::endl;
+				exit(-1);
+			}
+		}
+		if(debug)
+		{
+			std::cout << "Debug mode activated" << std::endl;
+		}
+		else
+		{
+			std::cout << "Release mode activated" << std::endl;
+		}
+	}
+	else if(argc > 1)
+	{
+		std::cerr << "Usage : " << argv[0] << " [-debug (activate the debugging mode)]" << std::endl;
+		exit(-1);
 	}
 
 	// Read command lines arguments

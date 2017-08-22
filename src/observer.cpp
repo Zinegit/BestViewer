@@ -121,12 +121,12 @@ void Observer::drawSurfaces()
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, m_var -> color_buffer);
 	glVertexAttribPointer(
-	    1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-	    3,                                // size
-	    GL_FLOAT,                         // type
-	    GL_FALSE,                         // normalized?
-	    0,                                // stride
-	    (void*)0                          // array buffer offset
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		3,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
 	);
 
 	glColor3f(1,1,1);
@@ -155,28 +155,13 @@ void Observer::draw()
 
 	// Send our transformation to the currently bound shader,
 	// in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(m_var -> render_programID, "MVP"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o));  //&MVP[0][0]
-
-
-	glm::mat4 mvp_matrix_o2;
+	glUniformMatrix4fv(glGetUniformLocation(m_var -> render_programID, "MVP"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o));  //&MVP[0][0]
 
 	glUseProgram(0);
 	glColor3f(1.0, 0.0, 0.0);
 	observed_camera -> draw();
 	glUseProgram(m_var -> render_programID);
 
-	for(int j = 0; j < 4; ++j)
-	{
-		for(int k = 0; k < 4; ++k)
-		{
-			mvp_matrix_o2[j][k] = 0;
-		}
-	}
-	mvp_matrix_o2[0][0] = 1;
-	mvp_matrix_o2[1][1] = 1;
-	mvp_matrix_o2[2][2] = 1;
-	mvp_matrix_o2[3][3] = 1;
-    glUniformMatrix4fv(glGetUniformLocation(m_var -> render_programID, "MVP2"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 	observed_camera -> getFrustumPlanesCoefficients(m_var -> plane_coefficients);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_var -> color_buffer);

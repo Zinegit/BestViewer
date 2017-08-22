@@ -104,6 +104,7 @@ add_executable(bestView
 	${SRC_FILES}
 	${INCLUDE_FILES}
 	${SHADER_FILES}
+	${UI_FILES_MOC}
 )
 
 #add_executable(bestViewServer
@@ -111,7 +112,6 @@ add_executable(bestView
 #		${SRC_FILES}
 #	${INCLUDE_FILES}
 #	${SHADER_FILES}
-#		${UI_FILES_MOC}
 #)
 
 target_link_libraries(bestView

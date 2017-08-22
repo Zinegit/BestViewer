@@ -4,6 +4,16 @@ using namespace std;
 
 void Viewer::init()
 {
+	// Initialize GLEW
+	glewExperimental = true; // Needed for core profile
+	if (glewInit() != GLEW_OK)
+	{
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return;
+	}
+
+	std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+
 	camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -22,28 +32,20 @@ void Viewer::init()
 
 	// Enlighten everything (not just the well-oriented faces of the triangles)
 	// Light setup
-	 glDisable(GL_LIGHT0);
-	 glEnable(GL_LIGHT1);
-	 // Light default parameters
-	 const GLfloat light_ambient[4] = {1.0, 1.0, 1.0, 1.0};
-	 const GLfloat light_specular[4] = {1.0, 1.0, 1.0, 1.0};
-	 const GLfloat light_diffuse[4] = {1.0, 1.0, 1.0, 1.0};
-	 glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 3.0);
-	 glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 10.0);
-	 glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.1f);
-	 glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.3f);
-	 glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.3f);
-	 glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
-	 glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
-	 glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed for core profile
-	if (glewInit() != GLEW_OK)
-	{
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		return;
-	}
+	glDisable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	// Light default parameters
+	const GLfloat light_ambient[4] = {1.0, 1.0, 1.0, 1.0};
+	const GLfloat light_specular[4] = {1.0, 1.0, 1.0, 1.0};
+	const GLfloat light_diffuse[4] = {1.0, 1.0, 1.0, 1.0};
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 3.0);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 10.0);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.1f);
+	glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.3f);
+	glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.3f);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
 
 	// Create and compile our GLSL program from the shaders
 	ShaderProgram shader_program;
@@ -63,7 +65,8 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-	ply.readPly("../PLY_FILES/cube.ply");
+//	ply.readPly("../PLY_FILES/cube.ply");
+	ply.readPly("/home/blettere/Projets/Models/sphere.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
@@ -372,21 +375,6 @@ void Viewer::draw()
 	// Get viewer's viewing direction
 	qglviewer::Vec viewer_dir = camera() -> viewDirection();
 
-	glm::mat4 mvp_matrix_o2;
-	for(int j = 0; j < 4; ++j)
-	{
-		for(int k = 0; k < 4; ++k)
-		{
-			mvp_matrix_o2[j][k] = 0;
-		}
-	}
-	mvp_matrix_o2[0][0] = 1;
-	mvp_matrix_o2[1][1] = 1;
-	mvp_matrix_o2[2][2] = 1;
-	mvp_matrix_o2[3][3] = 1;
-	// Send our transformation to the currently bound shader,
-	// in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(m_var.render_programID, "MVP2"), 1, GL_FALSE, glm::value_ptr(mvp_matrix_o2));  //&MVP[0][0]
 
 	m_var.front_face_triangles = isFrontFace(viewer_dir, m_var.normals);
 	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertex_positions, m_var.index, m_var.plane_coefficients);
