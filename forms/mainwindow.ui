@@ -24,27 +24,41 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="viewer_layout"/>
-      </item>
-      <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="wire_button">
           <property name="text">
-           <string>PushButton</string>
+           <string>wire mode</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="predict_step">
           <property name="text">
-           <string>PushButton</string>
+           <string>predict step by step</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="predict_button">
+          <property name="text">
+           <string>predict all</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="record_button">
+          <property name="text">
+           <string>record</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
      </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="viewer_layout"/>
     </item>
    </layout>
   </widget>

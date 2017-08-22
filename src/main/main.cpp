@@ -73,11 +73,13 @@ int main(int argc, char **argv) {
 	// Read command lines arguments
 	QApplication application(argc, argv);
 
-	// GUI
-	MainWindow window;
+
 
 	// Instantiate the viewer
 	Viewer viewer(debug);
+	// GUI
+	MainWindow window(0, &viewer);
+	// Instantiate the observer
 	Observer observer(&viewer);
 
 	window.addViewer(&viewer);
@@ -94,8 +96,10 @@ int main(int argc, char **argv) {
 		observer.setCamera(cam) ;
 
 		// Make sure every viewer movement updates the observer
-		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
-		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
+		// Not really useful
+//		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
+//		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
+		QObject::connect(&viewer, SIGNAL(drawNeeded()), &observer, SLOT(update()));
 
 //		observer.show();
 

@@ -1,12 +1,14 @@
 #include "include/mainwindow.h"
-#include "ui_mainwindow.h"
-#include "include/viewer.hpp"
 
-MainWindow::MainWindow(QWidget *parent) :
+#include "ui_mainwindow.h"
+
+
+MainWindow::MainWindow(QWidget *parent, Viewer *viewer) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	vi = viewer;
 }
 
 MainWindow::~MainWindow()
@@ -19,3 +21,26 @@ void MainWindow::addViewer(QGLViewer* viewer)
 	ui->viewer_layout->addWidget(viewer);
 }
 
+void MainWindow::on_wire_button_clicked()
+{
+	vi->changeVisual();
+	vi->update();
+}
+
+void MainWindow::on_record_button_clicked()
+{
+	vi->record();
+	vi->update();
+}
+
+void MainWindow::on_predict_step_clicked()
+{
+	vi->predictStep();
+	vi->update();
+}
+
+void MainWindow::on_predict_button_clicked()
+{
+	vi->predict();
+	vi->update();
+}

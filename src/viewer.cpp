@@ -65,12 +65,12 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-    ply.readPly("../PLY_FILES/cube.ply");
+	ply.readPly("../PLY_FILES/cow.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
 	m_var.index = ply.getIndex();
-	 ////////////READING .PLY FILES//////////// //
+	 // //////////READING .PLY FILES//////////// //
 
 //	// ////////////READING .DAT FILES//////////// //
 //	std::vector<float> geometry_coarse_lvl;
@@ -196,6 +196,37 @@ void Viewer::init()
 //	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
 }
 
+void Viewer::record()
+{
+	if (m_var.recording)
+	{
+		m_var.triangles_to_show_t2 = m_var.triangles_to_show;
+		m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
+		m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+		m_var.recording = false;
+	} else {
+		m_var.triangles_to_show_t1 = m_var.triangles_to_show;
+		m_var.recording = true;
+	}
+}
+
+void Viewer::predictStep()
+{
+	if (!m_var.frontline.empty())
+	{
+		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+	}
+}
+
+void Viewer::predict()
+{
+	std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
+	m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+	exportToTxt(dist_true_predicted, "../analyses/data.txt");
+}
+
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
 	if (Viewer::debug_mode)
@@ -239,7 +270,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		}
 		else if (e->key() == Qt::Key_T)
 		{
-			findCoefficients(m_var.vertex_positions, m_var.index, m_var.triangles_status, m_var.halfedgeMesh);
+			//findCoefficients(m_var.vertex_positions, m_var.index, m_var.triangles_status, m_var.halfedgeMesh);
 		}
 		else if (e->key() == Qt::Key_K)
 		{
@@ -438,6 +469,9 @@ void Viewer::draw()
 //	glVertex3f(m_var.predicted_vertex[9], m_var.predicted_vertex[10], m_var.predicted_vertex[11]);
 //	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]);
 //	glEnd();
+
+	// Synchronize observer and viewer
+	Q_EMIT this->drawNeeded();
 }
 
 QString Viewer::helpString() const {

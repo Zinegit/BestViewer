@@ -53,6 +53,7 @@
 #include "dat.h"
 #include "import_structure.h"
 #include "halfedgemesh.h"
+#include "QGLViewer/manipulatedCameraFrame.h"
 
 /**
  * \class Viewer
@@ -122,6 +123,17 @@ public:
 	{
 		debug_mode = debug;
 	}
+
+	void changeVisual()
+	{
+		m_var.mix = !m_var.mix;
+	}
+
+	void record();
+
+	void predictStep();
+
+	void predict();
 };
 
 #endif // VIEWER_HPP

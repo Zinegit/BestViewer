@@ -1,6 +1,6 @@
 #include "include/coefficients.hpp"
 
-void findCoefficients(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& triangles_status, HalfedgeMesh& halfedgeMesh)
+void findCoefficients(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& triangles_status, HalfedgeMesh& halfedgeMesh, int depth)
 {
 	std::vector<FaceIter> children;
 	for (FaceIter f = halfedgeMesh.facesBegin(); f != halfedgeMesh.facesEnd(); f++)
