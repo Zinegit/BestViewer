@@ -65,8 +65,7 @@ void Viewer::init()
 
 	// ////////////READING .PLY FILES//////////// //
 	Ply ply;
-//	ply.readPly("../PLY_FILES/cube.ply");
-	ply.readPly("/home/blettere/Projets/Models/sphere.ply");
+    ply.readPly("../PLY_FILES/cube.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
