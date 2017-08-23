@@ -91,6 +91,16 @@ void Viewer::init()
 //	m_var.index = connectivity_wanted_lvl;
 //	// ////////////READING .DAT FILES//////////// //
 
+	int depth;
+
+	datToHalfedgeMesh("../DAT_FILES", m_var.halfedgeMesh, m_var.vertex_positions, depth);
+
+	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
+
+	m_var.halfedgeMesh.subdivConnectivityOnly(depth);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT file
+
+	m_var.index = m_var.halfedgeMesh.getNewIndexTriangles();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
+
 //	// ////////////READING .OBJ FILES//////////// //
 	std::vector<float> out_vertices;
 	std::vector<float> out_uvs;
