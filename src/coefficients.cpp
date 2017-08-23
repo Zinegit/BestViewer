@@ -5,14 +5,14 @@ void findCoefficients(std::vector<float>& vertex_positions, std::vector<int>& in
 	std::vector<FaceIter> children;
 	for (FaceIter f = halfedgeMesh.facesBegin(); f != halfedgeMesh.facesEnd(); f++)
 	{
-		children = f->children();
+		children = f->getChildren(depth);
 		std::cout << children.size() << std::endl;
 		HalfedgeIter h = f->halfedge();
 		HalfedgeIter h_cur = h;
 		do
 		{
 			std::list<FaceIter> frontline;
-			std::vector<FaceIter> children_to_predict = h_cur->twin()->face()->children();
+			std::vector<FaceIter> children_to_predict = h_cur->twin()->face()->getChildren(depth);
 			for (int i = 0; i < children.size(); i++)
 			{
 				HalfedgeIter h_c = children[i]->halfedge();
