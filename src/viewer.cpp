@@ -49,10 +49,10 @@ void Viewer::init()
 
 	// Create and compile our GLSL program from the shaders
 	ShaderProgram shader_program;
-	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
-	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
-//	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
-//	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
+//	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
+//	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
+	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
+	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
 	m_var.render_programID = shader_program.getProgramId();
 
 	// Dark red background
@@ -92,18 +92,23 @@ void Viewer::init()
 //	// ////////////READING .DAT FILES//////////// //
 
 //	// ////////////READING .OBJ FILES//////////// //
+	std::vector<float> vertices_in_order;
+	std::vector<float> uvs_in_order;
 	std::vector<float> out_vertices;
-	std::vector<float> out_uvs;
-	std::vector<float> out_normals;
+	std::vector<float> out_normals,
 	std::vector<int> out_indices;
 	loadOBJ(
 		"../OBJ_FILES/cube.obj",
+		vertices_in_order,
+		uvs_in_order,
 		out_vertices,
-		out_uvs,
 		out_normals,
 		out_indices);
 	m_var.vertex_positions = out_vertices;
 	m_var.index = out_indices;
+//	m_var.texture = uvs_in_order;
+	// With duplication. Use for drawing
+//	m_var.vertices_in_order = vertices_in_order;
 
 	std::cout << m_var.vertex_positions.size() << std::endl;
 	std::cout << m_var.index.size() << std::endl;
@@ -162,42 +167,22 @@ void Viewer::init()
 
 	// Texture
 	m_var.texture = {
-		0.000059f, 1.0f-0.000004f,
-		0.000103f, 1.0f-0.336048f,
-		0.335973f, 1.0f-0.335903f,
-		1.000023f, 1.0f-0.000013f,
-		0.667979f, 1.0f-0.335851f,
-		0.999958f, 1.0f-0.336064f,
-		0.667979f, 1.0f-0.335851f,
-		0.336024f, 1.0f-0.671877f,
-		0.667969f, 1.0f-0.671889f,
-		1.000023f, 1.0f-0.000013f,
-		0.668104f, 1.0f-0.000013f,
-		0.667979f, 1.0f-0.335851f,
-		0.000059f, 1.0f-0.000004f,
-		0.335973f, 1.0f-0.335903f,
-		0.336098f, 1.0f-0.000071f,
-		0.667979f, 1.0f-0.335851f,
-		0.335973f, 1.0f-0.335903f,
-		0.336024f, 1.0f-0.671877f,
-		1.000004f, 1.0f-0.671847f,
-		0.999958f, 1.0f-0.336064f,
-		0.667979f, 1.0f-0.335851f,
-		0.668104f, 1.0f-0.000013f,
-		0.335973f, 1.0f-0.335903f,
-		0.667979f, 1.0f-0.335851f,
-		0.335973f, 1.0f-0.335903f,
-		0.668104f, 1.0f-0.000013f,
-		0.336098f, 1.0f-0.000071f,
-		0.000103f, 1.0f-0.336048f,
-		0.000004f, 1.0f-0.671870f,
-		0.336024f, 1.0f-0.671877f,
-		0.000103f, 1.0f-0.336048f,
-		0.336024f, 1.0f-0.671877f,
-		0.335973f, 1.0f-0.335903f,
-		0.667969f, 1.0f-0.671889f,
-		1.000004f, 1.0f-0.671847f,
-		0.667979f, 1.0f-0.335851f
+//		0.0, 0.0,
+//		1.0, 0.0,
+//		0.0, 0.0,
+//		1.0, 0.0,
+//		0.0, 1.0,
+//		1.0, 1.0,
+//		0.0, 1.0,
+//		1.0, 1.0
+		0, 0.66,
+		0.33, 0.66,
+		0, 0,
+		0.667, 0.667,
+		1, 1,
+		0, 0,
+		0, 0,
+		0.667, 1
 	};
 	// Create one OpenGL texture
 	glGenTextures(1, &m_var.textureID);
@@ -205,8 +190,9 @@ void Viewer::init()
 	// "Bind" the newly created texture : all future texture functions will modify this texture
 	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
 
-	m_var.Texture = loadBMP_custom("../uvtemplate.bmp");
-
+//	m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
+	m_var.Texture = loadDDS("../TEXTURE_FILES/uvtemplate.DDS");
+//	m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
 	m_var.pointer_to_texture = m_var.texture.data();
 	glGenBuffers(1, &m_var.texture_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);

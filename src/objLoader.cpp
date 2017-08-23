@@ -2,16 +2,17 @@
 
 bool loadOBJ(
     const char * path,
+	std::vector<float>& vertices_in_order,
+	std::vector<float>& uvs_in_order,
 	std::vector<float>& out_vertices,
-	std::vector<float>& out_uvs,
 	std::vector<float>& out_normals,
-	std::vector<int>& out_indices)
+	std::vector<int>& out_indices
+)
 {
 	setlocale(LC_NUMERIC, "C");
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 	std::vector<std::vector<float>> temp_vertices;
 	std::vector<std::vector<float>> temp_uvs;
-	std::vector<std::vector<float>> temp_normals;
 
 	FILE * file = fopen(path, "r");
 	if( file == NULL ){
@@ -39,8 +40,8 @@ bool loadOBJ(
 			std::vector<float> uv(2, 0);
 			fscanf(file, "%f %f\n", &uv[0], &uv[1] );
 			uv[1] = -uv[1]; // Invert V coordinate since we will only use DDS texture, which are inverted. Remove if you want to use TGA or BMP loaders.
-			out_uvs.push_back(uv[0]);
-			out_uvs.push_back(uv[1]);
+			uvs_in_order.push_back(uv[0]);
+			uvs_in_order.push_back(uv[1]);
 		}else if (strcmp( lineHeader, "vn" ) == 0){
 			std::vector<float> normal(3, 0);
 			fscanf(file, "%f %f %f\n", &normal[0], &normal[1], &normal[2] );
