@@ -160,57 +160,57 @@ void Viewer::init()
 	m_var.true_vertex.resize(3, 0);
 
 
-	// Texture
-	m_var.texture = {
-		0.000059f, 1.0f-0.000004f,
-		0.000103f, 1.0f-0.336048f,
-		0.335973f, 1.0f-0.335903f,
-		1.000023f, 1.0f-0.000013f,
-		0.667979f, 1.0f-0.335851f,
-		0.999958f, 1.0f-0.336064f,
-		0.667979f, 1.0f-0.335851f,
-		0.336024f, 1.0f-0.671877f,
-		0.667969f, 1.0f-0.671889f,
-		1.000023f, 1.0f-0.000013f,
-		0.668104f, 1.0f-0.000013f,
-		0.667979f, 1.0f-0.335851f,
-		0.000059f, 1.0f-0.000004f,
-		0.335973f, 1.0f-0.335903f,
-		0.336098f, 1.0f-0.000071f,
-		0.667979f, 1.0f-0.335851f,
-		0.335973f, 1.0f-0.335903f,
-		0.336024f, 1.0f-0.671877f,
-		1.000004f, 1.0f-0.671847f,
-		0.999958f, 1.0f-0.336064f,
-		0.667979f, 1.0f-0.335851f,
-		0.668104f, 1.0f-0.000013f,
-		0.335973f, 1.0f-0.335903f,
-		0.667979f, 1.0f-0.335851f,
-		0.335973f, 1.0f-0.335903f,
-		0.668104f, 1.0f-0.000013f,
-		0.336098f, 1.0f-0.000071f,
-		0.000103f, 1.0f-0.336048f,
-		0.000004f, 1.0f-0.671870f,
-		0.336024f, 1.0f-0.671877f,
-		0.000103f, 1.0f-0.336048f,
-		0.336024f, 1.0f-0.671877f,
-		0.335973f, 1.0f-0.335903f,
-		0.667969f, 1.0f-0.671889f,
-		1.000004f, 1.0f-0.671847f,
-		0.667979f, 1.0f-0.335851f
-	};
-	// Create one OpenGL texture
-	glGenTextures(1, &m_var.textureID);
+//	// Texture
+//	m_var.texture = {
+//		0.000059f, 1.0f-0.000004f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.335973f, 1.0f-0.335903f,
+//		1.000023f, 1.0f-0.000013f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.999958f, 1.0f-0.336064f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.667969f, 1.0f-0.671889f,
+//		1.000023f, 1.0f-0.000013f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.000059f, 1.0f-0.000004f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.336098f, 1.0f-0.000071f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.336024f, 1.0f-0.671877f,
+//		1.000004f, 1.0f-0.671847f,
+//		0.999958f, 1.0f-0.336064f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.667979f, 1.0f-0.335851f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.668104f, 1.0f-0.000013f,
+//		0.336098f, 1.0f-0.000071f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.000004f, 1.0f-0.671870f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.000103f, 1.0f-0.336048f,
+//		0.336024f, 1.0f-0.671877f,
+//		0.335973f, 1.0f-0.335903f,
+//		0.667969f, 1.0f-0.671889f,
+//		1.000004f, 1.0f-0.671847f,
+//		0.667979f, 1.0f-0.335851f
+//	};
+//	// Create one OpenGL texture
+//	glGenTextures(1, &m_var.textureID);
 
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
+//	// "Bind" the newly created texture : all future texture functions will modify this texture
+//	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
 
-	m_var.Texture = loadBMP_custom("../uvtemplate.bmp");
+//	m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
 
-	m_var.pointer_to_texture = m_var.texture.data();
-	glGenBuffers(1, &m_var.texture_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
+//	m_var.pointer_to_texture = m_var.texture.data();
+//	glGenBuffers(1, &m_var.texture_buffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
 }
 
 void Viewer::record()
@@ -356,35 +356,35 @@ void Viewer::drawSurfaces()
 	   (void*)0            // array buffer offset
 	);
 
-//	// 2nd attribute buffer : colors
-//	glEnableVertexAttribArray(1);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
-//	glVertexAttribPointer(
-//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-//		3,                                // size
-//		GL_FLOAT,                         // type
-//		GL_FALSE,                         // normalized?
-//		0,                                // stride
-//		(void*)0                          // array buffer offset
-//	);
-
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
-	// Set our "myTextureSampler" sampler to user Texture Unit 0
-	glUniform1i(m_var.textureID, 0);
-
-	// 2nd bis attribute buffer : texture
+	// 2nd attribute buffer : colors
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
 	glVertexAttribPointer(
 		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-		2,                                // size
+		3,                                // size
 		GL_FLOAT,                         // type
 		GL_FALSE,                         // normalized?
 		0,                                // stride
 		(void*)0                          // array buffer offset
 	);
+
+//	// Bind our texture in Texture Unit 0
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
+//	// Set our "myTextureSampler" sampler to user Texture Unit 0
+//	glUniform1i(m_var.textureID, 0);
+
+//	// 2nd bis attribute buffer : texture
+//	glEnableVertexAttribArray(1);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glVertexAttribPointer(
+//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+//		2,                                // size
+//		GL_FLOAT,                         // type
+//		GL_FALSE,                         // normalized?
+//		0,                                // stride
+//		(void*)0                          // array buffer offset
+//	);
 
 
 	glColor3f(1,1,1);
