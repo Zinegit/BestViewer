@@ -48,7 +48,7 @@ typedef struct variable_to_share
 	bool recording = false;
 	HalfedgeMesh halfedgeMesh;
 	std::list<FaceIter> frontline;
-	vector<int> frontline_colors;
+	std::vector<int> frontline_colors;
 	std::vector<float> true_vertex;
 	std::vector<float> predicted_vertex;
 	GLuint textureID;
