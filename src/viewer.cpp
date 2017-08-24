@@ -108,8 +108,8 @@ void Viewer::init()
 	m_var.index = out_indices;
 
 	// With duplication. Use for drawing
-	m_var.vertices_in_order = vertices_in_order;
-	m_var.texture = uvs_in_order;
+//	m_var.vertices_in_order = vertices_in_order;
+//	m_var.texture = uvs_in_order;
 
 //	// //////////READING .OBJ FILES///////////// //
 
