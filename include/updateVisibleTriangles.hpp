@@ -28,4 +28,6 @@ std::vector<bool> fusionBools(std::vector<bool>& front_face_triangles, std::vect
  */
 std::vector<int> updateIndex(std::vector<bool>& triangles_to_show, std::vector<int>& index_triangles);
 
+std::vector<float> updateVertices(std::vector<int>& index_triangles);
+
 #endif // UPDATEINVISIBLETRIANGLES_HPP

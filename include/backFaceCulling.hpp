@@ -1,5 +1,5 @@
 /**
- * \file backfaceCulling.hpp
+ * \file backFaceCulling.hpp
  * \brief Contains all the functions used for backface culling process
  * \author Tom Mourot-Faraut
  * \version 1.0

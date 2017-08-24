@@ -63,78 +63,44 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-//	// ////////////READING .PLY FILES//////////// //
-//	Ply ply;
-//	ply.readPly("../PLY_FILES/anneau_bin.ply");
-//	// Retrieve geometry
-//	m_var.vertex_positions = ply.getPos();
-//	// Retrieve topology
-//	m_var.index = ply.getIndex();
-//	 // //////////READING .PLY FILES//////////// //
+	// ////////////READING .PLY FILES/////////// //
+	Ply ply;
+	ply.readPly("../PLY_FILES/icosahedron.ply");
+	// Retrieve geometry
+	m_var.vertex_positions = ply.getPos();
+	// Retrieve topology
+	m_var.index = ply.getIndex();
+	// //////////READING .PLY FILES//////////// //
 
 //	// ////////////READING .DAT FILES//////////// //
-//	std::vector<float> geometry_coarse_lvl;
-//	std::vector<float> geometry_wanted_lvl;
-//	std::vector<float> geometry_wanted_lvl_only;
-//	std::vector<int> connectivity_coarse_lvl;
-//	std::vector<int> connectivity_wanted_lvl;
-//	Dat dat;
-//	dat.readDat("../DAT_FILES/rabbit2.dat");
-//	readLvlXDat(dat,
-//					 1,
-//					 geometry_coarse_lvl,
-//					 geometry_wanted_lvl,
-//					 geometry_wanted_lvl_only,
-//					 connectivity_coarse_lvl,
-//					 connectivity_wanted_lvl);
-//	m_var.vertex_positions = geometry_wanted_lvl;
-//	m_var.index = connectivity_wanted_lvl;
-//	// ////////////READING .DAT FILES//////////// //
-
-	int depth;
-
-	datToHalfedgeMesh("../DAT_FILES", m_var.halfedgeMesh, m_var.vertex_positions, depth);
-
-	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
-
-	m_var.halfedgeMesh.subdivConnectivityOnly(depth);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT file
-
-	m_var.index = m_var.halfedgeMesh.getNewIndexTriangles();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
+//	// For rabbit.dat
+//	int depth = 1;
+//	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertex_positions, depth);
+//	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
+//	m_var.halfedgeMesh.subdivConnectivityOnly(depth);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT file
+//	m_var.index = m_var.halfedgeMesh.getNewIndexTriangles();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
+//	std::cout << m_var.vertex_positions.size() << " " << m_var.index.size() << std::endl;
+// 	// ////////////READING .DAT FILES//////////// //
 
 //	// ////////////READING .OBJ FILES//////////// //
-	std::vector<float> out_vertices;
-	std::vector<float> out_uvs;
-	std::vector<float> out_normals;
-	std::vector<int> out_indices;
-	loadOBJ(
-		"../OBJ_FILES/cube.obj",
-		out_vertices,
-		out_uvs,
-		out_normals,
-		out_indices);
-	m_var.vertex_positions = out_vertices;
-	m_var.index = out_indices;
-
-	std::cout << m_var.vertex_positions.size() << std::endl;
-	std::cout << m_var.index.size() << std::endl;
-//	for (float v : m_var.vertex_positions)
-//		std::cout << v << std::endl;
-//	for (int v : m_var.index)
-//		std::cout << v << std::endl;
-
+//	std::vector<float> out_vertices;
+//	std::vector<float> out_uvs;
+//	std::vector<float> out_normals;
+//	std::vector<int> out_indices;
+//	loadOBJ(
+//		"../OBJ_FILES/cube.obj",
+//		out_vertices,
+//		out_uvs,
+//		out_normals,
+//		out_indices);
+//	m_var.vertex_positions = out_vertices;
+//	m_var.index = out_indices;
 //	// //////////READING .OBJ FILES///////////// //
 
 	m_var.colors.resize(m_var.index.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
 	m_var.triangles_to_show_t2.resize(m_var.index.size() / 3, 1);
 
-//	m_var.m_triangles_to_show_t1.reserve(m_var.m_index.size() / 3);
-//	m_var.m_triangles_to_show_t2.reserve(m_var.m_index.size() / 3);
-//	for (int i = 0; i < m_var.m_index.size() / 3 ; i++)
-//	{
-//		m_var.m_triangles_to_show_t1.push_back(1);
-//		m_var.m_triangles_to_show_t2.push_back(1);
-//	}
 	// Get normal vertices
 	m_var.normals = getNormals(m_var.vertex_positions, m_var.index);
 
@@ -155,12 +121,6 @@ void Viewer::init()
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_vertex_positions, GL_STATIC_DRAW);
 
-	m_var.pointer_to_index_triangles = m_var.index_temp.data();
-	m_var.nb_indices = m_var.index_temp.size();
-	glGenBuffers(1, &m_var.index_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
-
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	// help();
@@ -169,46 +129,6 @@ void Viewer::init()
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 
-
-//	// Texture
-//	m_var.texture = {
-//		0.000059f, 1.0f-0.000004f,
-//		0.000103f, 1.0f-0.336048f,
-//		0.335973f, 1.0f-0.335903f,
-//		1.000023f, 1.0f-0.000013f,
-//		0.667979f, 1.0f-0.335851f,
-//		0.999958f, 1.0f-0.336064f,
-//		0.667979f, 1.0f-0.335851f,
-//		0.336024f, 1.0f-0.671877f,
-//		0.667969f, 1.0f-0.671889f,
-//		1.000023f, 1.0f-0.000013f,
-//		0.668104f, 1.0f-0.000013f,
-//		0.667979f, 1.0f-0.335851f,
-//		0.000059f, 1.0f-0.000004f,
-//		0.335973f, 1.0f-0.335903f,
-//		0.336098f, 1.0f-0.000071f,
-//		0.667979f, 1.0f-0.335851f,
-//		0.335973f, 1.0f-0.335903f,
-//		0.336024f, 1.0f-0.671877f,
-//		1.000004f, 1.0f-0.671847f,
-//		0.999958f, 1.0f-0.336064f,
-//		0.667979f, 1.0f-0.335851f,
-//		0.668104f, 1.0f-0.000013f,
-//		0.335973f, 1.0f-0.335903f,
-//		0.667979f, 1.0f-0.335851f,
-//		0.335973f, 1.0f-0.335903f,
-//		0.668104f, 1.0f-0.000013f,
-//		0.336098f, 1.0f-0.000071f,
-//		0.000103f, 1.0f-0.336048f,
-//		0.000004f, 1.0f-0.671870f,
-//		0.336024f, 1.0f-0.671877f,
-//		0.000103f, 1.0f-0.336048f,
-//		0.336024f, 1.0f-0.671877f,
-//		0.335973f, 1.0f-0.335903f,
-//		0.667969f, 1.0f-0.671889f,
-//		1.000004f, 1.0f-0.671847f,
-//		0.667979f, 1.0f-0.335851f
-//	};
 //	// Create one OpenGL texture
 //	glGenTextures(1, &m_var.textureID);
 
@@ -446,6 +366,8 @@ void Viewer::draw()
 	m_var.triangles_to_show = fusionBools(m_var.front_face_triangles, m_var.inside_frustum_triangles);
 	// Display combination of both
 	m_var.index_temp = updateIndex(m_var.triangles_to_show, m_var.index);
+	// Might be impossible to modify the vertices because of the indexation
+//	m_var.vertices_temp = updateVertices(m_var.index_temp);
 
 	m_var.pointer_to_colors = m_var.colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
@@ -463,6 +385,7 @@ void Viewer::draw()
 	glUseProgram(0);
 	drawOutlines();
 	glUseProgram(m_var.render_programID);
+	std::cout << m_var.vertex_positions.size() << std::endl;
 
 	// Display of predictions
 

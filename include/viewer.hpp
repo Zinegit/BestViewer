@@ -59,7 +59,6 @@
  * \class Viewer
  * \brief This class is the viewer that let the user visualize the object. It also uses all the functions made for culling and so on
  */
-
 class Viewer : public QGLViewer
 {
 private:

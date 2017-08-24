@@ -25,3 +25,15 @@ std::vector<int> updateIndex(std::vector<bool>& triangles_to_show, std::vector<i
 	}
 	return new_index;
 }
+
+// Might be impossible to modify the vertices because of the indexation
+//std::vector<float> updateVertices(std::vector<int>& index_triangles)
+//{
+//	std::vector<float> new_vertices;
+//	for (int i = 0; i < index_triangles.size(); i++)
+//	{
+//		new_vertices.push_back(3 * index_triangles[i]);
+//		new_vertices.push_back(3 * index_triangles[i]+1);
+//		new_vertices.push_back(3 * index_triangles[i]+2);
+//	}
+//}

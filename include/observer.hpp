@@ -52,7 +52,6 @@
  * \class PlanesCamera
  * \brief This class changes the z of far and near planes of the observer's camera
  */
-
 class PlanesCamera : public qglviewer::Camera
 {
 private:
@@ -86,7 +85,6 @@ public:
  * \class Observer
  * \brief This class is the viewer's viewer that let the user visualize what the viewer is visualizing. It is mainly used for debugging and does not make any calculus
  */
-
 class Observer : public QGLViewer
 {
 private:

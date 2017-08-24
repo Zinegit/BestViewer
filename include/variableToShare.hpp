@@ -14,7 +14,6 @@
  * \struct variable_to_share
  * \brief Set of variable shared by the viewer and the observer
  */
-
 typedef struct variable_to_share
 {
 	std::vector<int> index;
@@ -39,6 +38,7 @@ typedef struct variable_to_share
 	std::vector<float> near_projected_vertex_positions;
 	std::vector<bool> triangles_to_show;
 	std::vector<int> index_temp;
+	std::vector<float> vertices_temp;
 	GLdouble plane_coefficients[6][4];
 	int compteur = 0;
 	std::vector<bool> triangles_to_show_t1;
