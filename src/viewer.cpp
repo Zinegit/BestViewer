@@ -63,22 +63,23 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// ////////////READING .PLY FILES/////////// //
+//	// ////////////READING .PLY FILES/////////// //
 	Ply ply;
 	ply.readPly("../PLY_FILES/icosahedron.ply");
 	// Retrieve geometry
 	m_var.vertex_positions = ply.getPos();
 	// Retrieve topology
 	m_var.index = ply.getIndex();
-	// //////////READING .PLY FILES//////////// //
+//	// //////////READING .PLY FILES//////////// //
 
 //	// ////////////READING .DAT FILES//////////// //
-//	// For rabbit.dat
+//	// For rabbit2.dat
+//	std::list<MR_Face> multiResConnectivity;
 //	int depth = 1;
-//	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertex_positions, depth);
+//	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertex_positions, multiResConnectivity, depth);
 //	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
-//	m_var.halfedgeMesh.subdivConnectivityOnly(depth);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT file
-//	m_var.index = m_var.halfedgeMesh.getNewIndexTriangles();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
+//	m_var.halfedgeMesh.subdivConnectivityOnly(depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
+//	m_var.index = m_var.halfedgeMesh.getTriangleIndices();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
 //	std::cout << m_var.vertex_positions.size() << " " << m_var.index.size() << std::endl;
 // 	// ////////////READING .DAT FILES//////////// //
 
@@ -385,7 +386,6 @@ void Viewer::draw()
 	glUseProgram(0);
 	drawOutlines();
 	glUseProgram(m_var.render_programID);
-	std::cout << m_var.vertex_positions.size() << std::endl;
 
 	// Display of predictions
 
