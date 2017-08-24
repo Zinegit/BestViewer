@@ -53,6 +53,7 @@ typedef struct variable_to_share
 	std::vector<float> predicted_vertex;
 	GLuint textureID;
 	GLuint Texture;
+	std::vector<float> vertices_in_order;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_HPP

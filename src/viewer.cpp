@@ -95,7 +95,7 @@ void Viewer::init()
 	std::vector<float> vertices_in_order;
 	std::vector<float> uvs_in_order;
 	std::vector<float> out_vertices;
-	std::vector<float> out_normals,
+	std::vector<float> out_normals;
 	std::vector<int> out_indices;
 	loadOBJ(
 		"../OBJ_FILES/cube.obj",
@@ -106,16 +106,10 @@ void Viewer::init()
 		out_indices);
 	m_var.vertex_positions = out_vertices;
 	m_var.index = out_indices;
-//	m_var.texture = uvs_in_order;
-	// With duplication. Use for drawing
-//	m_var.vertices_in_order = vertices_in_order;
 
-	std::cout << m_var.vertex_positions.size() << std::endl;
-	std::cout << m_var.index.size() << std::endl;
-//	for (float v : m_var.vertex_positions)
-//		std::cout << v << std::endl;
-//	for (int v : m_var.index)
-//		std::cout << v << std::endl;
+	// With duplication. Use for drawing
+	m_var.vertices_in_order = vertices_in_order;
+	m_var.texture = uvs_in_order;
 
 //	// //////////READING .OBJ FILES///////////// //
 
@@ -164,26 +158,6 @@ void Viewer::init()
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 
-
-	// Texture
-	m_var.texture = {
-//		0.0, 0.0,
-//		1.0, 0.0,
-//		0.0, 0.0,
-//		1.0, 0.0,
-//		0.0, 1.0,
-//		1.0, 1.0,
-//		0.0, 1.0,
-//		1.0, 1.0
-		0, 0.66,
-		0.33, 0.66,
-		0, 0,
-		0.667, 0.667,
-		1, 1,
-		0, 0,
-		0, 0,
-		0.667, 1
-	};
 	// Create one OpenGL texture
 	glGenTextures(1, &m_var.textureID);
 
