@@ -115,7 +115,7 @@ bool getSimilarVertexIndex(
 	std::vector<float>& out_normals,
 	int& index
 ){
-	// Lame linear search
+	// linear search
 	unsigned int j = 0;
 	for (unsigned int i = 0; i < out_vertices.size()/3; i++, j++)
 	{
@@ -129,7 +129,6 @@ bool getSimilarVertexIndex(
 //			is_near(in_normal[2], out_normals[3 * i + 2]))
 		{
 			index = i;
-			std::cout << "i = " << i << std::endl;
 			return true;
 		}
 	}
@@ -138,7 +137,7 @@ bool getSimilarVertexIndex(
 	return false;
 }
 
-void indexVBO_slow(
+void indexVBO(
 	std::vector<float>& in_vertices,
 	std::vector<float>& in_uvs,
 	std::vector<float>& in_normals,

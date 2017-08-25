@@ -24,7 +24,7 @@ bool getSimilarVertexIndex(std::vector<float> &in_vertex,
 	std::vector<float> &out_normals,
 	int &index);
 
-void indexVBO_slow(std::vector<float> &in_vertices,
+void indexVBO(std::vector<float> &in_vertices,
 	std::vector<float> &in_uvs,
 	std::vector<float> &in_normals,
 

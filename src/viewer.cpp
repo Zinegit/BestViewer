@@ -97,10 +97,14 @@ void Viewer::init()
 	bool res = loadOBJ("../OBJ_FILES/cube.obj", m_var.vertices, m_var.uvs, normals);
 
 	std::vector<float> indexed_normals;
-	indexVBO_slow(m_var.vertices, m_var.uvs, normals, m_var.indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
+	indexVBO(m_var.vertices, m_var.uvs, normals, m_var.indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
 	std::cout << m_var.vertices.size() << " " << m_var.indexed_vertices.size() << " " << m_var.uvs.size() << " " << m_var.indexed_uvs.size() << " " << m_var.indices.size() << std::endl;
-	for (int i : m_var.indices)
-		std::cout << i << std::endl;
+//	for (int i : m_var.indices)
+//		std::cout << i << std::endl;
+//	for (int i = 0; i < m_var.indexed_vertices.size()/3; i++)
+//		std::cout << m_var.indexed_vertices[3 * i] << " " << m_var.indexed_vertices[3 * i + 1] << " " << m_var.indexed_vertices[3 * i + 2] << std::endl;
+	for (int i = 0; i < m_var.indexed_uvs.size()/3; i++)
+			std::cout << m_var.indexed_uvs[2 * i] << " " << m_var.indexed_uvs[2 * i + 1] << std::endl;
 	// //////////READING .OBJ FILES///////////// //
 
 	m_var.colors.resize(m_var.indices.size(), 1.f);
@@ -384,9 +388,10 @@ void Viewer::draw()
 	//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
 	// Only display occulted triangles. Really slow
 	//m_index_temp = updateIndex(m_first_plane_triangles, m_index);
-	m_var.triangles_to_show = fusionBools(m_var.front_face_triangles, m_var.inside_frustum_triangles);
+//	m_var.triangles_to_show = fusionBools(m_var.front_face_triangles, m_var.inside_frustum_triangles);
 	// Display combination of both
-	m_var.temp_indices = updateIndex(m_var.triangles_to_show, m_var.indices);
+//	m_var.temp_indices = updateIndex(m_var.triangles_to_show, m_var.indices);
+	m_var.temp_indices = m_var.indices;
 
 	m_var.pointer_to_colors = m_var.colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
