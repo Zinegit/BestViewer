@@ -12,8 +12,25 @@
 bool loadOBJ(const char * path,
 	std::vector<float>& vertices_in_order,
 	std::vector<float>& uvs_in_order,
-	std::vector<float>& out_vertices, std::vector<float> &out_normals,
-	std::vector<int>& out_indices
-);
+	std::vector<float> &normals_in_order);
+
+bool is_near(float v1, float v2);
+
+bool getSimilarVertexIndex(std::vector<float> &in_vertex,
+	std::vector<float> &in_uv,
+	std::vector<float> &in_normal,
+	std::vector<float> &out_vertices,
+	std::vector<float> &out_uvs,
+	std::vector<float> &out_normals,
+	int &index);
+
+void indexVBO_slow(std::vector<float> &in_vertices,
+	std::vector<float> &in_uvs,
+	std::vector<float> &in_normals,
+
+	std::vector<int> &out_indices,
+	std::vector<float> &out_vertices,
+	std::vector<float> &out_uvs,
+	std::vector<float> &out_normals);
 
 #endif
