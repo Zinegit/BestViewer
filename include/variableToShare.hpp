@@ -23,6 +23,7 @@ typedef struct variable_to_share
 	std::vector <float> uvs;
 	std::vector<float> indexed_vertices;
 	std::vector<float> indexed_uvs;
+	std::vector<int> indexed_indices;
 	GLuint vertices_buffer;
 	GLuint nb_vertices;
 	GLuint nb_uvs;

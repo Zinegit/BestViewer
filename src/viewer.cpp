@@ -93,11 +93,12 @@ void Viewer::init()
 
 	// ////////////READING .OBJ FILES//////////// //
 	// Normals are useless for us for now
-	std::vector<float> normals;
-	bool res = loadOBJ("../OBJ_FILES/cube.obj", m_var.vertices, m_var.uvs, normals);
+	std::vector<float> in_vertices;
+	std::vector<float> in_uvs;
+	std::vector<float> in_normals;
+	bool res = loadOBJ("../OBJ_FILES/cube.obj", in_vertices, in_uvs, in_normals, m_var.vertices, m_var.indices);
 	std::vector<float> indexed_normals;
-	indexVBO(m_var.vertices, m_var.uvs, normals, m_var.indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
-	std::cout << m_var.vertices.size() << " " << m_var.indexed_vertices.size() << " " << m_var.uvs.size() << " " << m_var.indexed_uvs.size() << " " << m_var.indices.size() << std::endl;
+	indexVBO(in_vertices, in_uvs, in_normals, m_var.indexed_indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
 	// //////////READING .OBJ FILES///////////// //
 
 	m_var.colors.resize(m_var.indices.size(), 1.f);
@@ -366,7 +367,7 @@ void Viewer::draw()
 
 
 	m_var.front_face_triangles = isFrontFace(viewer_dir, m_var.normals);
-	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertices, m_var.indices, m_var.plane_coefficients);
+	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertices, m_var.indexed_indices, m_var.plane_coefficients);
 	// Depth culling
 	//m_first_plane_triangles = notOccultedTriangles(m_near_projected_vertex_positions, m_vertex_positions, m_index, plane_coefficients);
 	// Only display frontface triangles
@@ -377,8 +378,8 @@ void Viewer::draw()
 	//m_index_temp = updateIndex(m_first_plane_triangles, m_index);
 //	m_var.triangles_to_show = fusionBools(m_var.front_face_triangles, m_var.inside_frustum_triangles);
 	// Display combination of both
-//	m_var.temp_indices = updateIndex(m_var.triangles_to_show, m_var.indices);
-	m_var.temp_indices = m_var.indices;
+//	m_var.temp_indices = updateIndex(m_var.triangles_to_show, m_var.indexed_indices);
+	m_var.temp_indices = m_var.indexed_indices;
 
 	m_var.pointer_to_colors = m_var.colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);

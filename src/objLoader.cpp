@@ -4,8 +4,9 @@ bool loadOBJ(
     const char * path,
 	std::vector<float>& vertices_in_order,
 	std::vector<float>& uvs_in_order,
-	std::vector<float>& normals_in_order
-//	std::vector<float>& out_vertices,
+	std::vector<float>& normals_in_order,
+	std::vector<float>& out_vertices,
+	std::vector<int>& out_indices
 )
 {
 	setlocale(LC_NUMERIC, "C");
@@ -33,9 +34,9 @@ bool loadOBJ(
 		if ( strcmp( lineHeader, "v" ) == 0 ){
 			std::vector<float> vertex(3, 0);
 			fscanf(file, "%f %f %f\n", &vertex[0], &vertex[1], &vertex[2]);
-//			out_vertices.push_back(vertex[0]);
-//			out_vertices.push_back(vertex[1]);
-//			out_vertices.push_back(vertex[2]);
+			out_vertices.push_back(vertex[0]);
+			out_vertices.push_back(vertex[1]);
+			out_vertices.push_back(vertex[2]);
 			temp_vertices.push_back(vertex);
 		}else if (strcmp( lineHeader, "vt" ) == 0){
 			std::vector<float> uv(2, 0);
@@ -62,6 +63,9 @@ bool loadOBJ(
 			normalIndices.push_back(normalIndex[0]);
 			normalIndices.push_back(normalIndex[1]);
 			normalIndices.push_back(normalIndex[2]);
+			out_indices.push_back(vertexIndex[0]-1);
+			out_indices.push_back(vertexIndex[1]-1);
+			out_indices.push_back(vertexIndex[2]-1);
 		}else{
 			// Probably a comment, eat up the rest of the line
 			char stupidBuffer[1000];
