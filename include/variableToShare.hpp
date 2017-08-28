@@ -16,33 +16,38 @@
  */
 typedef struct variable_to_share
 {
-	std::vector<float> vertex_positions;
-	std::vector<int> index;
+	std::vector<int> indices;
+	std::vector<float> vertices;
 	std::vector <float> colors;
-	std::vector <float> texture;
-	GLuint vertex_buffer;
-	GLuint index_buffer;
+	std::vector <float> uvs;
+	std::vector<float> indexed_vertices;
+	std::vector<float> indexed_uvs;
+	std::vector<int> indexed_indices;
+	GLuint vertices_buffer;
+	GLuint nb_vertices;
+	GLuint nb_uvs;
 	GLuint color_buffer;
-	GLuint texture_buffer;
-	float* pointer_to_vertex_positions;
-	int* pointer_to_index_triangles;
-	float* pointer_to_colors;
-	float* pointer_to_texture;
+	GLuint uvs_buffer;
+	GLuint indices_buffer;
 	GLuint nb_indices;
-	GLuint nb_points_buffer;
 	std::vector<float> normals;
+	int* pointer_to_indices;
+	float* pointer_to_vertices;
+	float* pointer_to_colors;
+	float* pointer_to_uvs;
+	bool mix = true;
 	std::vector<bool> front_face_triangles;
 	std::vector<bool> inside_frustum_triangles;
 	std::vector<bool> first_plane_triangles;
 	std::vector<float> near_projected_vertex_positions;
 	std::vector<bool> triangles_to_show;
-	std::vector<int> index_temp;
-//	std::vector<float> vertices_temp;
+	std::vector<int> temp_indices;
 	GLdouble plane_coefficients[6][4];
 	std::vector<bool> triangles_to_show_t1;
 	std::vector<bool> triangles_to_show_t2;
 	GLuint render_programID;
 	std::vector<int> triangles_status;
+	bool recording = false;
 	HalfedgeMesh halfedgeMesh;
 	std::list<FaceIter> frontline;
 	std::vector<int> frontline_colors;
@@ -50,8 +55,7 @@ typedef struct variable_to_share
 	std::vector<float> predicted_vertex;
 	GLuint textureID;
 	GLuint Texture;
-	bool recording = false;
-	bool mix = true;
+	std::vector<float> vertices_in_order;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_HPP

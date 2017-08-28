@@ -47,23 +47,25 @@ void Observer::init()
 
 	// Place observer
 	camera() -> setViewDirection(qglviewer::Vec(0.5, 0.5, 0.5));
-	float max = 4 * *std::max_element(m_var -> vertex_positions.begin(), m_var -> vertex_positions.end());
+	float max = 4 * *std::max_element(m_var -> vertices.begin(), m_var -> vertices.end());
 	setSceneRadius(max);
-	const qglviewer::Vec center = barycenter(m_var -> vertex_positions);
+	const qglviewer::Vec center = barycenter(m_var -> vertices);
 	setSceneCenter(center);
 	showEntireScene();
 
-	// Why not putting viewer and observer in the same context? (see qgl multiview example)
-
-	glGenBuffers(1, &m_var -> vertex_buffer);
+	glGenBuffers(1, &m_var -> vertices_buffer);
 	// The following commands will talk about our 'm_vertex_buffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertices_buffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_points_buffer * sizeof(float), m_var -> pointer_to_vertex_positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_vertices * sizeof(float), m_var -> pointer_to_vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> index_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_index_triangles, GL_STATIC_DRAW);
+	glGenBuffers(1, &m_var -> uvs_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> uvs_buffer);
+	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_uvs * sizeof(float), m_var -> pointer_to_uvs, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &m_var -> indices_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> indices_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_indices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m_var -> color_buffer);
 
@@ -73,7 +75,7 @@ void Observer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertices_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -107,7 +109,7 @@ void Observer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertices_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -128,6 +130,25 @@ void Observer::drawSurfaces()
 		0,                                // stride
 		(void*)0                          // array buffer offset
 	);
+
+//	// Bind our texture in Texture Unit 0
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_2D, m_var -> Texture);
+//	// Set our "myTextureSampler" sampler to user Texture Unit 0
+//	glUniform1i(m_var -> textureID, 0);
+
+//	// 2nd bis attribute buffer : texture
+//	glEnableVertexAttribArray(1);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var -> uvs_buffer);
+//	glVertexAttribPointer(
+//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+//		2,                                // size
+//		GL_FLOAT,                         // type
+//		GL_FALSE,                         // normalized?
+//		0,                                // stride
+//		(void*)0                          // array buffer offset
+//	);
+
 
 	glColor3f(1,1,1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -165,11 +186,11 @@ void Observer::draw()
 	observed_camera -> getFrustumPlanesCoefficients(m_var -> plane_coefficients);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_var -> color_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_points_buffer * sizeof(float), m_var -> pointer_to_colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_vertices * sizeof(float), m_var -> pointer_to_colors, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> index_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_index_triangles, GL_STATIC_DRAW);
+	glGenBuffers(1, &m_var -> indices_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> indices_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_indices, GL_STATIC_DRAW);
 	if (m_var -> mix)
 	{
 		drawSurfaces();

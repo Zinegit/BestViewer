@@ -65,6 +65,8 @@ private:
 	variable_to_share m_var;
 	bool debug_mode = false;
 
+//	void (*drawSurfaces)();
+
 protected:
 
 	/**
@@ -87,6 +89,9 @@ protected:
 	 * \return void
 	 */
 	virtual void drawSurfaces();
+//	virtual void drawSurfacesColor();
+
+//	virtual void drawSurfacesTexture();
 
 	/**
 	 * \fn void drawOutlines()

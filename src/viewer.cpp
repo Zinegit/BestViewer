@@ -64,84 +64,92 @@ void Viewer::init()
 	glBindVertexArray(VertexArrayID);
 
 //	// ////////////READING .PLY FILES/////////// //
-	Ply ply;
-	ply.readPly("../PLY_FILES/icosahedron.ply");
-	// Retrieve geometry
-	m_var.vertex_positions = ply.getPos();
-	// Retrieve topology
-	m_var.index = ply.getIndex();
+//	Ply ply;
+//	ply.readPly("../PLY_FILES/icosahedron.ply");
+//	// Retrieve geometry
+//	m_var.vertices = ply.getPos();
+//	// Retrieve topology
+//	m_var.indices = ply.getIndex();
 //	// //////////READING .PLY FILES//////////// //
 
-//	// ////////////READING .DAT FILES//////////// //
-//	// For rabbit2.dat
-//	std::list<MR_Face> multiResConnectivity;
-//	int depth = 1;
-//	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertex_positions, multiResConnectivity, depth);
-//	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
-//	m_var.halfedgeMesh.subdivConnectivityOnly(depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
-//	m_var.index = m_var.halfedgeMesh.getTriangleIndices();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
-//	std::cout << m_var.vertex_positions.size() << " " << m_var.index.size() << std::endl;
-// 	// ////////////READING .DAT FILES//////////// //
+	// ////////////READING .DAT FILES//////////// //
+	// For rabbit2.dat
+	std::list<MR_Face> multiResConnectivity;
+	int depth = 1;
+	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertices, multiResConnectivity, depth);
+	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
+	m_var.halfedgeMesh.subdivConnectivityOnly(depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
+	m_var.indices = m_var.halfedgeMesh.getTriangleIndices();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
+	// ////////////READING .DAT FILES//////////// //
 
+	// Need to replace m_var.indices with m_var.indexed_indices and m_var.vertices with m_var.indexed_vertices in buffer building
 //	// ////////////READING .OBJ FILES//////////// //
-//	std::vector<float> out_vertices;
-//	std::vector<float> out_uvs;
-//	std::vector<float> out_normals;
-//	std::vector<int> out_indices;
-//	loadOBJ(
-//		"../OBJ_FILES/cube.obj",
-//		out_vertices,
-//		out_uvs,
-//		out_normals,
-//		out_indices);
-//	m_var.vertex_positions = out_vertices;
-//	m_var.index = out_indices;
+//	// Normals are useless for us for now
+//	std::vector<float> in_vertices;
+//	std::vector<float> in_uvs;
+//	std::vector<float> in_normals;
+//	bool res = loadOBJ("../OBJ_FILES/cube.obj", in_vertices, in_uvs, in_normals, m_var.vertices, m_var.indices);
+//	std::vector<float> indexed_normals;
+//	indexVBO(in_vertices, in_uvs, in_normals, m_var.indexed_indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
 //	// //////////READING .OBJ FILES///////////// //
 
-	m_var.colors.resize(m_var.index.size(), 1.f);
-	m_var.triangles_to_show_t1.resize(m_var.index.size() / 3, 1);
-	m_var.triangles_to_show_t2.resize(m_var.index.size() / 3, 1);
+	m_var.colors.resize(m_var.indices.size(), 1.f);
+	m_var.triangles_to_show_t1.resize(m_var.indices.size() / 3, 1);
+	m_var.triangles_to_show_t2.resize(m_var.indices.size() / 3, 1);
 
 	// Get normal vertices
-	m_var.normals = getNormals(m_var.vertex_positions, m_var.index);
+	m_var.normals = getNormals(m_var.vertices, m_var.indices);
 
 	// Place viewer
-	float max = *std::max_element(m_var.vertex_positions.begin(), m_var.vertex_positions.end());
+	float max = *std::max_element(m_var.vertices.begin(), m_var.vertices.end());
 	setSceneRadius(max);
-	const qglviewer::Vec center = barycenter(m_var.vertex_positions);
+	const qglviewer::Vec center = barycenter(m_var.vertices);
 	setSceneCenter(center);
 	showEntireScene();
 
-	m_var.nb_points_buffer = m_var.vertex_positions.size();
+	m_var.nb_vertices = m_var.vertices.size();
 	// Create pointer to vector for glBufferData
-	m_var.pointer_to_vertex_positions = m_var.vertex_positions.data();
+	m_var.pointer_to_vertices = m_var.vertices.data();
 	// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
-	glGenBuffers(1, &m_var.vertex_buffer);
+	glGenBuffers(1, &m_var.vertices_buffer);
 	// The following commands will talk about our 'm_vertex_buffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_vertex_positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
+
+	m_var.nb_indices = m_var.temp_indices.size();
+	m_var.pointer_to_indices = m_var.temp_indices.data();
+	glGenBuffers(1, &m_var.indices_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.indices_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_indices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	// help();
 	std::list<MR_Face> multi_res_connectivity;
-	m_var.halfedgeMesh.build(m_var.vertex_positions, m_var.index, multi_res_connectivity);
+	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 
-//	// Create one OpenGL texture
-//	glGenTextures(1, &m_var.textureID);
+	// Create one OpenGL texture
+	glGenTextures(1, &m_var.textureID);
 
-//	// "Bind" the newly created texture : all future texture functions will modify this texture
-//	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
 
+	// If you want to use BMP files, comment line "uv[1] = -uv[1];" in objLoader.cpp
 //	m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
+//	m_var.Texture = loadDDS("../TEXTURE_FILES/uvtemplate.DDS");
+	m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
+	m_var.nb_uvs = m_var.indexed_uvs.size();
+	m_var.pointer_to_uvs = m_var.indexed_uvs.data();
+	glGenBuffers(1, &m_var.uvs_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
+	glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
 
-//	m_var.pointer_to_texture = m_var.texture.data();
-//	glGenBuffers(1, &m_var.texture_buffer);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
-//	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_texture, GL_STATIC_DRAW);
+	//If color
+//	this->drawSurfaces = &drawSurfacesColor;
+//	this->drawSurfaces = &drawSurfacesTexture;
 }
 
 void Viewer::record()
@@ -151,7 +159,7 @@ void Viewer::record()
 		m_var.triangles_to_show_t2 = m_var.triangles_to_show;
 		m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
 		m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
-		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 		m_var.recording = false;
 	} else {
 		m_var.triangles_to_show_t1 = m_var.triangles_to_show;
@@ -163,15 +171,15 @@ void Viewer::predictStep()
 {
 	if (!m_var.frontline.empty())
 	{
-		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
-		m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 	}
 }
 
 void Viewer::predict()
 {
-	std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
-	m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+	std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
+	m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 	exportToTxt(dist_true_predicted, "../analyses/data.txt");
 }
 
@@ -191,7 +199,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 				m_var.triangles_to_show_t2 = m_var.triangles_to_show;
 				m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
 				m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
-				m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+				m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 				m_var.recording = false;
 			} else {
 				m_var.triangles_to_show_t1 = m_var.triangles_to_show;
@@ -201,8 +209,8 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		}
 		else if (e->key() == Qt::Key_M)
 		{
-			std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertex_positions, m_var.index, m_var.halfedgeMesh);
-			m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+			std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
+			m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 			float mean_distances = mean(dist_true_predicted);
 			exportToTxt(dist_true_predicted, "../analyses/data.txt");
 			update();
@@ -211,8 +219,8 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		{
 			if (!m_var.frontline.empty())
 			{
-				TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
-				m_var.colors = colorize(m_var.triangles_status, m_var.vertex_positions, m_var.index, m_var.frontline_colors);
+				TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
+				m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 				update();
 			}
 		}
@@ -239,7 +247,7 @@ void Viewer::drawOutlines()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -277,7 +285,7 @@ void Viewer::drawSurfaces()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
 	glVertexAttribPointer(
 	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 	   3,                  // size
@@ -307,7 +315,7 @@ void Viewer::drawSurfaces()
 
 //	// 2nd bis attribute buffer : texture
 //	glEnableVertexAttribArray(1);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var.texture_buffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
 //	glVertexAttribPointer(
 //		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
 //		2,                                // size
@@ -348,37 +356,37 @@ void Viewer::draw()
 
 	this -> camera() -> getFrustumPlanesCoefficients(m_var.plane_coefficients);
 
-	m_var.near_projected_vertex_positions = project(m_var.vertex_positions, m_var.plane_coefficients, 3);
+	m_var.near_projected_vertex_positions = project(m_var.vertices, m_var.plane_coefficients, 3);
 
 	// Get viewer's viewing direction
 	qglviewer::Vec viewer_dir = camera() -> viewDirection();
 
 
 	m_var.front_face_triangles = isFrontFace(viewer_dir, m_var.normals);
-	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertex_positions, m_var.index, m_var.plane_coefficients);
+	m_var.inside_frustum_triangles = areInsideFrustum(m_var.vertices, m_var.indices, m_var.plane_coefficients);
 	// Depth culling
-	//m_first_plane_triangles = notOccultedTriangles(m_near_projected_vertex_positions, m_vertex_positions, m_index, plane_coefficients);
+	// m_var.first_plane_triangles = notOccultedTriangles(m_var.near_projected_vertex_positions, m_var.vertices, m_var.indices, m_var.plane_coefficients);
 	// Only display frontface triangles
-	//m_index_temp = updateIndex(m_front_face_triangles, m_index);
+	//m_var.temp_indices = updateIndex(m_var.front_face_triangles, m_var.indices);
 	// Only display triangles in the frustum
-	//m_index_temp = updateIndex(m_inside_frustum_triangles, m_index);
-	// Only display occulted triangles
-	//m_index_temp = updateIndex(m_first_plane_triangles, m_index);
+	//m_var.temp_indices = updateIndex(m_var.inside_frustum_triangles, m_var.indices);
+	// Only display not occulted triangles. Really slow
+	//m_var.temp_indices = updateIndex(m_var.first_plane_triangles, m_var.indices);
 	m_var.triangles_to_show = fusionBools(m_var.front_face_triangles, m_var.inside_frustum_triangles);
 	// Display combination of both
-	m_var.index_temp = updateIndex(m_var.triangles_to_show, m_var.index);
-	// Might be impossible to modify the vertices because of the indexation
-//	m_var.vertices_temp = updateVertices(m_var.index_temp);
+
+	m_var.temp_indices = updateIndex(m_var.triangles_to_show, m_var.indices);
+//	m_var.temp_indices = m_var.indexed_indices;
 
 	m_var.pointer_to_colors = m_var.colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_points_buffer * sizeof(float), m_var.pointer_to_colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_colors, GL_STATIC_DRAW);
 
-	m_var.pointer_to_index_triangles = m_var.index_temp.data();
-	m_var.nb_indices = m_var.index_temp.size();
-	glGenBuffers(1, &m_var.index_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_index_triangles, GL_STATIC_DRAW);
+	m_var.pointer_to_indices = m_var.temp_indices.data();
+	m_var.nb_indices = m_var.temp_indices.size();
+	glGenBuffers(1, &m_var.indices_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.indices_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_indices, GL_STATIC_DRAW);
 	if (m_var.mix)
 	{
 		drawSurfaces();
