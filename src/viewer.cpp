@@ -94,17 +94,17 @@ void Viewer::init()
 	// ////////////READING .OBJ FILES//////////// //
 	// Normals are useless for us for now
 	std::vector<float> normals;
-	bool res = loadOBJ("../OBJ_FILES/cube.obj", m_var.vertices, m_var.uvs, normals);
+	bool res = loadOBJ("../OBJ_FILES/cube.obj", m_var.vertices, m_var.uvs, normals, m_var.indices);
 
-	std::vector<float> indexed_normals;
-	indexVBO(m_var.vertices, m_var.uvs, normals, m_var.indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
-	std::cout << m_var.vertices.size() << " " << m_var.indexed_vertices.size() << " " << m_var.uvs.size() << " " << m_var.indexed_uvs.size() << " " << m_var.indices.size() << std::endl;
-//	for (int i : m_var.indices)
-//		std::cout << i << std::endl;
+//	std::vector<float> indexed_normals;
+//	indexVBO(m_var.vertices, m_var.uvs, normals, m_var.indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
+//	std::cout << m_var.vertices.size() << " " << m_var.indexed_vertices.size() << " " << m_var.uvs.size() << " " << m_var.indexed_uvs.size() << " " << m_var.indices.size() << std::endl;
+	for (int i : m_var.indices)
+		std::cout << i << std::endl;
 //	for (int i = 0; i < m_var.indexed_vertices.size()/3; i++)
 //		std::cout << m_var.indexed_vertices[3 * i] << " " << m_var.indexed_vertices[3 * i + 1] << " " << m_var.indexed_vertices[3 * i + 2] << std::endl;
-	for (int i = 0; i < m_var.indexed_uvs.size()/3; i++)
-			std::cout << m_var.indexed_uvs[2 * i] << " " << m_var.indexed_uvs[2 * i + 1] << std::endl;
+//	for (int i = 0; i < m_var.indexed_uvs.size()/3; i++)
+//		std::cout << m_var.indexed_uvs[2 * i] << " " << m_var.indexed_uvs[2 * i + 1] << std::endl;
 	// //////////READING .OBJ FILES///////////// //
 
 	m_var.colors.resize(m_var.indices.size(), 1.f);
@@ -121,22 +121,15 @@ void Viewer::init()
 	setSceneCenter(center);
 	showEntireScene();
 
-	m_var.nb_vertices = m_var.indexed_vertices.size();
+	m_var.nb_vertices = m_var.vertices.size();
 	// Create pointer to vector for glBufferData
-	m_var.pointer_to_vertices = m_var.indexed_vertices.data();
+	m_var.pointer_to_vertices = m_var.vertices.data();
 	// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
 	glGenBuffers(1, &m_var.vertices_buffer);
 	// The following commands will talk about our 'm_vertex_buffer' buffer
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
-
-	m_var.nb_uvs = m_var.indexed_uvs.size();
-	m_var.pointer_to_uvs = m_var.indexed_uvs.data();
-	GLuint uvbuffer;
-	glGenBuffers(1, &uvbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
 
 	m_var.nb_indices = m_var.temp_indices.size();
 	m_var.pointer_to_indices = m_var.temp_indices.data();
@@ -162,10 +155,11 @@ void Viewer::init()
 //	m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
 //	m_var.Texture = loadDDS("../TEXTURE_FILES/uvtemplate.DDS");
 	m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
+	m_var.nb_uvs = m_var.uvs.size();
 	m_var.pointer_to_uvs = m_var.uvs.data();
 	glGenBuffers(1, &m_var.uvs_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
 }
 
 void Viewer::record()

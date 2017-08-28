@@ -4,9 +4,9 @@ bool loadOBJ(
     const char * path,
 	std::vector<float>& vertices_in_order,
 	std::vector<float>& uvs_in_order,
-	std::vector<float>& normals_in_order
+	std::vector<float>& normals_in_order,
 //	std::vector<float>& out_vertices,
-//	std::vector<int>& out_indices
+	std::vector<int>& out_indices
 )
 {
 	setlocale(LC_NUMERIC, "C");
@@ -63,9 +63,6 @@ bool loadOBJ(
 			normalIndices.push_back(normalIndex[0]);
 			normalIndices.push_back(normalIndex[1]);
 			normalIndices.push_back(normalIndex[2]);
-//			out_indices.push_back(vertexIndex[0]-1);
-//			out_indices.push_back(vertexIndex[1]-1);
-//			out_indices.push_back(vertexIndex[2]-1);
 		}else{
 			// Probably a comment, eat up the rest of the line
 			char stupidBuffer[1000];
@@ -94,6 +91,7 @@ bool loadOBJ(
 		normals_in_order.push_back(normal[0]);
 		normals_in_order.push_back(normal[1]);
 		normals_in_order.push_back(normal[2]);
+		out_indices.push_back(i);
 	}
 	return true;
 }
