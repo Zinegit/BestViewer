@@ -49,6 +49,7 @@ typedef struct variable_to_share
 	std::vector<int> triangles_status;
 	bool recording = false;
 	HalfedgeMesh halfedgeMesh;
+	HalfedgeMesh old_halfedgeMesh;
 	std::list<FaceIter> frontline;
 	std::vector<int> frontline_colors;
 	std::vector<float> true_vertex;
@@ -56,6 +57,7 @@ typedef struct variable_to_share
 	GLuint textureID;
 	GLuint Texture;
 	std::vector<float> vertices_in_order;
+	int depth;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_HPP

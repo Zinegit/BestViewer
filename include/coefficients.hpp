@@ -25,6 +25,6 @@
  * \param depth : The resolution wanted
  * \return The distance of a vertex from one of the frustum's planes
  */
-void findCoefficients(std::vector<float>& vertex_positions, std::vector<int> &index_triangles, std::vector<int> &triangles_status, HalfedgeMesh& halfedgeMesh, int depth);
+void findCoefficients(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& triangles_status, HalfedgeMesh& old_halfedgeMesh, HalfedgeMesh& halfedgeMesh, int depth);
 
 #endif // COEFFICIENTS_H

@@ -64,22 +64,28 @@ void Viewer::init()
 	glBindVertexArray(VertexArrayID);
 
 //	// ////////////READING .PLY FILES/////////// //
-//	Ply ply;
-//	ply.readPly("../PLY_FILES/icosahedron.ply");
-//	// Retrieve geometry
-//	m_var.vertices = ply.getPos();
-//	// Retrieve topology
-//	m_var.indices = ply.getIndex();
+	Ply ply;
+	ply.readPly("../PLY_FILES/Triangle.ply");
+	// Retrieve geometry
+	m_var.vertices = ply.getPos();
+	// Retrieve topology
+	m_var.indices = ply.getIndex();
 //	// //////////READING .PLY FILES//////////// //
 
 	// ////////////READING .DAT FILES//////////// //
 	// For rabbit2.dat
 	std::list<MR_Face> multiResConnectivity;
-	int depth = 1;
-	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertices, multiResConnectivity, depth);
-	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
-	m_var.halfedgeMesh.subdivConnectivityOnly(depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
-	m_var.indices = m_var.halfedgeMesh.getTriangleIndices();	//Getting the connectivity of the current subdivision level of the Halfedge mesh
+	std::vector<int> depth_vertex_location;		//Useless
+	m_var.depth = 1;
+//	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertices, multiResConnectivity, m_var.depth);
+//	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
+//	m_var.halfedgeMesh.subdivConnectivityOnly(depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
+
+	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
+	m_var.old_halfedgeMesh = m_var.halfedgeMesh;
+
+	m_var.halfedgeMesh.subdiv(loop_lifted, m_var.depth, m_var.vertices, m_var.indices, depth_vertex_location, multiResConnectivity);
+
 	// ////////////READING .DAT FILES//////////// //
 
 	// Need to replace m_var.indices with m_var.indexed_indices and m_var.vertices with m_var.indexed_vertices in buffer building
@@ -126,8 +132,8 @@ void Viewer::init()
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	// help();
-	std::list<MR_Face> multi_res_connectivity;
-	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
+//	std::list<MR_Face> multi_res_connectivity;
+//	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 
@@ -226,7 +232,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		}
 		else if (e->key() == Qt::Key_T)
 		{
-			//findCoefficients(m_var.vertex_positions, m_var.index, m_var.triangles_status, m_var.halfedgeMesh);
+			findCoefficients(m_var.vertices, m_var.indices, m_var.triangles_status, m_var.old_halfedgeMesh,	m_var.halfedgeMesh, m_var.depth);
 		}
 		else if (e->key() == Qt::Key_K)
 		{
