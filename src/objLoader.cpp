@@ -4,9 +4,8 @@ bool loadOBJ(
     const char * path,
 	std::vector<float>& vertices_in_order,
 	std::vector<float>& uvs_in_order,
-	std::vector<float>& normals_in_order,
+	std::vector<float>& normals_in_order
 //	std::vector<float>& out_vertices,
-	std::vector<int>& out_indices
 )
 {
 	setlocale(LC_NUMERIC, "C");
@@ -91,7 +90,6 @@ bool loadOBJ(
 		normals_in_order.push_back(normal[0]);
 		normals_in_order.push_back(normal[1]);
 		normals_in_order.push_back(normal[2]);
-		out_indices.push_back(i);
 	}
 	return true;
 }
@@ -169,8 +167,8 @@ void indexVBO(
 			out_vertices.push_back(in_vertices[3 * i]);
 			out_vertices.push_back(in_vertices[3 * i + 1]);
 			out_vertices.push_back(in_vertices[3 * i + 2]);
-			out_uvs.push_back(in_uvs[3 * i]);
-			out_uvs.push_back(in_uvs[3 * i + 1]);
+			out_uvs.push_back(in_uvs[2 * i]);
+			out_uvs.push_back(in_uvs[2 * i + 1]);
 			out_normals.push_back(in_normals[3 * i]);
 			out_normals.push_back(in_normals[3 * i + 1]);
 			out_normals.push_back(in_normals[3 * i + 2]);
