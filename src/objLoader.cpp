@@ -2,11 +2,9 @@
 
 bool loadOBJ(
 	const char * path,
-	std::vector<float>& vertices_in_order,
-	std::vector<float>& uvs_in_order,
-	std::vector<float>& normals_in_order,
-	std::vector<float>& out_vertices,
-	std::vector<int>& out_indices
+	std::vector<float>& vertices,
+	std::vector<float>& uvs,
+	std::vector<float>& normals
 )
 {
 	setlocale(LC_NUMERIC, "C");
@@ -34,9 +32,6 @@ bool loadOBJ(
 		if ( strcmp( lineHeader, "v" ) == 0 ){
 			std::vector<float> vertex(3, 0);
 			fscanf(file, "%f %f %f\n", &vertex[0], &vertex[1], &vertex[2]);
-			out_vertices.push_back(vertex[0]);
-			out_vertices.push_back(vertex[1]);
-			out_vertices.push_back(vertex[2]);
 			temp_vertices.push_back(vertex);
 		}else if (strcmp( lineHeader, "vt" ) == 0){
 			std::vector<float> uv(2, 0);
@@ -63,9 +58,6 @@ bool loadOBJ(
 			normalIndices.push_back(normalIndex[0]);
 			normalIndices.push_back(normalIndex[1]);
 			normalIndices.push_back(normalIndex[2]);
-			out_indices.push_back(vertexIndex[0]-1);
-			out_indices.push_back(vertexIndex[1]-1);
-			out_indices.push_back(vertexIndex[2]-1);
 		}else{
 			// Probably a comment, eat up the rest of the line
 			char stupidBuffer[1000];
@@ -86,14 +78,14 @@ bool loadOBJ(
 		std::vector<float> normal = temp_normals[normalIndex-1];
 
 		// Put the attributes in buffers
-		vertices_in_order.push_back(vertex[0]);
-		vertices_in_order.push_back(vertex[1]);
-		vertices_in_order.push_back(vertex[2]);
-		uvs_in_order.push_back(uv[0]);
-		uvs_in_order.push_back(uv[1]);
-		normals_in_order.push_back(normal[0]);
-		normals_in_order.push_back(normal[1]);
-		normals_in_order.push_back(normal[2]);
+		vertices.push_back(vertex[0]);
+		vertices.push_back(vertex[1]);
+		vertices.push_back(vertex[2]);
+		uvs.push_back(uv[0]);
+		uvs.push_back(uv[1]);
+		normals.push_back(normal[0]);
+		normals.push_back(normal[1]);
+		normals.push_back(normal[2]);
 	}
 	return true;
 }

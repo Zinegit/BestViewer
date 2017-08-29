@@ -4,6 +4,7 @@ using namespace std;
 
 void Observer::init()
 {
+
 	camera() -> setType(qglviewer::Camera::ORTHOGRAPHIC);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -59,20 +60,22 @@ void Observer::init()
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_vertices * sizeof(float), m_var -> pointer_to_vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> uvs_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var -> uvs_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var -> nb_uvs * sizeof(float), m_var -> pointer_to_uvs, GL_STATIC_DRAW);
-
 	glGenBuffers(1, &m_var -> indices_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var -> indices_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_indices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_var -> color_buffer);
-
 	if (m_var -> type_file == 1 or m_var -> type_file == 2)
+	{
 		drawSurfaces = &Observer::drawSurfacesColor;
+		glGenBuffers(1, &m_var -> color_buffer);
+	}
 	else if (m_var -> type_file == 3)
+	{
 		drawSurfaces = &Observer::drawSurfacesTexture;
+		glGenBuffers(1, &m_var -> uvs_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, m_var -> uvs_buffer);
+		glBufferData(GL_ARRAY_BUFFER, m_var -> nb_uvs * sizeof(float), m_var -> pointer_to_uvs, GL_STATIC_DRAW);
+	}
 }
 
 void Observer::drawOutlines()

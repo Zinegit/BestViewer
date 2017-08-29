@@ -17,11 +17,9 @@
 #include <glm/glm.hpp>
 
 bool loadOBJ(const char *path,
-	std::vector<float>& vertices_in_order,
-	std::vector<float>& uvs_in_order,
-	std::vector<float> &normals_in_order,
-	std::vector<float> &out_vertices,
-	std::vector<int> &out_indices);
+	std::vector<float>& vertices,
+	std::vector<float>& uvs,
+	std::vector<float> &normals);
 
 bool is_near(float v1, float v2);
 

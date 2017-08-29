@@ -45,7 +45,6 @@ void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
 	int infoLogLength;
 
 	// Compile Shader
-	printf("Compiling shader : %s\n", shader_file_path);
 	char const * sourcePointer = shaderCode.c_str();
 	glShaderSource(shader_id, 1, &sourcePointer , NULL);
 	glCompileShader(shader_id);
@@ -59,8 +58,6 @@ void ShaderProgram::loadShader(GLenum shaderType, const char* shader_file_path)
 		printf("%s\n", &shaderErrorMessage[0]);
 	}
 
-	// Link the program
-	printf("Linking program\n");
 	glAttachShader(m_program_id, shader_id);
 	glLinkProgram(m_program_id);
 

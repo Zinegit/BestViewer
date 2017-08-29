@@ -96,12 +96,7 @@ int main(int argc, char **argv) {
 		observer.setCamera(cam) ;
 
 		// Make sure every viewer movement updates the observer
-		// Not really useful
-//		QObject::connect(viewer.camera()->frame(), SIGNAL(manipulated()), &observer, SLOT(update()));
-//		QObject::connect(viewer.camera()->frame(), SIGNAL(spun()), &observer, SLOT(update()));
 		QObject::connect(&viewer, SIGNAL(drawNeeded()), &observer, SLOT(update()));
-
-//		observer.show();
 
 		window.addViewer(&observer);
 	}

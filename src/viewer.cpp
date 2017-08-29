@@ -70,12 +70,9 @@ void Viewer::init()
 	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
 
-	// Create and compile our GLSL program from the shaders
+	// Create our GLSL program from the shaders
 	ShaderProgram shader_program;
-	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
-	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
-//	shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
-//	shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
+
 	m_var.render_programID = shader_program.getProgramId();
 
 	// Dark red background
@@ -87,11 +84,12 @@ void Viewer::init()
 	glBindVertexArray(VertexArrayID);
 
 	// Read the file extension
-	std::cout << file_path << std::endl;
 	m_var.type_file = typeFile(file_path);
 	// Read the file depending on the extension
 	if (m_var.type_file == 1)
 	{
+		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
+		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		Ply ply;
 		ply.readPly(file_path);
 		// Retrieve geometry
@@ -100,9 +98,24 @@ void Viewer::init()
 		m_var.indices = ply.getIndex();
 		// Function pointer
 		drawSurfaces = &Viewer::drawSurfacesColor;
+
+		m_var.nb_vertices = m_var.vertices.size();
+		// Create pointer to vector for glBufferData
+		m_var.pointer_to_vertices = m_var.vertices.data();
+		// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
+		glGenBuffers(1, &m_var.vertices_buffer);
+		// The following commands will talk about our 'm_vertex_buffer' buffer
+		glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
+		// Give our vertices to OpenGL.
+		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
+
+		std::list<MR_Face> multi_res_connectivity;
+		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
 	}
 	else if (m_var.type_file == 2)
 	{
+		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
+		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		std::list<MR_Face> multiResConnectivity;
 		std::vector<int> depth_vertex_location;		//Useless
 		m_var.depth = 1;
@@ -115,19 +128,56 @@ void Viewer::init()
 
 		m_var.halfedgeMesh.subdiv(loop_lifted, m_var.depth, m_var.vertices, m_var.indices, depth_vertex_location, multiResConnectivity);
 		drawSurfaces = &Viewer::drawSurfacesColor;
+
+		m_var.nb_vertices = m_var.vertices.size();
+		// Create pointer to vector for glBufferData
+		m_var.pointer_to_vertices = m_var.vertices.data();
+		// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
+		glGenBuffers(1, &m_var.vertices_buffer);
+		// The following commands will talk about our 'm_vertex_buffer' buffer
+		glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
+		// Give our vertices to OpenGL.
+		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
 	}
 	else if (m_var.type_file == 3)
 	{
+		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
+		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/texture.frag");
 		// Need to replace m_var.indices with m_var.indexed_indices and m_var.vertices with m_var.indexed_vertices in buffer building
 		// Normals are useless for us for now
 		std::vector<float> in_vertices;
 		std::vector<float> in_uvs;
 		std::vector<float> in_normals;
 		const char* file_path_obj = file_path.c_str();
-		bool res = loadOBJ(file_path_obj, in_vertices, in_uvs, in_normals, m_var.vertices, m_var.indices);
-		std::vector<float> indexed_normals;
-		indexVBO(in_vertices, in_uvs, in_normals, m_var.indexed_indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
+		bool res = loadOBJ(file_path_obj, in_vertices, in_uvs, in_normals);
+		std::vector<float> normals;
+		indexVBO(in_vertices, in_uvs, in_normals, m_var.indices, m_var.vertices, m_var.uvs, normals);
 		drawSurfaces = &Viewer::drawSurfacesTexture;
+		// Create one OpenGL texture
+		glGenTextures(1, &m_var.textureID);
+
+		// "Bind" the newly created texture : all future texture functions will modify this texture
+		glBindTexture(GL_TEXTURE_2D, m_var.textureID);
+
+		//If you want to use BMP files, comment line "uv[1] = -uv[1];" in objLoader.cpp
+		//m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
+		//m_var.Texture = loadDDS("../TEXTURE_FILES/uvtemplate.DDS");
+		m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
+		m_var.nb_uvs = m_var.uvs.size();
+		m_var.pointer_to_uvs = m_var.uvs.data();
+		glGenBuffers(1, &m_var.uvs_buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
+		glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
+
+		m_var.nb_vertices = m_var.vertices.size();
+		// Create pointer to vector for glBufferData
+		m_var.pointer_to_vertices = m_var.vertices.data();
+		// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
+		glGenBuffers(1, &m_var.vertices_buffer);
+		// The following commands will talk about our 'm_vertex_buffer' buffer
+		glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
+		// Give our vertices to OpenGL.
+		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
 	}
 
 	m_var.colors.resize(m_var.indices.size(), 1.f);
@@ -144,16 +194,6 @@ void Viewer::init()
 	setSceneCenter(center);
 	showEntireScene();
 
-	m_var.nb_vertices = m_var.vertices.size();
-	// Create pointer to vector for glBufferData
-	m_var.pointer_to_vertices = m_var.vertices.data();
-	// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
-	glGenBuffers(1, &m_var.vertices_buffer);
-	// The following commands will talk about our 'm_vertex_buffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
-	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
-
 	m_var.nb_indices = m_var.temp_indices.size();
 	m_var.pointer_to_indices = m_var.temp_indices.data();
 	glGenBuffers(1, &m_var.indices_buffer);
@@ -163,30 +203,9 @@ void Viewer::init()
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	// help();
-	std::list<MR_Face> multi_res_connectivity;
-	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 
-	// Create one OpenGL texture
-//	glGenTextures(1, &m_var.textureID);
-
-	// "Bind" the newly created texture : all future texture functions will modify this texture
-//	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
-
-	// If you want to use BMP files, comment line "uv[1] = -uv[1];" in objLoader.cpp
-//	m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
-//	m_var.Texture = loadDDS("../TEXTURE_FILES/uvtemplate.DDS");
-//	m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
-//	m_var.nb_uvs = m_var.indexed_uvs.size();
-//	m_var.pointer_to_uvs = m_var.indexed_uvs.data();
-//	glGenBuffers(1, &m_var.uvs_buffer);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
-//	glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
-
-	//If color
-//	this->drawSurfaces = &drawSurfacesColor;
-//	this->drawSurfaces = &drawSurfacesTexture;
 }
 
 void Viewer::record()
@@ -432,7 +451,6 @@ void Viewer::draw()
 	// Display combination of both
 
 	m_var.temp_indices = updateIndex(m_var.triangles_to_show, m_var.indices);
-//	m_var.temp_indices = m_var.indexed_indices;
 
 	m_var.pointer_to_colors = m_var.colors.data();
 	glBindBuffer(GL_ARRAY_BUFFER, m_var.color_buffer);
@@ -443,6 +461,7 @@ void Viewer::draw()
 	glGenBuffers(1, &m_var.indices_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_var.indices_buffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_indices, GL_STATIC_DRAW);
+	// Appeler une autre fonction (pointeur)
 	if (m_var.mix)
 	{
 		(this->*drawSurfaces)();
@@ -484,7 +503,7 @@ void Viewer::draw()
 //	glVertex3f(m_var.true_vertex[0], m_var.true_vertex[1], m_var.true_vertex[2]);
 //	glEnd();
 
-	// Synchronize observer and viewer
+	// Synchronize observer and viewer by sending a signal
 	Q_EMIT this->drawNeeded();
 }
 
