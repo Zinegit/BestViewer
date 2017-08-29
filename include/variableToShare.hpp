@@ -58,6 +58,7 @@ typedef struct variable_to_share
 	GLuint Texture;
 	std::vector<float> vertices_in_order;
 	int depth;
+	int type_file;
 } variable_to_share;
 
 #endif // VARIABLETOSHARE_HPP

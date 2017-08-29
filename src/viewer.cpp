@@ -1,6 +1,29 @@
 #include "include/viewer.hpp"
 
-using namespace std;
+int Viewer::typeFile(const std::string& file_path)
+{
+	std::string file_type;
+	int i = 0;
+	while (file_path[file_path.size() - i] != '.')
+	{
+		file_type += file_path[file_path.size() - i];
+		i += 1;
+	}
+	reverse(file_type.begin(), file_type.end());
+	if (file_type.compare("ply") == 1)
+	{
+		return 1;
+	}
+	else if (file_type.compare("dat") == 1)
+		return 2;
+	else if (file_type.compare("obj") == 1)
+		return 3;
+	else
+	{
+		std::cout << "Wrong type of file" << std::endl;
+		return 0;
+	}
+}
 
 void Viewer::init()
 {
@@ -63,41 +86,49 @@ void Viewer::init()
 	glGenVertexArrays(3, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-//	// ////////////READING .PLY FILES/////////// //
-	Ply ply;
-	ply.readPly("../PLY_FILES/Triangle.ply");
-	// Retrieve geometry
-	m_var.vertices = ply.getPos();
-	// Retrieve topology
-	m_var.indices = ply.getIndex();
-//	// //////////READING .PLY FILES//////////// //
+	// Read the file extension
+	std::cout << file_path << std::endl;
+	m_var.type_file = typeFile(file_path);
+	// Read the file depending on the extension
+	if (m_var.type_file == 1)
+	{
+		Ply ply;
+		ply.readPly(file_path);
+		// Retrieve geometry
+		m_var.vertices = ply.getPos();
+		// Retrieve topology
+		m_var.indices = ply.getIndex();
+		// Function pointer
+		drawSurfaces = &Viewer::drawSurfacesColor;
+	}
+	else if (m_var.type_file == 2)
+	{
+		std::list<MR_Face> multiResConnectivity;
+		std::vector<int> depth_vertex_location;		//Useless
+		m_var.depth = 1;
+		datToHalfedgeMesh(file_path, m_var.halfedgeMesh, m_var.vertices, multiResConnectivity, m_var.depth);
+		HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
+		m_var.halfedgeMesh.subdivConnectivityOnly(m_var.depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
 
-	// ////////////READING .DAT FILES//////////// //
-	// For rabbit2.dat
-	std::list<MR_Face> multiResConnectivity;
-	std::vector<int> depth_vertex_location;		//Useless
-	m_var.depth = 1;
-//	datToHalfedgeMesh("../DAT_FILES/rabbit2.dat", m_var.halfedgeMesh, m_var.vertices, multiResConnectivity, m_var.depth);
-//	HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
-//	m_var.halfedgeMesh.subdivConnectivityOnly(depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
+		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
+		m_var.old_halfedgeMesh = m_var.halfedgeMesh;
 
-	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
-	m_var.old_halfedgeMesh = m_var.halfedgeMesh;
-
-	m_var.halfedgeMesh.subdiv(loop_lifted, m_var.depth, m_var.vertices, m_var.indices, depth_vertex_location, multiResConnectivity);
-
-	// ////////////READING .DAT FILES//////////// //
-
-	// Need to replace m_var.indices with m_var.indexed_indices and m_var.vertices with m_var.indexed_vertices in buffer building
-//	// ////////////READING .OBJ FILES//////////// //
-//	// Normals are useless for us for now
-//	std::vector<float> in_vertices;
-//	std::vector<float> in_uvs;
-//	std::vector<float> in_normals;
-//	bool res = loadOBJ("../OBJ_FILES/cube.obj", in_vertices, in_uvs, in_normals, m_var.vertices, m_var.indices);
-//	std::vector<float> indexed_normals;
-//	indexVBO(in_vertices, in_uvs, in_normals, m_var.indexed_indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
-//	// //////////READING .OBJ FILES///////////// //
+		m_var.halfedgeMesh.subdiv(loop_lifted, m_var.depth, m_var.vertices, m_var.indices, depth_vertex_location, multiResConnectivity);
+		drawSurfaces = &Viewer::drawSurfacesColor;
+	}
+	else if (m_var.type_file == 3)
+	{
+		// Need to replace m_var.indices with m_var.indexed_indices and m_var.vertices with m_var.indexed_vertices in buffer building
+		// Normals are useless for us for now
+		std::vector<float> in_vertices;
+		std::vector<float> in_uvs;
+		std::vector<float> in_normals;
+		const char* file_path_obj = file_path.c_str();
+		bool res = loadOBJ(file_path_obj, in_vertices, in_uvs, in_normals, m_var.vertices, m_var.indices);
+		std::vector<float> indexed_normals;
+		indexVBO(in_vertices, in_uvs, in_normals, m_var.indexed_indices, m_var.indexed_vertices, m_var.indexed_uvs, indexed_normals);
+		drawSurfaces = &Viewer::drawSurfacesTexture;
+	}
 
 	m_var.colors.resize(m_var.indices.size(), 1.f);
 	m_var.triangles_to_show_t1.resize(m_var.indices.size() / 3, 1);
@@ -132,26 +163,26 @@ void Viewer::init()
 	glGenBuffers(1, &m_var.color_buffer);
 	// Opens help window
 	// help();
-//	std::list<MR_Face> multi_res_connectivity;
-//	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
+	std::list<MR_Face> multi_res_connectivity;
+	m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 
 	// Create one OpenGL texture
-	glGenTextures(1, &m_var.textureID);
+//	glGenTextures(1, &m_var.textureID);
 
 	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
+//	glBindTexture(GL_TEXTURE_2D, m_var.textureID);
 
 	// If you want to use BMP files, comment line "uv[1] = -uv[1];" in objLoader.cpp
 //	m_var.Texture = loadBMP_custom("../TEXTURE_FILES/uvtemplate.bmp");
 //	m_var.Texture = loadDDS("../TEXTURE_FILES/uvtemplate.DDS");
-	m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
-	m_var.nb_uvs = m_var.indexed_uvs.size();
-	m_var.pointer_to_uvs = m_var.indexed_uvs.data();
-	glGenBuffers(1, &m_var.uvs_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
+//	m_var.Texture = loadDDS("../TEXTURE_FILES/uvmap.DDS");
+//	m_var.nb_uvs = m_var.indexed_uvs.size();
+//	m_var.pointer_to_uvs = m_var.indexed_uvs.data();
+//	glGenBuffers(1, &m_var.uvs_buffer);
+//	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
+//	glBufferData(GL_ARRAY_BUFFER, m_var.nb_uvs * sizeof(float), m_var.pointer_to_uvs, GL_STATIC_DRAW);
 
 	//If color
 //	this->drawSurfaces = &drawSurfacesColor;
@@ -287,7 +318,7 @@ void Viewer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
-void Viewer::drawSurfaces()
+void Viewer::drawSurfacesColor()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -313,24 +344,43 @@ void Viewer::drawSurfaces()
 		(void*)0                          // array buffer offset
 	);
 
-//	// Bind our texture in Texture Unit 0
-//	glActiveTexture(GL_TEXTURE0);
-//	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
-//	// Set our "myTextureSampler" sampler to user Texture Unit 0
-//	glUniform1i(m_var.textureID, 0);
+	glColor3f(1,1,1);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDrawElements(GL_TRIANGLES, m_var.nb_indices, GL_UNSIGNED_INT, NULL);
+	glDisableVertexAttribArray(0);
+}
 
-//	// 2nd bis attribute buffer : texture
-//	glEnableVertexAttribArray(1);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
-//	glVertexAttribPointer(
-//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-//		2,                                // size
-//		GL_FLOAT,                         // type
-//		GL_FALSE,                         // normalized?
-//		0,                                // stride
-//		(void*)0                          // array buffer offset
-//	);
+void Viewer::drawSurfacesTexture()
+{
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
+	glVertexAttribPointer(
+	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+	   3,                  // size
+	   GL_FLOAT,           // type
+	   GL_FALSE,           // normalized?
+	   0,                  // stride
+	   (void*)0            // array buffer offset
+	);
 
+	// Bind our texture in Texture Unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_var.Texture);
+	// Set our "myTextureSampler" sampler to user Texture Unit 0
+	glUniform1i(m_var.textureID, 0);
+
+	// 2nd bis attribute buffer : texture
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var.uvs_buffer);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		2,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+	);
 
 	glColor3f(1,1,1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -395,7 +445,7 @@ void Viewer::draw()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_indices, GL_STATIC_DRAW);
 	if (m_var.mix)
 	{
-		drawSurfaces();
+		(this->*drawSurfaces)();
 	}
 	glUseProgram(0);
 	drawOutlines();

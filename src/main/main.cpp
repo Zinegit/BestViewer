@@ -40,11 +40,11 @@ int main(int argc, char **argv) {
 
 	// Mode debug
 	bool debug = false;
-	if (argc <= 2)
+	if (argc <= 3)
 	{
-		if(argc == 2)
+		if(argc == 3)
 		{
-			std::string arg(argv[1]);
+			std::string arg(argv[2]);
 			if(arg == "-debug")
 			{
 				debug = true;
@@ -64,19 +64,19 @@ int main(int argc, char **argv) {
 			std::cout << "Release mode activated" << std::endl;
 		}
 	}
-	else if(argc > 1)
+	else if(argc > 2)
 	{
 		std::cerr << "Usage : " << argv[0] << " [-debug (activate the debugging mode)]" << std::endl;
 		exit(-1);
 	}
+	std::string file (argv[1]);
 
 	// Read command lines arguments
 	QApplication application(argc, argv);
 
 
-
 	// Instantiate the viewer
-	Viewer viewer(debug);
+	Viewer viewer(file, debug);
 	// GUI
 	MainWindow window(0, &viewer);
 	// Instantiate the observer

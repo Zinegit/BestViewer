@@ -69,6 +69,10 @@ void Observer::init()
 
 	glGenBuffers(1, &m_var -> color_buffer);
 
+	if (m_var -> type_file == 1 or m_var -> type_file == 2)
+		drawSurfaces = &Observer::drawSurfacesColor;
+	else if (m_var -> type_file == 3)
+		drawSurfaces = &Observer::drawSurfacesTexture;
 }
 
 void Observer::drawOutlines()
@@ -105,7 +109,7 @@ void Observer::drawOutlines()
 	glDisableVertexAttribArray(0);
 }
 
-void Observer::drawSurfaces()
+void Observer::drawSurfacesColor()
 {
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -131,23 +135,43 @@ void Observer::drawSurfaces()
 		(void*)0                          // array buffer offset
 	);
 
-//	// Bind our texture in Texture Unit 0
-//	glActiveTexture(GL_TEXTURE0);
-//	glBindTexture(GL_TEXTURE_2D, m_var -> Texture);
-//	// Set our "myTextureSampler" sampler to user Texture Unit 0
-//	glUniform1i(m_var -> textureID, 0);
+	glColor3f(1,1,1);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDrawElements(GL_TRIANGLES, m_var -> nb_indices, GL_UNSIGNED_INT, NULL);
+	glDisableVertexAttribArray(0);
+}
 
-//	// 2nd bis attribute buffer : texture
-//	glEnableVertexAttribArray(1);
-//	glBindBuffer(GL_ARRAY_BUFFER, m_var -> uvs_buffer);
-//	glVertexAttribPointer(
-//		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-//		2,                                // size
-//		GL_FLOAT,                         // type
-//		GL_FALSE,                         // normalized?
-//		0,                                // stride
-//		(void*)0                          // array buffer offset
-//	);
+void Observer::drawSurfacesTexture()
+{
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> vertices_buffer);
+	glVertexAttribPointer(
+	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+	   3,                  // size
+	   GL_FLOAT,           // type
+	   GL_FALSE,           // normalized?
+	   0,                  // stride
+	   (void*)0            // array buffer offset
+	);
+
+	// Bind our texture in Texture Unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_var -> Texture);
+	// Set our "myTextureSampler" sampler to user Texture Unit 0
+	glUniform1i(m_var -> textureID, 0);
+
+	// 2nd bis attribute buffer : texture
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, m_var -> uvs_buffer);
+	glVertexAttribPointer(
+		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+		2,                                // size
+		GL_FLOAT,                         // type
+		GL_FALSE,                         // normalized?
+		0,                                // stride
+		(void*)0                          // array buffer offset
+	);
 
 
 	glColor3f(1,1,1);
@@ -193,7 +217,7 @@ void Observer::draw()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var -> nb_indices * sizeof(int), m_var -> pointer_to_indices, GL_STATIC_DRAW);
 	if (m_var -> mix)
 	{
-		drawSurfaces();
+		(this->*drawSurfaces)();
 	}
 	glUseProgram(0);
 	drawOutlines();

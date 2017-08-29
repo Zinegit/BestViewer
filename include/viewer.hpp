@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <chrono>
+#include <cstring>
+#include <algorithm>
 
 
 #include <QGLViewer/qglviewer.h>
@@ -64,8 +66,8 @@ class Viewer : public QGLViewer
 private:
 	variable_to_share m_var;
 	bool debug_mode = false;
-
-//	void (*drawSurfaces)();
+	void (Viewer::*drawSurfaces)();
+	std::string file_path;
 
 protected:
 
@@ -84,14 +86,15 @@ protected:
 	virtual void init();
 
 	/**
-	 * \fn void drawSurfaces()
-	 * \brief This function draws the surfaces of the triangles composing the object
-	 * \return void
+	 * \fn int typeFile(std::string& file_path);
+	 * \brief This function indicates the type of file to read
+	 * \return the number corresponding to the type of file (ply, dat, obj...)
 	 */
-	virtual void drawSurfaces();
-//	virtual void drawSurfacesColor();
+	virtual int typeFile(const std::__cxx11::string &file_path);
 
-//	virtual void drawSurfacesTexture();
+	virtual void drawSurfacesColor();
+
+	virtual void drawSurfacesTexture();
 
 	/**
 	 * \fn void drawOutlines()
@@ -109,7 +112,6 @@ protected:
 	 */
 	virtual void keyPressEvent(QKeyEvent *e);
 
-
 	/**
 	 * \fn QString Viewer::helpString() const {
 	 * \brief This function opens a help windows
@@ -123,8 +125,9 @@ public:
 		return &m_var;
 	}
 
-	Viewer(bool debug = false)
+	Viewer(std::string file, bool debug = false)
 	{
+		file_path = file;
 		debug_mode = debug;
 	}
 

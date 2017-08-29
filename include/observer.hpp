@@ -90,6 +90,7 @@ class Observer : public QGLViewer
 private:
 	variable_to_share *m_var;
 	qglviewer::Camera *observed_camera = NULL;
+	void (Observer::*drawSurfaces)();
 
 public:
 	Observer(Viewer* viewer = NULL)
@@ -114,12 +115,9 @@ protected:
 	 */
 	virtual void init();
 
-	/**
-	 * \fn void drawSurfaces()
-	 * \brief This function draws the surfaces of the triangles composing the object
-	 * \return void
-	 */
-	virtual void drawSurfaces();
+	virtual void drawSurfacesColor();
+
+	virtual void drawSurfacesTexture();
 
 	/**
 	 * \fn void drawOutlines()
