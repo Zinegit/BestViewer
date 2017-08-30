@@ -18,6 +18,8 @@ typedef struct variable_to_share
 {
 	std::vector<int> indices;
 	std::vector<float> vertices;
+	std::vector<int> old_indices;
+	std::vector<float> old_vertices;
 	std::vector <float> colors;
 	std::vector <float> uvs;
 	std::vector<float> indexed_vertices;

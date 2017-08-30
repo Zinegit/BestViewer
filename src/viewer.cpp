@@ -86,47 +86,65 @@ void Viewer::init()
 	// Read the file extension
 	m_var.type_file = typeFile(file_path);
 	// Read the file depending on the extension
+
+	// Ply FILES
+//	if (m_var.type_file == 1)
+//	{
+//		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
+//		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
+//		Ply ply;
+//		ply.readPly(file_path);
+//		// Retrieve geometry
+//		m_var.vertices = ply.getPos();
+//		// Retrieve topology
+//		m_var.indices = ply.getIndex();
+//		// Function pointer
+//		drawSurfaces = &Viewer::drawSurfacesColor;
+
+//		m_var.nb_vertices = m_var.vertices.size();
+//		// Create pointer to vector for glBufferData
+//		m_var.pointer_to_vertices = m_var.vertices.data();
+//		// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
+//		glGenBuffers(1, &m_var.vertices_buffer);
+//		// The following commands will talk about our 'm_vertex_buffer' buffer
+//		glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
+//		// Give our vertices to OpenGL.
+//		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
+
+//		std::list<MR_Face> multi_res_connectivity;
+//		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
+//	}
+
+	// DAT FILES
 	if (m_var.type_file == 1)
 	{
-		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
-		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		Ply ply;
 		ply.readPly(file_path);
-		// Retrieve geometry
 		m_var.vertices = ply.getPos();
-		// Retrieve topology
 		m_var.indices = ply.getIndex();
-		// Function pointer
-		drawSurfaces = &Viewer::drawSurfacesColor;
 
-		m_var.nb_vertices = m_var.vertices.size();
-		// Create pointer to vector for glBufferData
-		m_var.pointer_to_vertices = m_var.vertices.data();
-		// Generate 1 buffer, put the resulting identifier in m_vertex_buffer
-		glGenBuffers(1, &m_var.vertices_buffer);
-		// The following commands will talk about our 'm_vertex_buffer' buffer
-		glBindBuffer(GL_ARRAY_BUFFER, m_var.vertices_buffer);
-		// Give our vertices to OpenGL.
-		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
-
-		std::list<MR_Face> multi_res_connectivity;
-		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
-	}
-	else if (m_var.type_file == 2)
-	{
 		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
 		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
-		std::list<MR_Face> multiResConnectivity;
+		std::list<MR_Face> multiResConnectivity;	//Useless
 		std::vector<int> depth_vertex_location;		//Useless
-		m_var.depth = 1;
-		datToHalfedgeMesh(file_path, m_var.halfedgeMesh, m_var.vertices, multiResConnectivity, m_var.depth);
-		HalfedgeMesh coarse_mesh = m_var.halfedgeMesh;	//Halfedge mesh representing the coarse connectivity
-		m_var.halfedgeMesh.subdivConnectivityOnly(m_var.depth-1, multiResConnectivity);	//Halfedge mesh subdivision up to the maximum level indicated in the DAT fil (one subdivision less than the level of the mesh)
+		m_var.depth = 0;
 
 		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
-		m_var.old_halfedgeMesh = m_var.halfedgeMesh;
 
+		// Information on the coarse model
+		m_var.old_halfedgeMesh = m_var.halfedgeMesh;
+		m_var.old_vertices = m_var.vertices;
+		m_var.old_indices = m_var.indices;
 		m_var.halfedgeMesh.subdiv(loop_lifted, m_var.depth, m_var.vertices, m_var.indices, depth_vertex_location, multiResConnectivity);
+
+		for (float f : m_var.vertices)
+			std::cout << f << std::endl;
+
+		std::cout << "lol" << std::endl;
+
+		for (int i : m_var.indices)
+			std::cout << i << std::endl;
+
 		drawSurfaces = &Viewer::drawSurfacesColor;
 
 		m_var.nb_vertices = m_var.vertices.size();
@@ -139,6 +157,8 @@ void Viewer::init()
 		// Give our vertices to OpenGL.
 		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
 	}
+
+	// OBJ FILES
 	else if (m_var.type_file == 3)
 	{
 		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/texture.vert");
@@ -205,7 +225,6 @@ void Viewer::init()
 	// help();
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
-
 }
 
 void Viewer::record()
