@@ -127,23 +127,19 @@ void Viewer::init()
 		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		std::list<MR_Face> multiResConnectivity;	//Useless
 		std::vector<int> depth_vertex_location;		//Useless
-		m_var.depth = 0;
+		m_var.depth = 1;
 
+		m_var.old_halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
 		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
 
+		m_var.vertices = m_var.halfedgeMesh.getNewVertPos();
+		m_var.indices = m_var.halfedgeMesh.getTriangleIndices();
+
 		// Information on the coarse model
-		m_var.old_halfedgeMesh = m_var.halfedgeMesh;
 		m_var.old_vertices = m_var.vertices;
 		m_var.old_indices = m_var.indices;
+
 		m_var.halfedgeMesh.subdiv(loop_lifted, m_var.depth, m_var.vertices, m_var.indices, depth_vertex_location, multiResConnectivity);
-
-		for (float f : m_var.vertices)
-			std::cout << f << std::endl;
-
-		std::cout << "lol" << std::endl;
-
-		for (int i : m_var.indices)
-			std::cout << i << std::endl;
 
 		drawSurfaces = &Viewer::drawSurfacesColor;
 
