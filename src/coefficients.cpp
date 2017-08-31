@@ -1,57 +1,29 @@
 #include "include/coefficients.hpp"
 
-void findCoefficients(std::vector<float>& vertices, std::vector<int>& indices, std::vector<int>& triangles_status, HalfedgeMesh& old_halfedgeMesh, HalfedgeMesh& halfedgeMesh, int depth)
+void findCoefficients(std::vector<float>& vertices, std::vector<int>& indices, HalfedgeMesh& old_halfedgeMesh, HalfedgeMesh& halfedgeMesh, int depth)
 {
+	for (FaceIter f = halfedgeMesh.facesBegin(); f != halfedgeMesh.facesEnd(); f++)
+	{
+		f->unmark();
+	}
+	for (VertexIter v = halfedgeMesh.verticesBegin(); v != halfedgeMesh.verticesEnd(); v++)
+	{
+		v->unmark();
+	}
+
 	for (FaceIter f = old_halfedgeMesh.facesBegin(); f != old_halfedgeMesh.facesEnd(); f++)
 	{
 		std::vector<FaceIter> children;
 		FaceIter new_face = halfedgeMesh.facesBegin();
 		std::advance(new_face, f->index());
 
-		// Function getChildren does not work so we emulate it
-		//children = new_face->getChildren(depth);
-		//		for(auto&& child : children)
-		//		{
-		//			std::cout << child->index() << std::endl;
-		//		}
-
-		if (f->index() == 0)
-		{
-			children.push_back(new_face);
-			new_face++;
-			new_face++;
-			children.push_back(new_face);
-			new_face++;
-			children.push_back(new_face);
-			new_face++;
-			children.push_back(new_face);
-//			std::cout << new_face->index() << std::endl;
-		}
-		else if (f->index() == 1)
-		{
-			children.push_back(new_face);
-			new_face++;
-			new_face++;
-			new_face++;
-			new_face++;
-			children.push_back(new_face);
-			new_face++;
-			children.push_back(new_face);
-			new_face++;
-			children.push_back(new_face);
-//			std::cout << new_face->index() << std::endl;
-		}
+		children = new_face->getChildren(depth);
 
 		new_face = halfedgeMesh.facesBegin();
 		std::advance(new_face, f->index());
 
-//		for (auto v : children)
-//			std::cout << v->index() << std::endl;
-//		std::cout << " " << std::endl;
-
 		HalfedgeIter h = f->halfedge();
 		HalfedgeIter h_cur = h;
-//		std::cout << h_cur->twin()->face()->index() << std::endl;
 		do
 		{
 			std::list<FaceIter> frontline;
@@ -62,58 +34,100 @@ void findCoefficients(std::vector<float>& vertices, std::vector<int>& indices, s
 			{
 				std::advance(neighbor_new_face, h_cur->twin()->face()->index());
 
-				std::vector<FaceIter> children_to_predict/* = neighbor_new_face->getChildren(depth)*/;
-				//Emulation
+				std::vector<FaceIter> children_to_predict = neighbor_new_face->getChildren(depth);
 
-				// Go through every child of our main face to see if it belongs to its frontline
+				for(FaceIter child : children_to_predict)
+				{
+					child->mark();
+					HalfedgeIter h_tmp = child->halfedge();
+					do
+					{
+						if(h_tmp->vertex()->depth() > 0)
+						{
+							h_tmp->vertex()->mark();
+						}
+						h_tmp = h_tmp->next();
+					} while(h_tmp != child->halfedge());
+				}
+
+				for(FaceIter child : children)
+				{
+					HalfedgeIter h_tmp = child->halfedge();
+					do
+					{
+						h_tmp->vertex()->unmark();
+						h_tmp = h_tmp->next();
+					} while(h_tmp != child->halfedge());
+				}
+
+				neighbor_new_face = halfedgeMesh.facesBegin();
+				std::advance(neighbor_new_face, h_cur->twin()->face()->index());
+
+				// Go through every child of our main face to see if they belong to its frontline
 				for (int i = 0; i < children.size(); i++)
 				{
 					HalfedgeIter h_c = children[i]->halfedge();
 					HalfedgeIter h_c_cur = h_c;
 					do
 					{
-						if (std::find(children_to_predict.begin(), children_to_predict.end(), h_c_cur->twin()->face()) != children_to_predict.end());
+						if(!h_cur->twin()->face()->isBoundary())
 						{
-							frontline.push_back(children[i]);
-							break;
+
+							if (h_c_cur->twin()->face()->isMarked())
+							{
+								frontline.push_back(children[i]);
+								break;
+							}
 						}
 						h_c_cur = h_c_cur->next();
 					} while (h_c_cur != h_c);
 				}
-				std::vector<float> dist_true_predicted;
-				std::vector<float> predicted_vertices;
+
+				std::vector<std::tuple<int, float, float, float>> coefficients;
 				std::vector<float> true_vertices;
 				while (!frontline.empty())
 				{
 					HalfedgeIter h_c = frontline.front()->halfedge();
 					HalfedgeIter h_c_cur = h_c;
-	//				int dist2 = std::distance(halfedgeMesh.facesBegin(), frontline.front());
 					do
-					{
-						if(!h_c_cur->twin()->face()->isBoundary())
+					{						
+						if(!h_c_cur->twin()->face()->isBoundary() && h_c_cur->twin()->face()->isMarked())
 						{
-							int dist1 = std::distance(halfedgeMesh.facesBegin(), h_c_cur->twin()->face());
-							if ((std::find(children_to_predict.begin(), children_to_predict.end(), h_c_cur->twin()->face()) != children_to_predict.end()) && (triangles_status[dist1] == 1))
+							HalfedgeIter reference_halfedge = h_c_cur->next()->next();
+							HalfedgeIter halfedge_to_predict = h_c_cur->twin()->next()->next();
+
+							if(halfedge_to_predict->vertex()->isMarked())
 							{
-								true_vertices.push_back(vertices[3 * indices[3 * dist1]]);
-								true_vertices.push_back(vertices[3 * indices[3 * dist1] + 1]);
-								true_vertices.push_back(vertices[3 * indices[3 * dist1] + 2]);
-								std::vector<float> pos = predictTriangle(h_cur);
-								predicted_vertices.push_back(pos[9]);
-								predicted_vertices.push_back(pos[10]);
-								predicted_vertices.push_back(pos[11]);
-								frontline.push_back(h_c_cur->twin()->face());
-								triangles_status[dist1] = 0;
+								true_vertices.push_back(vertices[3 * halfedge_to_predict->vertex()->index()]);
+								true_vertices.push_back(vertices[3 * halfedge_to_predict->vertex()->index() + 1]);
+								true_vertices.push_back(vertices[3 * halfedge_to_predict->vertex()->index() + 2]);
+								std::vector<float> pos = predictTriangle(reference_halfedge);
+								coefficients.push_back(std::make_tuple(halfedge_to_predict->vertex()->index(), pos[9], pos[10], pos[11]));
+								halfedge_to_predict->vertex()->unmark();
 							}
+
+							halfedge_to_predict->face()->unmark();
+
+							HalfedgeIter h_tmp = halfedge_to_predict;
+							do
+							{
+								if(!h_tmp->twin()->face()->isBoundary() && h_tmp->twin()->face()->isMarked())
+								{
+									frontline.push_back(h_tmp->face());
+								}
+								h_tmp = h_tmp->next();
+							} while(h_tmp!= halfedge_to_predict);
 						}
 						h_c_cur = h_c_cur->next();
 					} while (h_c_cur != h_c);
 					frontline.pop_front();
+
 				}
-				for (int i = 0; i < predicted_vertices.size(); i += 3)
+				for (int i = 0; i < coefficients.size(); ++i)
 				{
-					float dist = std::sqrt(std::pow(true_vertices[i] - predicted_vertices[i], 2) + std::pow(true_vertices[i+1] - predicted_vertices[i+1], 2) + std::pow(true_vertices[i+2] - predicted_vertices[i+2], 2));
-					dist_true_predicted.push_back(dist);
+					std::get<1>(coefficients[i]) = true_vertices[i] - std::get<1>(coefficients[i]);
+					std::get<2>(coefficients[i]) = true_vertices[i] - std::get<2>(coefficients[i]);
+					std::get<3>(coefficients[i]) = true_vertices[i] - std::get<3>(coefficients[i]);
 				}
 				// Generate the file name
 				// The standard form is: "index_of_the_known_triangle" + "_" + "index_of_the_triangle_to_predict"
@@ -122,71 +136,11 @@ void findCoefficients(std::vector<float>& vertices, std::vector<int>& indices, s
 				target_file += "_";
 				target_file += std::to_string(neighbor_new_face->index());
 				target_file += ".txt";
-				exportToTxt(dist_true_predicted, target_file);
+				exportToTxt(coefficients, target_file);
 			} else {
-				std::cout << "mdr" << std::endl;
+
 			}
 			h_cur = h_cur->next();
 		} while (h_cur != h);
 	}
 }
-//	for (FaceIter f = halfedgeMesh.facesBegin(); f != halfedgeMesh.facesEnd(); f++)
-//	{
-//			children = f->getChildren(depth);
-//			HalfedgeIter h = f->halfedge();
-//			HalfedgeIter h_cur = h;
-//			do
-//			{
-//				std::list<FaceIter> frontline;
-//				std::vector<FaceIter> children_to_predict = h_cur->twin()->face()->getChildren(depth);
-//				for (int i = 0; i < children.size(); i++)
-//				{
-//					HalfedgeIter h_c = children[i]->halfedge();
-//					HalfedgeIter h_c_cur = h_c;
-//					do
-//					{
-//						if (std::find(children_to_predict.begin(), children_to_predict.end(), h_c_cur->twin()->face()) != children_to_predict.end());
-//						{
-//							frontline.push_back(children[i]);
-//							break;
-//						}
-//						h_c_cur = h_c_cur->next();
-//					} while (h_c_cur != h_c);
-//				}
-//				std::vector<float> dist_true_predicted;
-//				std::vector<float> predicted_vertices;
-//				std::vector<float> true_vertices;
-//				while (!frontline.empty())
-//				{
-//					HalfedgeIter h_c = frontline.front()->halfedge();
-//					HalfedgeIter h_c_cur = h_c;
-//					int dist2 = std::distance(halfedgeMesh.facesBegin(), frontline.front());
-//					do
-//					{
-//						int dist1 = std::distance(halfedgeMesh.facesBegin(), h_c_cur->twin()->face());
-//						if (std::find(children_to_predict.begin(), children_to_predict.end(), h_c_cur->twin()->face()) != children_to_predict.end() && triangles_status[dist1] == 1)
-//						{
-//							true_vertices.push_back(vertices[3 * indices[3 * dist1]]);
-//							true_vertices.push_back(vertices[3 * indices[3 * dist1] + 1]);
-//							true_vertices.push_back(vertices[3 * indices[3 * dist1] + 2]);
-//							std::vector<float> pos = predictTriangle(h_cur);
-//							predicted_vertices.push_back(pos[9]);
-//							predicted_vertices.push_back(pos[10]);
-//							predicted_vertices.push_back(pos[11]);
-//							frontline.push_back(h_c_cur->twin()->face());
-//							triangles_status[dist1] = 0;
-//							h_c_cur = h_c_cur->next();
-//						}
-//					} while (h_c_cur != h_c);
-//					frontline.pop_front();
-//				}
-//				for (int i = 0; i < predicted_vertices.size(); i += 3)
-//				{
-//					float dist = std::sqrt(std::pow(true_vertices[i] - predicted_vertices[i], 2) + std::pow(true_vertices[i+1] - predicted_vertices[i+1], 2) + std::pow(true_vertices[i+2] - predicted_vertices[i+2], 2));
-//					dist_true_predicted.push_back(dist);
-//				}
-//				exportToTxt(dist_true_predicted, "../analyses/data.txt");
-//				h_cur = h_cur->next();
-//			} while (h_cur != h);
-//	}
-//}

@@ -12,6 +12,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <tuple>
 
 #include "include/statistics.hpp"
 
@@ -22,6 +23,6 @@
  * \param target_file : The file in which the values will be written
  * \return void
  */
-void exportToTxt(std::vector<float> dist_true_predicted,  std::string target_file);
+void exportToTxt(std::vector<std::tuple<int, float, float, float>> coefficients,  std::string target_file);
 
 #endif // TOTXT_HPP

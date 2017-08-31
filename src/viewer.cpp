@@ -127,7 +127,7 @@ void Viewer::init()
 		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		std::list<MR_Face> multiResConnectivity;	//Useless
 		std::vector<int> depth_vertex_location;		//Useless
-		m_var.depth = 1;
+		m_var.depth = 2;
 
 		m_var.old_halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
 		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
@@ -240,18 +240,17 @@ void Viewer::record()
 
 void Viewer::predictStep()
 {
-	if (!m_var.frontline.empty())
-	{
-		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
-		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
-	}
+//	if (!m_var.frontline.empty())
+//	{
+//		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
+//		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
+//	}
 }
 
 void Viewer::predict()
 {
-	std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
-	m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
-	exportToTxt(dist_true_predicted, "../analyses/data.txt");
+//	std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
+//	m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -283,7 +282,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 			std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
 			m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 			float mean_distances = mean(dist_true_predicted);
-			exportToTxt(dist_true_predicted, "../analyses/data.txt");
+//			exportToTxt(dist_true_predicted, "../analyses/data.txt");
 			update();
 		}
 		else if (e->key() == Qt::Key_N)
@@ -297,7 +296,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		}
 		else if (e->key() == Qt::Key_T)
 		{
-			findCoefficients(m_var.vertices, m_var.indices, m_var.triangles_status, m_var.old_halfedgeMesh,	m_var.halfedgeMesh, m_var.depth);
+			findCoefficients(m_var.vertices, m_var.indices, m_var.old_halfedgeMesh,	m_var.halfedgeMesh, m_var.depth);
 		}
 		else if (e->key() == Qt::Key_K)
 		{
