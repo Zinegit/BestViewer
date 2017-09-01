@@ -12,7 +12,7 @@
 #include <iostream>
 
 /**
- * \fn std::vector<float> colorize(std::vector<int>& triangles_status, std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<int>& frontline_colors)
+ * \fn std::vector<float> colorize(std::vector<int>& triangles_status, std::vector<float>& vertices, std::vector<int>& indices, std::vector<int>& frontline_colors)
  * \brief Function used to create the vector filled with the color of each vertex that is to be displayed in the viewer
  * \param triangles_status : State of every triangle (appeared/disappeared/same state)
  * \param vertices : Geometrical description of the object

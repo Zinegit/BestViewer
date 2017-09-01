@@ -52,12 +52,12 @@ std::vector<float> updateFrontLine(std::list<FaceIter>& frontline,
 
 float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 						  std::vector<int>& triangles_status,
-						  std::vector<float>& vertex_positions,
-						  std::vector<int>& index_triangles,
+						  std::vector<float>& vertices,
+						  std::vector<int>& indices,
 						  std::vector<int>& frontline_colors,
 						  HalfedgeMesh& halfedgeMesh,
-						  std::vector<float>& true_vertex,
-						  std::vector<float>& predicted_vertex)
+						  std::vector<float>& true_vertices,
+						  std::vector<float>& predicted_vertices)
 {
 	float dist_true_predicted;
 	HalfedgeIter h = frontline.front()->halfedge();
@@ -73,14 +73,14 @@ float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 			// If the triangle next to the current triangle appeared, then the current triangle belongs to the front line
 			if (status == 1)
 			{
-				true_vertex[0] = vertex_positions[3 * index_triangles[3 * dist1]];
-				true_vertex[1] = vertex_positions[3 * index_triangles[3 * dist1] + 1];
-				true_vertex[2] = vertex_positions[3 * index_triangles[3 * dist1] + 2];
-				predicted_vertex = predictTriangle(h_cur);
+				true_vertices[0] = vertices[3 * indices[3 * dist1]];
+				true_vertices[1] = vertices[3 * indices[3 * dist1] + 1];
+				true_vertices[2] = vertices[3 * indices[3 * dist1] + 2];
+				predicted_vertices = predictTriangle(h_cur);
 				frontline.push_back(h_cur->twin()->face());
 				frontline_colors[dist1] = 1;
 				triangles_status[dist1] = 0;
-				dist_true_predicted = std::sqrt(std::pow(true_vertex[0] - predicted_vertex[9], 2) + std::pow(true_vertex[1] - predicted_vertex[10], 2) + std::pow(true_vertex[2] - predicted_vertex[11], 2));
+				dist_true_predicted = std::sqrt(std::pow(true_vertices[0] - predicted_vertices[9], 2) + std::pow(true_vertices[1] - predicted_vertices[10], 2) + std::pow(true_vertices[2] - predicted_vertices[11], 2));
 			}
 			frontline_colors[dist2] = 0;
 		}
