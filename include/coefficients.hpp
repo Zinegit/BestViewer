@@ -18,11 +18,12 @@
 /**
  * \fn findCoefficients(std::vector<float>& vertex_positions, std::vector<int> &index_triangles, std::vector<int> &triangles_status, HalfedgeMesh& halfedgeMesh, int depth)
  * \brief This function generates all the the coefficient files used by every client connected to the server. These files contain the prediction errors of every triangle
- * \param vertex_positions : Geometrical description of the object
- * \param index_triangles : Topological description of the object
+ * \param vertices : Geometrical description of the object
+ * \param indices : Topological description of the object
+ * \param old_halfedgeMesh : The coarse halfedgeMesh
  * \param halfedgeMesh : The instanciation of the halfedgeMesh class
  * \param depth : The resolution wanted
- * \return The distance of a vertex from one of the frustum's planes
+ * \return void
  */
 void findCoefficients(std::vector<float>& vertices, std::vector<int>& indices, HalfedgeMesh& old_halfedgeMesh, HalfedgeMesh& halfedgeMesh, int depth);
 

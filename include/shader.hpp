@@ -38,6 +38,11 @@ public:
 	 */
 	void loadShader(GLenum shaderType, const char* file_path);
 
+	/**
+	 * \fn GLuint getProgramId()
+	 * \brief get the program Id
+	 * \return the program id
+	 */
 	GLuint getProgramId() { return m_program_id; }
 };
 

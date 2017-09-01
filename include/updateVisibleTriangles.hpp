@@ -21,13 +21,19 @@ std::vector<bool> fusionBools(std::vector<bool>& front_face_triangles, std::vect
 
 /**
  * \fn std::vector<int> updateIndex(std::vector<bool>& triangles_to_show, std::vector<int>& index)
- * \brief This function updates the index_triangles vector in order to select only the ones that are supposed to be drawn
+ * \brief This function updates the indices vector in order to select only the ones that are supposed to be drawn
  * \param triangles_to_show : Vector of booleans describing which triangle is supposed to be drawn
- * \param index_triangles : Topological description of the object
- * \return New index_triangles containing only the triangles to draw
+ * \param indices : Topological description of the object
+ * \return New indices containing only the triangles to draw
  */
-std::vector<int> updateIndex(std::vector<bool>& triangles_to_show, std::vector<int>& index_triangles);
+std::vector<int> updateIndex(std::vector<bool>& triangles_to_show, std::vector<int>& indices);
 
-std::vector<float> updateVertices(std::vector<int>& index_triangles);
+/**
+ * \fn std::vector<float> updateVertices(std::vector<int>& index_triangles);
+ * \brief This function updates the vertices vector in order to select only the ones that are supposed to be drawn. The implementation is not that easy in the case of an obj with texture. Not used here
+ * \param indices : Topological description of the object
+ * \return New vertices of the triangles to draw
+ */
+std::vector<float> updateVertices(std::vector<int>& indices);
 
 #endif // UPDATEINVISIBLETRIANGLES_HPP

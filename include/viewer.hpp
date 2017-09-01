@@ -92,8 +92,18 @@ protected:
 	 */
 	virtual int typeFile(const std::__cxx11::string &file_path);
 
+	/**
+	 * \fn void drawSurfacesColor();
+	 * \brief This function draws the surfaces of the triangles. Used with color buffer. For .dat and .ply at the moment
+	 * \return void
+	 */
 	virtual void drawSurfacesColor();
 
+	/**
+	 * \fn void drawSurfacesTexture();
+	 * \brief This function draws the outlines of the triangles. Used with texture buffer. For obj. files only at the moment
+	 * \return void
+	 */
 	virtual void drawSurfacesTexture();
 
 	/**
@@ -112,13 +122,6 @@ protected:
 	 */
 	virtual void keyPressEvent(QKeyEvent *e);
 
-	/**
-	 * \fn QString Viewer::helpString() const {
-	 * \brief This function opens a help windows
-	 * \return a help window
-	 */
-	virtual QString helpString() const;
-
 public:
 	variable_to_share* getVariableToShare()
 	{
@@ -136,10 +139,25 @@ public:
 		m_var.mix = !m_var.mix;
 	}
 
+	/**
+	 * \fn void record()
+	 * \brief This records the state of every triangles at the moment. When pressed twice, displays the states of the triangles with colors
+	 * \return void
+	 */
 	void record();
 
+	/**
+	 * \fn void predictStep();
+	 * \brief This function predicts step by step the position of an appearing vertex
+	 * \return void
+	 */
 	void predictStep();
 
+	/**
+	 * \fn void predict();
+	 * \brief This function predicts the position of all vertices that are appearing
+	 * \return void
+	 */
 	void predict();
 };
 

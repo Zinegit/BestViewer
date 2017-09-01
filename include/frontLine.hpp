@@ -15,16 +15,16 @@
 
 /**
  * \fn void updateFrontLine(std::list<FaceIter> frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)
- * \brief This function updates the frontline untill every triangle is predicted
+ * \brief This function updates the frontline untill every triangle is predicted. TO DO: This function only works on the monores mesh. The aim of this function will be to calculate
  * \param frontline : The initialized frontline of the object
  * \param triangles_status : State of every triangle (appeared/disappeared/same state)
  * \param frontline_colors : The triangles that belong to the frontline are associated with one in order to colorize them in blue in addColor
- * \param vertex_positions : Geometrical description of the object
- * \param index_triangles : Topological description of the object
+ * \param vertices : Geometrical description of the object
+ * \param indices : Topological description of the object
  * \param halfedgeMesh : The instanciation of the halfedgeMesh class
  * \return The distances between each vertex and its prediction
  */
-std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, std::vector<float>& vertex_positions, std::vector<int>& index_triangles, HalfedgeMesh& halfedgeMesh);
+std::vector<float> updateFrontLine(std::list<FaceIter>& frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, std::vector<float>& vertices, std::vector<int>& indices, HalfedgeMesh& halfedgeMesh);
 
 /**
  * \fn void TempUpdateFrontLine(std::list<FaceIter> frontline, std::vector<int>& triangles_status, std::vector<int>& frontline_colors, HalfedgeMesh& halfedgeMesh)

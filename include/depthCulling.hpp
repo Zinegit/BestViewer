@@ -36,39 +36,37 @@ bool pointInTriangle (qglviewer::Vec pt, qglviewer::Vec v1, qglviewer::Vec v2, q
 /**
  * \fn bool isNotOcculted(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, std::vector<float>& point, int point_index, GLdouble plane_coefficients[6][4], std::vector<float>& distances, float& d4)
  * \brief This function returns true if the input point is not occulted and false if it is
- * \param vertex_positions : Geometrical description of the object projected in the near_plane
- * \param vertex_positions_3d : Geometrical description of the object
- * \param index_triangles : Topological description of the object
+ * \param vertices : Geometrical description of the object projected in the near_plane
+ * \param indices : Topological description of the object
  * \param point : A vertex
  * \param point_index : The index of the point in vertex_positions
- * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
  * \param distances : The distances of every vertex from the near plane
  * \param d4 : The distance of the point from the near plane
  * \return True if the point is not occulted and false if it is
  */
-bool isNotOcculted(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, std::vector<float>& point, int point_index, GLdouble plane_coefficients[6][4], std::vector<float>& distances, float& d4);
+bool isNotOcculted(std::vector<float>& vertices, std::vector<int>& indices, std::vector<float>& point, int point_index, std::vector<float>& distances, float& d4);
 
 /**
  * \fn std::vector<bool> notOccultedPoints(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4], std::vector<float>& distances)
  * \brief This function returns a vector of booleans. True is for a point visible and false for an occulted point. This function is to heavy to run so it is not used here.
- * \param vertex_positions : Geometrical description of the object projected in the near_plane
- * \param vertex_positions_3d : Geometrical description of the object
- * \param index_triangles : Topological description of the object
+ * \param vertices : Geometrical description of the object projected in the near_plane
+ * \param vertices_3d : Geometrical description of the object
+ * \param indices : Topological description of the object
  * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
  * \param distances : The distances of every vertex from the near plane
  * \return Vector of booleans describing which point is occulted and which is not
  */
-std::vector<bool> notOccultedPoints(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4], std::vector<float>& distances);
+std::vector<bool> notOccultedPoints(std::vector<float>& vertices, std::vector<float>& vertices_3d, std::vector<int>& indices, GLdouble plane_coefficients[6][4], std::vector<float>& distances);
 
 /**
  * \fn std::vector<bool> notOccultedTriangles(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
  * \brief This function returns a vector of booleans. True is for a triangle visible and false for an occulted triangle. This function is to heavy to run so it is not used here.
- * \param vertex_positions : Geometrical description of the object projected in the near_plane
- * \param vertex_positions_3d : Geometrical description of the object
- * \param index_triangles : Topological description of the object
+ * \param vertices : Geometrical description of the object projected in the near_plane
+ * \param vertices_3d : Geometrical description of the object
+ * \param indices : Topological description of the object
  * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
  * \return Vector of booleans describing which triangle is occulted and which is not
  */
-std::vector<bool> notOccultedTriangles(std::vector<float>& vertex_positions, std::vector<float>& vertex_positions_3d, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4]);
+std::vector<bool> notOccultedTriangles(std::vector<float>& vertices, std::vector<float>& vertices_3d, std::vector<int>& indices, GLdouble plane_coefficients[6][4]);
 
 #endif // DEPTHCULLING_HPP

@@ -87,7 +87,7 @@ void Viewer::init()
 	m_var.type_file = typeFile(file_path);
 	// Read the file depending on the extension
 
-	// Ply FILES
+	// Regular visioning of PLY FILES
 //	if (m_var.type_file == 1)
 //	{
 //		shader_program.loadShader(GL_VERTEX_SHADER, "../shaders/vertexShader.vert");
@@ -115,7 +115,7 @@ void Viewer::init()
 //		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multi_res_connectivity);
 //	}
 
-	// DAT FILES
+	// Visualize PLY FILES and generates coeff files
 	if (m_var.type_file == 1)
 	{
 		Ply ply;
@@ -127,7 +127,7 @@ void Viewer::init()
 		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		std::list<MR_Face> multiResConnectivity;	//Useless
 		std::vector<int> depth_vertex_location;		//Useless
-		m_var.depth = 2;
+		m_var.depth = 1;
 
 		m_var.old_halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
 		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
@@ -153,7 +153,29 @@ void Viewer::init()
 		// Give our vertices to OpenGL.
 		glBufferData(GL_ARRAY_BUFFER, m_var.nb_vertices * sizeof(float), m_var.pointer_to_vertices, GL_STATIC_DRAW);
 	}
-
+	// DAT FILES
+	// Function readDat does not exist anymore. See with I3S_Meshing
+//	else if (m_var.type_file == 2)
+//	{
+//		std::vector<float> geometry_coarse_lvl;
+//		std::vector<float> geometry_wanted_lvl;
+//		std::vector<float> geometry_wanted_lvl_only;
+//		std::vector<int> connectivity_coarse_lvl;
+//		std::vector<int> connectivity_wanted_lvl;
+//		Dat dat;
+//		dat.readDat("../DAT_FILES/rabbit2.dat");
+//		readLvlXDat(dat,
+//						 1,
+//						 geometry_coarse_lvl,
+//						 geometry_wanted_lvl,
+//						 geometry_wanted_lvl_only,
+//						 connectivity_coarse_lvl,
+//						 connectivity_wanted_lvl);
+//		// Retrieve geometry
+//		m_var.vertex_positions = geometry_wanted_lvl;
+//		// Retrieve topology
+//		m_var.index = connectivity_wanted_lvl;
+//	}
 	// OBJ FILES
 	else if (m_var.type_file == 3)
 	{
@@ -217,40 +239,48 @@ void Viewer::init()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_var.nb_indices * sizeof(int), m_var.pointer_to_indices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m_var.color_buffer);
-	// Opens help window
-	// help();
+
 	m_var.predicted_vertex.resize(12, 0);
 	m_var.true_vertex.resize(3, 0);
 }
 
 void Viewer::record()
 {
-	if (m_var.recording)
+	if (Viewer::debug_mode)
 	{
-		m_var.triangles_to_show_t2 = m_var.triangles_to_show;
-		m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
-		m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
-		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
-		m_var.recording = false;
-	} else {
-		m_var.triangles_to_show_t1 = m_var.triangles_to_show;
-		m_var.recording = true;
+		if (m_var.recording)
+		{
+			m_var.triangles_to_show_t2 = m_var.triangles_to_show;
+			m_var.triangles_status = appearance(m_var.triangles_to_show_t1, m_var.triangles_to_show_t2);
+			m_var.frontline = getFrontLine(m_var.triangles_status, m_var.frontline_colors, m_var.halfedgeMesh);
+			m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
+			m_var.recording = false;
+		} else {
+			m_var.triangles_to_show_t1 = m_var.triangles_to_show;
+			m_var.recording = true;
+		}
 	}
 }
 
 void Viewer::predictStep()
 {
-//	if (!m_var.frontline.empty())
-//	{
-//		TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
-//		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
-//	}
+	if (Viewer::debug_mode)
+	{
+		if (!m_var.frontline.empty())
+		{
+			TempUpdateFrontLine(m_var.frontline, m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors, m_var.halfedgeMesh, m_var.true_vertex, m_var.predicted_vertex);
+			m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
+		}
+	}
 }
 
 void Viewer::predict()
 {
-//	std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
-//	m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
+	if (Viewer::debug_mode)
+	{
+		std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
+		m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
+	}
 }
 
 void Viewer::keyPressEvent(QKeyEvent *e)
@@ -261,7 +291,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 		// Get event modifiers key
 		const Qt::KeyboardModifiers modifiers = e->modifiers();
 
-		// Bug avec glDisable(GL_CULL_FACE) depuis l'update vers qgl 2.7.0
 		if (e->key() == Qt::Key_L)
 		{
 			if (m_var.recording)
@@ -282,7 +311,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 			std::vector<float> dist_true_predicted = updateFrontLine(m_var.frontline, m_var.triangles_status, m_var.frontline_colors, m_var.vertices, m_var.indices, m_var.halfedgeMesh);
 			m_var.colors = colorize(m_var.triangles_status, m_var.vertices, m_var.indices, m_var.frontline_colors);
 			float mean_distances = mean(dist_true_predicted);
-//			exportToTxt(dist_true_predicted, "../analyses/data.txt");
 			update();
 		}
 		else if (e->key() == Qt::Key_N)
@@ -519,25 +547,4 @@ void Viewer::draw()
 
 	// Synchronize observer and viewer by sending a signal
 	Q_EMIT this->drawNeeded();
-}
-
-QString Viewer::helpString() const {
-	QString text("<h2>B e s t V i e w e r</h2>");
-	text += "<b> First of all Press C </b> to deactivate auto frustum culling.<br> <br>";
-	text += " Press <b> L </b> to enable/disable backface culling.<br> <br> ";
-	text += " Press <b> K </b> to fill the surfaces.<br> <br> ";
-	text += "Use the mouse to move the camera around the object. ";
-	text += "You can respectively revolve around, zoom and translate with the "
-			  "three mouse buttons. ";
-	text += "Left and middle buttons pressed together rotate around the camera "
-			  "view direction axis<br><br>";
-	text += "Press <b>A</b> for the world axis ";
-	text += "and <b>Control+S</b> to save "
-			  "a snapshot. ";
-	text += "Double clicks automates single click actions: A left button double "
-			  "click aligns the closer axis with the camera (if close enough). ";
-	text += "A middle button double click fits the zoom of the camera and the "
-			  "right button re-centers the scene.<br><br>";
-	text += "Press <b>Escape</b> to exit the viewer.";
-	return text;
 }
