@@ -16,7 +16,7 @@
 #include "include/barycenter.hpp"
 
 /**
- * \fn std::vector<float> project(std::vector<float>& vertex_positions, GLdouble plane_coefficients[6][4], int nb_plane)
+ * \fn std::vector<float> project(std::vector<float>& vertices, GLdouble plane_coefficients[6][4], int nb_plane);
  * \brief This function projects every vertex in the near/far plane
  * \param vertices : Geometrical description of the object
  * \param plane_coefficients[6][4] : List of lists containing the frustum's planes' coefficients
@@ -26,7 +26,7 @@
 std::vector<float> project(std::vector<float>& vertices, GLdouble plane_coefficients[6][4], int nb_plane);
 
 /**
- * \fn void incircle (std::vector<float>& vertex_positions, std::vector<int>& index_triangles, std::vector<float>& centers, std::vector<float>& radius, bool far_plane)
+ * \fn void incircle (std::vector<float>& vertices, std::vector<int>& indices, std::vector<float>& centers, std::vector<float>& radius, bool far_plane);
  * \brief This function returns the incircle of each triangle. This function is not currently used by could be in order to simplify the depth culling that is currently to slow to be used.
  * \param vertices : Geometrical description of the object
  * \param indices : Topological description of the object

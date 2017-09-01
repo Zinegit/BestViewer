@@ -1,6 +1,6 @@
 Présentation du projet BestViewer
 
-J’écris ces quelques lignes afin de décrire le plus brièvement possible dans son ensemble le fonctionnement du projet bestViewer.
+Ces quelques lignes ont pour but de décrire le plus clairement possible dans son ensemble le fonctionnement du projet bestViewer et ce qu'il reste à y faire.
 
 
 
@@ -33,6 +33,8 @@ Ce format signifie que le triangle grossier 45 sert à prédire le triangle 186.
 Dans ces fichiers on trouve à chaque ligne l’indice du sommet prédit ainsi que ses 3 coordonnées.
 
 -L’affichage des triangles prédits avec les fonctions predict et predictStep ne se fait que sur le modèle monorésolution et ne tient pas compte des parents grossiers. Il faudrait par la suite faire en sorte que le calcul des 
+
+-La fonction TempUpdateFrontLine possède un défaut. Lorsque l'on détermine pour chaque triangle sa vraie position, le vertex choisit a une chance sur trois d'être le bon. Il convient de rajouter un test comme fait dans la fonction findCoefficients qui s'appuie plus sur la structure halfedgeMesh.
 
 -L’affichage des textures se fait pour l’instant avec un modèle .obj et un fichier image .dds ou .bmp. Le parseur d’obj est basique et ne peut pas lire tous les formats. De plus la partie prédiction ne marche pas sur les fichiers obj car l’ajout du paramètre texture oblige à réindexer les vecteurs de position et fait apparaître des doublons ce qui ne plait pas à la structure halfedgeMesh.
 

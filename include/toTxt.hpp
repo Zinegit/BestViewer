@@ -17,9 +17,9 @@
 #include "include/statistics.hpp"
 
 /**
- * \fn void exportToTxt(std::vector<float> dist_true_predicted,  std::string target_file)
+ * \fn void exportToTxt(std::vector<std::tuple<int, float, float, float>> coefficients,  std::string target_file);
  * \brief This function exports the data collected into a file
- * \param dist_true_predicted : The distance between the predicted and the real position of each vertex
+ * \param coefficients : The index of the vertex + The distance between the predicted and the real position of each vertex
  * \param target_file : The file in which the values will be written
  * \return void
  */

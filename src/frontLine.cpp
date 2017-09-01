@@ -1,5 +1,6 @@
 #include "include/frontLine.hpp"
 
+// This function should be multires in the future and ask for the right error files to the server in order to correct the prediction of the children triangles.
 std::vector<float> updateFrontLine(std::list<FaceIter>& frontline,
 								   std::vector<int>& triangles_status,
 								   std::vector<int>& frontline_colors,
@@ -65,7 +66,7 @@ float TempUpdateFrontLine(std::list<FaceIter>& frontline,
 	int dist2 = std::distance(halfedgeMesh.facesBegin(), frontline.front());
 	do
 	{
-		// If an halfedge is a boundary, the triangle it belongs to is not part of the frontline
+		// If a halfedge is a boundary, the triangle it belongs to is not part of the frontline
 		if (!h_cur->twin()->face()->isBoundary())
 		{
 			int dist1 = std::distance(halfedgeMesh.facesBegin(), h_cur->twin()->face());

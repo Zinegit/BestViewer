@@ -32,7 +32,7 @@ float distanceToPlane(int i, qglviewer::Vec& pos, GLdouble plane_coefficients[6]
 bool isInsideFrustum(qglviewer::Vec& pos, GLdouble plane_coefficients[6][4]);
 
 /**
- * \fn std::vector<bool> areInsideFrustum(std::vector<float>& vertex_positions, std::vector<int>& index_triangles, GLdouble plane_coefficients[6][4])
+ * \fn std::vector<bool> areInsideFrustum(std::vector<float>& vertices, std::vector<int>& indices, GLdouble plane_coefficients[6][4]);
  * \brief This function checks for every triangle whether it is in the frustum or not. If at least one of the vertices of a triangle is in the frustum then the triangle is considered in the frustum. For each triangle this function calls isInsideFrustum in order to check if one of its vertices is inside the frustum
  * \param vertices : Geometrical description of the object
  * \param indices : Topological description of the object

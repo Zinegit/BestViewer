@@ -11,9 +11,7 @@ int Viewer::typeFile(const std::string& file_path)
 	}
 	reverse(file_type.begin(), file_type.end());
 	if (file_type.compare("ply") == 1)
-	{
 		return 1;
-	}
 	else if (file_type.compare("dat") == 1)
 		return 2;
 	else if (file_type.compare("obj") == 1)
@@ -127,7 +125,7 @@ void Viewer::init()
 		shader_program.loadShader(GL_FRAGMENT_SHADER, "../shaders/fragmentShader.frag");
 		std::list<MR_Face> multiResConnectivity;	//Useless
 		std::vector<int> depth_vertex_location;		//Useless
-		m_var.depth = 1;
+		m_var.depth = 0;
 
 		m_var.old_halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);
 		m_var.halfedgeMesh.build(m_var.vertices, m_var.indices, multiResConnectivity);

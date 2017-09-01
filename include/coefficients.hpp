@@ -16,7 +16,7 @@
 #include "external/I3S-Meshing/include/halfedgemesh.h"
 
 /**
- * \fn findCoefficients(std::vector<float>& vertex_positions, std::vector<int> &index_triangles, std::vector<int> &triangles_status, HalfedgeMesh& halfedgeMesh, int depth)
+ * \fn void findCoefficients(std::vector<float>& vertices, std::vector<int>& indices, HalfedgeMesh& old_halfedgeMesh, HalfedgeMesh& halfedgeMesh, int depth);
  * \brief This function generates all the the coefficient files used by every client connected to the server. These files contain the prediction errors of every triangle
  * \param vertices : Geometrical description of the object
  * \param indices : Topological description of the object
